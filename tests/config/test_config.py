@@ -7,6 +7,7 @@ import sys
 import pytest
 
 import libs.global_value as g
+from cls.config import SubCommand
 from libs import configuration
 
 
@@ -43,6 +44,33 @@ def test_subcommand_default(input_args, monkeypatch):
     """サブコマンドデフォルト値チェック"""
     monkeypatch.setattr(sys, "argv", ["progname", "--config=tests/testdata/minimal.ini"])
 
-    # fixme
-    _ = input_args
-    configuration.setup(init_db=False)
+    default = {
+        "section": input_args,
+        "commandword": [],
+        "aggregation_range": "当日",
+        "individual": True,
+        "all_player": False,
+        "daily": True,
+        "fourfold": True,
+        "game_results": False,
+        "guest_skip": True,
+        "guest_skip2": True,
+        "ranked": 3,
+        "score_comparisons": False,
+        "statistics": False,
+        "stipulated": 0,
+        "stipulated_rate": 0.05,
+        "unregistered_replace": True,
+        "anonymous": False,
+        "verbose": False,
+        "versus_matrix": False,
+        "collection": "",
+        "always_argument": [],
+        "target_mode": 0,
+        "format": "",
+        "filename": "",
+        "interval": 80,
+    }
+
+    sub_command = SubCommand(input_args)
+    assert sub_command.to_dict() == default
