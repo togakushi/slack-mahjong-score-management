@@ -90,9 +90,9 @@ DATE_RANGE_MAP: dict[str, DateRangeSpec] = {
     },
     "yesterday": {
         "keyword": ["昨日"],
-        "range": lambda _: [
-            datetime.now() + relativedelta(days=-1, hour=0, minute=0, second=0, microsecond=0),
-            datetime.now() + relativedelta(days=-1, hour=23, minute=59, second=59, microsecond=999999),
+        "range": lambda x: [
+            x + relativedelta(days=-1, hour=0, minute=0, second=0, microsecond=0),
+            x + relativedelta(days=-1, hour=23, minute=59, second=59, microsecond=999999),
         ],
     },
     "this_week": {
@@ -153,19 +153,21 @@ DATE_RANGE_MAP: dict[str, DateRangeSpec] = {
     },
     "first_day": {
         "keyword": ["最初"],
-        "range": lambda _: [
-            datetime.now() + relativedelta(year=1900, month=1, day=1, hour=0, minute=0, second=0, microsecond=0),
+        "range": lambda x: [
+            x + relativedelta(year=1900, month=1, day=1, hour=0, minute=0, second=0, microsecond=0),
         ],
     },
     "last_day": {
         "keyword": ["最後"],
-        "range": lambda _: [datetime.now() + relativedelta(days=1, hour=23, minute=59, second=59, microsecond=999999)],
+        "range": lambda x: [
+            x + relativedelta(days=1, hour=23, minute=59, second=59, microsecond=999999),
+        ],
     },
     "all": {
         "keyword": ["全部"],
-        "range": lambda _: [
-            datetime.now() + relativedelta(year=1900, month=1, day=1, hour=0, minute=0, second=0, microsecond=0),
-            datetime.now() + relativedelta(days=1, hour=23, minute=59, second=59, microsecond=999999),
+        "range": lambda x: [
+            x + relativedelta(year=1900, month=1, day=1, hour=0, minute=0, second=0, microsecond=0),
+            x + relativedelta(days=1, hour=23, minute=59, second=59, microsecond=999999),
         ],
     },
 }
