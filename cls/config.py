@@ -626,8 +626,11 @@ class SubCommand(BaseSection):
     fourfold: bool
     game_results: bool
     guest_skip: bool
+    """ゲストアリ/ナシフラグ(サマリ集計用)"""
     guest_skip2: bool
+    """ゲストアリ/ナシフラグ(詳細集計用)"""
     ranked: int
+    """ランキング/レーティングで表示する順位"""
     score_comparisons: bool
     """スコア比較"""
     statistics: bool
