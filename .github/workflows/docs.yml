@@ -24,12 +24,12 @@ jobs:
         run: uv sync --all-extras --dev
 
       - name: Generate documentation
-        env:
-          PDOC_ALLOW_EXEC: "1"
         run: |
           rm -rf temp_docs
           uv run pdoc -d google --logo https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEig6avYSN3Ds4H-e_Hib-mB6bYwDH71xSD7vn22M6QVjtzMei0d6T29PZYPOQadAs6AqUe4dzFo4lLhN6gpKCJHugZd5rQdF8m5oXt2BL1gZAv11YQey7bds63cuhP0gFqQwk4hF9yV28sE/s128/ma-jan_pai.png --logo-link '' --output-dir temp_docs *.py libs cls integrations
           touch temp_docs/.nojekyll
+        env:
+          PDOC_ALLOW_EXEC: "1"
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
