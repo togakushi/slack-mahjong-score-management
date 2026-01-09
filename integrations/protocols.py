@@ -29,6 +29,21 @@ class MessageStatus(StrEnum):
     """未定義状態"""
 
 
+class ChannelType(StrEnum):
+    """チャンネルタイプ"""
+
+    CHANNEL = "normal"
+    """通常チャンネル"""
+    PRIVATE = "private"
+    """プライベートチャンネル"""
+    DIRECT_MESSAGE = "direct_message"
+    """ダイレクトメッセージ"""
+    SEARCH = "search_api"
+    """検索API"""
+    UNDETERMINED = "undetermined"
+    """未定義状態"""
+
+
 class CommandType(StrEnum):
     """実行(する/した)サブコマンド"""
 
@@ -78,20 +93,8 @@ class MsgData(DataMixin):
     """イベント編集タイムスタンプ"""
     channel_id: str = field(default=str())
     """チャンネルID"""
-    channel_type: Literal[
-        "channel",
-        "group",
-        "im",
-        "search_messages",
-        "undetermined",
-    ] = field(default="undetermined")
-    """チャンネルタイプ
-    - *channel*: 通常チャンネル
-    - *group*: プライベートチャンネル
-    - *im*: ダイレクトメッセージ
-    - *search_messages*: 検索API
-    - *undetermined*: 未定義状態
-    """
+    channel_type: ChannelType = field(default=ChannelType.UNDETERMINED)
+    """チャンネルタイプ"""
     user_id: str = field(default=str())
     """ユーザーID"""
     status: MessageStatus = field(default=MessageStatus.UNDETERMINED)
@@ -125,7 +128,7 @@ class StatusData(DataMixin):
     """処理した結果"""
 
     command_type: CommandType = field(default=CommandType.UNKNOWN)
-
+    """実行(する/した)サブコマンド"""
     command_flg: bool = field(default=False)
     """コマンドとして実行されたかチェック
     - *True*: コマンド実行

@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, cast
 
 import libs.global_value as g
 from integrations.base.interface import MessageParserDataMixin, MessageParserInterface
-from integrations.protocols import MessageStatus, MsgData, PostData, StatusData
+from integrations.protocols import ChannelType, MessageStatus, MsgData, PostData, StatusData
 
 if TYPE_CHECKING:
     from integrations.slack.adapter import ServiceAdapter
@@ -32,23 +32,23 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
             self.data.status = MessageStatus.APPEND
             self.data.user_id = str(_body.get("user_id", ""))
             if _body.get("channel_name") == "directmessage":
-                self.data.channel_type = "im"
+                self.data.channel_type = ChannelType.DIRECT_MESSAGE
                 self.data.channel_id = str(_body.get("channel_id", ""))
             else:  # チャンネル内コマンド
                 if channel_id := str(_body.get("channel_id")):
                     self.status.source = f"slack_{channel_id}"
-                self.data.channel_type = "im"
+                self.data.channel_type = ChannelType.DIRECT_MESSAGE
                 self.data.channel_id = g.adapter.functions.get_dm_channel_id(self.data.user_id)  # DM Open
         elif _body.get("container"):  # Homeタブ
             self.data.user_id = str(cast(dict, _body["user"]).get("id", ""))
             self.data.channel_id = g.adapter.functions.get_dm_channel_id(self.data.user_id)
-            self.data.channel_type = "channel"
+            self.data.channel_type = ChannelType.CHANNEL
             self.data.text = "dummy"
         elif _body.get("iid"):  # 検索結果
             if _channel_id := str(cast(dict, _event["channel"]).get("id", "")):
                 self.data.channel_id = _channel_id
                 _event.pop("channel")
-            self.data.channel_type = "search_messages"
+            self.data.channel_type = ChannelType.SEARCH
             self.data.status = MessageStatus.APPEND
         else:
             match _event.get("subtype"):
@@ -78,9 +78,18 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
                     self.data.status = MessageStatus.APPEND
                     logging.warning("unknown subtype: %s", _body)
 
+        match _event.get("channel_type"):
+            case "directmessage" | "im":
+                self.data.channel_type = ChannelType.DIRECT_MESSAGE
+            case "channel":
+                self.data.channel_type = ChannelType.CHANNEL
+            case "group":
+                self.data.channel_type = ChannelType.PRIVATE
+            case _:
+                pass
+
         self.data.text = _event.get("text", self.data.text)
         self.data.channel_id = _event.get("channel", self.data.channel_id)
-        self.data.channel_type = _event.get("channel_type", self.data.channel_type)
         self.data.user_id = _event.get("user", self.data.user_id)
         self.data.event_ts = _event.get("ts", "0")
         self.data.thread_ts = _event.get("thread_ts", "0")
