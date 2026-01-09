@@ -11,7 +11,7 @@ from cls.score import GameResult
 from integrations import factory
 from libs.data import lookup, modify
 from libs.functions import message
-from libs.types import StyleOptions
+from libs.types import MessageStatus, StyleOptions
 from libs.utils import formatter, validator
 
 if TYPE_CHECKING:
@@ -33,7 +33,7 @@ def by_keyword(m: "MessageParserProtocol"):
     logging.debug("keyword=%s, argument=%s, source=%s", m.keyword, m.argument, m.status.source)
     logging.debug(
         "status=%s, event_ts=%s, thread_ts=%s, in_thread=%s, is_command=%s, user_id=%s,",
-        m.data.status,
+        m.data.status.value,
         m.data.event_ts,
         m.data.thread_ts,
         m.in_thread,
@@ -42,7 +42,7 @@ def by_keyword(m: "MessageParserProtocol"):
     )
 
     # 変更がないイベントは処理をスキップ
-    if m.data.status == "do_nothing":
+    if m.data.status == MessageStatus.DO_NOTHING:
         return
 
     # 許可されていないユーザのコマンドは処理しない
@@ -51,7 +51,7 @@ def by_keyword(m: "MessageParserProtocol"):
         return
 
     # メッセージが削除された場合
-    if m.data.status == "message_deleted":
+    if m.data.status == MessageStatus.DELETED:
         message_deleted(m)
         return
 
@@ -59,12 +59,12 @@ def by_keyword(m: "MessageParserProtocol"):
         # キーワード実行
         case word if word in g.keyword_dispatcher and not m.is_command:
             logging.debug("dispatch keyword")
-            if m.data.status == "message_append":
+            if m.data.status == MessageStatus.APPEND:
                 g.keyword_dispatcher[word](m)
         # コマンド実行
         case word if word in g.command_dispatcher and m.is_command:
             logging.debug("dispatch command")
-            if m.data.status == "message_append":
+            if m.data.status == MessageStatus.APPEND:
                 g.command_dispatcher[word](m)
         # リマインダ実行
         case "Reminder:":
@@ -100,15 +100,15 @@ def other_words(word: str, m: "MessageParserProtocol"):
                     continue
 
             match m.data.status:
-                case "message_append":
+                case MessageStatus.APPEND:
                     message_append(score, m)
-                case "message_changed":
+                case MessageStatus.CHANGED:
                     message_changed(score, m)
                 case _:
                     pass
         else:
             record_data = lookup.exsist_record(m.data.event_ts)
-            if record_data and m.data.status == "message_changed":
+            if record_data and m.data.status == MessageStatus.CHANGED:
                 message_deleted(m)
 
 

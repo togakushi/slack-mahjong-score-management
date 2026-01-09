@@ -15,7 +15,7 @@ from cls.timekit import ExtendedDatetime as ExtDt
 from cls.timekit import Format
 from libs.data import lookup
 from libs.functions import message
-from libs.types import StyleOptions
+from libs.types import MessageStatus, StyleOptions
 from libs.utils import dbutil, formatter
 
 if TYPE_CHECKING:
@@ -259,12 +259,12 @@ def check_remarks(m: "MessageParserProtocol") -> None:
                 remarks.append(remark)
 
         match m.data.status:
-            case "message_append":
+            case MessageStatus.APPEND:
                 remarks_append(m, remarks)
-            case "message_changed":
+            case MessageStatus.CHANGED:
                 remarks_delete(m)
                 remarks_append(m, remarks)
-            case "message_deleted":
+            case MessageStatus.DELETED:
                 remarks_delete(m)
             case _:
                 pass

@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING, cast
 import libs.global_value as g
 from integrations.base.interface import MessageParserDataMixin, MessageParserInterface
 from integrations.protocols import MsgData, PostData, StatusData
+from libs.types import MessageStatus
 
 if TYPE_CHECKING:
     from integrations.slack.adapter import ServiceAdapter
@@ -29,7 +30,7 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
         if _body.get("command") == g.adapter.conf.slash_command:  # スラッシュコマンド
             self.status.command_flg = True
             self.status.command_name = g.adapter.conf.slash_command
-            self.data.status = "message_append"
+            self.data.status = MessageStatus.APPEND
             self.data.user_id = str(_body.get("user_id", ""))
             if _body.get("channel_name") == "directmessage":
                 self.data.channel_type = "im"
@@ -49,33 +50,33 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
                 self.data.channel_id = _channel_id
                 _event.pop("channel")
             self.data.channel_type = "search_messages"
-            self.data.status = "message_append"
+            self.data.status = MessageStatus.APPEND
         else:
             match _event.get("subtype"):
                 case subtype if str(subtype).endswith(("_topic", "_purpose", "_name")):
-                    self.data.status = "do_nothing"
+                    self.data.status = MessageStatus.DO_NOTHING
                     return
                 case "message_changed":
-                    self.data.status = "message_changed"
+                    self.data.status = MessageStatus.CHANGED
                     _event.update(cast(dict, _event["message"]))
                     if cast(dict, _event["message"]).get("subtype") == "tombstone":  # スレッド元の削除
-                        self.data.status = "message_deleted"
+                        self.data.status = MessageStatus.DELETED
                     elif _edited := cast(dict, _event["message"]).get("edited"):
                         self.data.edited_ts = str(cast(dict, _edited).get("ts", "undetermined"))
                     if _previous_message := cast(dict, _event.get("previous_message", {})):
                         if _previous_message.get("thread_ts"):
                             _event.update(thread_ts=_previous_message.get("thread_ts", "0"))
                         if cast(dict, _event["message"]).get("text") == _previous_message.get("text"):
-                            self.data.status = "do_nothing"
+                            self.data.status = MessageStatus.DO_NOTHING
                 case "message_deleted":
-                    self.data.status = "message_deleted"
+                    self.data.status = MessageStatus.DELETED
                     _event.update(cast(dict, _event["previous_message"]))
                 case "file_share" | "thread_broadcast":
-                    self.data.status = "message_append"
+                    self.data.status = MessageStatus.APPEND
                 case None:
-                    self.data.status = "message_append"
+                    self.data.status = MessageStatus.APPEND
                 case _:
-                    self.data.status = "message_append"
+                    self.data.status = MessageStatus.APPEND
                     logging.warning("unknown subtype: %s", _body)
 
         self.data.text = _event.get("text", self.data.text)

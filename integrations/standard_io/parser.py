@@ -7,6 +7,7 @@ from typing import cast
 
 from integrations.base.interface import MessageParserDataMixin, MessageParserInterface
 from integrations.protocols import MsgData, PostData, StatusData
+from libs.types import MessageStatus
 
 
 class MessageParser(MessageParserDataMixin, MessageParserInterface):
@@ -19,7 +20,7 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
         self.status: StatusData = StatusData()
 
     def parser(self, body: dict):
-        self.data.status = "message_append"
+        self.data.status = MessageStatus.APPEND
         self.data.channel_id = "dummy"
         self.data.event_ts = str(datetime.now().timestamp())
         self.data.thread_ts = self.data.event_ts

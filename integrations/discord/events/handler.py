@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING
 
 import integrations.discord.events.audioop as _audioop
 import libs.dispatcher
+from libs.types import MessageStatus
 
 if TYPE_CHECKING:
     from integrations.discord.adapter import ServiceAdapter
@@ -55,7 +56,7 @@ def main(adapter: "ServiceAdapter"):
         adapter.api.response = message
 
         m = adapter.parser()
-        m.data.status = "message_append"
+        m.data.status = MessageStatus.APPEND
         m.parser(message)
 
         libs.dispatcher.by_keyword(m)
@@ -83,7 +84,7 @@ def main(adapter: "ServiceAdapter"):
         adapter.api.response = message
 
         m = adapter.parser()
-        m.data.status = "message_changed"
+        m.data.status = MessageStatus.CHANGED
         m.parser(message)
 
         libs.dispatcher.by_keyword(m)
@@ -96,7 +97,7 @@ def main(adapter: "ServiceAdapter"):
         adapter.api.response = message
 
         m = adapter.parser()
-        m.data.status = "message_deleted"
+        m.data.status = MessageStatus.DELETED
         m.parser(message)
 
         libs.dispatcher.by_keyword(m)
@@ -108,7 +109,7 @@ def main(adapter: "ServiceAdapter"):
         m = adapter.parser()
         m.status.command_flg = True
         m.data.text = command
-        m.data.status = "message_append"
+        m.data.status = MessageStatus.APPEND
         m.data.thread_ts = "0"
 
         libs.dispatcher.by_keyword(m)

@@ -5,6 +5,8 @@ integrations/protocols.py
 from dataclasses import dataclass, field, fields, is_dataclass
 from typing import TYPE_CHECKING, Any, Literal, Protocol
 
+from libs.types import MessageStatus
+
 if TYPE_CHECKING:
     from pathlib import Path  # noqa: F401
 
@@ -59,20 +61,8 @@ class MsgData(DataMixin):
     """
     user_id: str = field(default=str())
     """ユーザーID"""
-    status: Literal[
-        "message_append",
-        "message_changed",
-        "message_deleted",
-        "do_nothing",
-        "undetermined",
-    ] = field(default="undetermined")
-    """イベントステータス
-    - *message_append*: 新規ポストイベント
-    - *message_changed*: 編集イベント
-    - *message_deleted*: 削除イベント
-    - *do_nothing*: 何もしなくてよいイベント
-    - *undetermined*: 未定義状態
-    """
+    status: MessageStatus = field(default=MessageStatus.UNDETERMINED)
+    """イベントステータス"""
     reaction_ok: list = field(default_factory=list)
     reaction_ng: list = field(default_factory=list)
     remarks: list = field(default_factory=list)
