@@ -13,6 +13,7 @@ from plotly.subplots import make_subplots  # type: ignore
 
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
+from cls.timekit import Format
 from libs.data import loader
 from libs.datamodels import GameInfo
 from libs.functions import compose, message
@@ -57,7 +58,7 @@ def plot(m: "MessageParserProtocol"):
     if g.params.get("target_count", 0):
         title_range = f"(直近 {len(df)} ゲーム)"
     else:
-        title_range = f"({ExtDt(g.params['starttime']).format('ymdhm')} - {ExtDt(g.params['endtime']).format('ymdhm')})"
+        title_range = f"({ExtDt(g.params['starttime']).format(Format.YMDHM)} - {ExtDt(g.params['endtime']).format(Format.YMDHM)})"
 
     m.post.headline = {title_text: message.header(game_info, m)}
     m.set_data(
@@ -165,7 +166,7 @@ def statistics_plot(m: "MessageParserProtocol"):
         mapping_dict = formatter.anonymous_mapping([g.params["player_name"]])
         player = next(iter(mapping_dict.values()))
 
-    title_text = f"『{player}』の成績 (検索範囲：{compose.text_item.date_range('ymd_o')})"
+    title_text = f"『{player}』の成績 (検索範囲：{compose.text_item.date_range(Format.YMD_O)})"
 
     rpoint_df = get_data(player_df["rpoint"], g.params["interval"])
     point_sum_df = get_data(player_df["point"], g.params["interval"])

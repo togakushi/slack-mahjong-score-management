@@ -12,6 +12,7 @@ from typing import TYPE_CHECKING, cast
 
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
+from cls.timekit import Format
 from libs.data import lookup
 from libs.functions import message
 from libs.types import StyleOptions
@@ -42,7 +43,7 @@ def db_insert(detection: "GameResult", m: "MessageParserProtocol") -> int:
                 cur.execute(
                     dbutil.query("RESULT_INSERT"),
                     {
-                        "playtime": ExtDt(float(detection.ts)).format("sql"),
+                        "playtime": ExtDt(float(detection.ts)).format(Format.SQL),
                         "rpoint_sum": detection.rpoint_sum,
                         **detection.to_dict(),
                     },
@@ -81,7 +82,7 @@ def db_update(detection: "GameResult", m: "MessageParserProtocol") -> int:
             cur.execute(
                 dbutil.query("RESULT_UPDATE"),
                 {
-                    "playtime": ExtDt(float(detection.ts)).format("sql"),
+                    "playtime": ExtDt(float(detection.ts)).format(Format.SQL),
                     "rpoint_sum": detection.rpoint_sum,
                     **detection.to_dict(),
                 },
@@ -138,7 +139,7 @@ def db_backup() -> str:
 
     fname = os.path.splitext(g.cfg.setting.database_file)[0]
     fext = os.path.splitext(g.cfg.setting.database_file)[1]
-    bktime = ExtDt().format("ext")
+    bktime = ExtDt().format(Format.EXT)
     bkfname = os.path.join(g.cfg.setting.backup_dir, os.path.basename(f"{fname}_{bktime}{fext}"))
 
     if not os.path.isdir(g.cfg.setting.backup_dir):  # バックアップディレクトリ作成

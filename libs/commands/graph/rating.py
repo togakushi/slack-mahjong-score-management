@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import plotly.express as px  # type: ignore
 
 import libs.global_value as g
+from cls.timekit import Format
 from libs.data import aggregate, loader
 from libs.datamodels import GameInfo
 from libs.functions import compose, message
@@ -201,19 +202,19 @@ def _graph_title(game_info: GameInfo) -> tuple[str, str]:
 
     match g.params.get("collection"):
         case "daily":
-            kind = "ymd_o"
+            kind = Format.YMD_O
             xlabel_text = f"集計日（総ゲーム数：{game_info.count} ゲーム）"
         case "monthly":
-            kind = "jym_o"
+            kind = Format.JYM_O
             xlabel_text = f"集計月（総ゲーム数：{game_info.count} ゲーム）"
         case "yearly":
-            kind = "jy_o"
+            kind = Format.JY_O
             xlabel_text = f"集計年（総ゲーム数：{game_info.count} ゲーム）"
         case "all":
-            kind = "ymdhm"
+            kind = Format.YMDHM
             xlabel_text = f"総ゲーム数：{game_info.count} ゲーム"
         case _:
-            kind = "ymdhm"
+            kind = Format.YMDHM
             xlabel_text = f"ゲーム終了日時（総ゲーム数：{game_info.count} ゲーム）"
 
     title_text = f"レーティング推移 ({compose.text_item.date_range(kind)})"

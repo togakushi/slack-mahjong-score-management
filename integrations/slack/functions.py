@@ -6,6 +6,7 @@ import logging
 from typing import TYPE_CHECKING, cast
 
 import libs.global_value as g
+from cls.timekit import Delimiter, Format
 from cls.timekit import ExtendedDatetime as ExtDt
 from integrations.base.interface import FunctionsInterface
 from libs.data import lookup
@@ -50,7 +51,7 @@ class SvcFunctions(FunctionsInterface):
         g.adapter = cast("ServiceAdapter", g.adapter)
 
         # 検索クエリ
-        after = ExtDt(days=-self.conf.search_after, hours=g.cfg.setting.time_adjust).format("ymd", "-")
+        after = ExtDt(days=-self.conf.search_after, hours=g.cfg.setting.time_adjust).format(Format.YMD, Delimiter.HYPHEN)
         channel = " ".join([f"in:{x}" for x in self.conf.search_channel])
         query = f"{word} {channel} after:{after}"
         logging.info("query=%s, check_db=%s", query, g.cfg.setting.database_file)

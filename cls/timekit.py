@@ -35,24 +35,52 @@ Examples:
 from datetime import datetime
 from enum import StrEnum
 from functools import total_ordering
-from typing import Callable, List, Literal, Optional, TypeAlias, TypedDict, Union, cast
+from typing import Callable, List, Optional, TypeAlias, TypedDict, Union, cast
 
 from dateutil.relativedelta import MO, SU, relativedelta
 
 
-class FormatStr(StrEnum):
+class Format(StrEnum):
     """フォーマット変換で指定する種類"""
 
     TS = "ts"
+    """タイムスタンプ"""
     Y = "y"
+    """年(%Y)"""
     YM = "ym"
+    """年月(%Y/%m)"""
     YMD = "ymd"
+    """年月日(%Y/%m/%d)"""
     YMDHM = "ymdhm"
+    """年月日時分(%Y/%m/%d %H:%M)"""
     YMDHMS = "ymdhms"
+    """年月日時分秒(%Y/%m/%d %H:%M:%S)"""
     HM = "hm"
+    """時分(%H:%M)"""
     HMS = "hms"
+    """時分秒(%H:%M:%S)"""
     SQL = "sql"
+    """SQLite用フォーマット(%Y-%m-%d %H:%M:%S.%f)"""
     EXT = "ext"
+    """ファイル拡張子用(%Y%m%d-%H%M%S)"""
+    JY_O = "jy_o"
+    JYM_O = "jym_o"
+    YMD_O = "ymd_o"
+
+
+class Delimiter(StrEnum):
+    """区切り記号"""
+
+    SLASH = "slash"
+    """スラッシュ(ex: %Y/%m/%d)"""
+    HYPHEN = "hyphen"
+    """ハイフン(ex: %Y-%m-%d)"""
+    NUMBER = "number"
+    """区切り無し (ex: %Y%m%d)"""
+    JAPANESE = "japanese"
+    """Japanese Style (ex: %Y%年m%月d日)"""
+    UNDEFINED = ""
+    """未定義"""
 
 
 class DateRangeSpec(TypedDict):
@@ -61,40 +89,6 @@ class DateRangeSpec(TypedDict):
     keyword: list[str]
     range: Callable[[datetime], list[datetime]]
 
-
-FormatType: TypeAlias = Literal[
-    "ts",
-    "y",
-    "ym",
-    "ymd",
-    "ymdhm",
-    "ymdhms",
-    "hm",
-    "hms",
-    "sql",
-    "ext",
-]
-"""フォーマット変換で指定する種類
-- **ts**: タイムスタンプ
-- **y**: %Y
-- **ym**: %Y/%m
-- **ymd**: %Y/%m/%d
-- **ymdhm**: %Y/%m/%d %H:%M
-- **ymdhms**: %Y/%m/%d %H:%M:%S
-- **hm**: %H:%M:%S
-- **hms**: %H:%M
-- **sql**: SQLite用フォーマット(%Y-%m-%d %H:%M:%S.%f)
-- **ext**: ファイル拡張子用(%Y%m%d-%H%M%S)
-"""
-
-DelimiterStyle: TypeAlias = Literal["slash", "/", "hyphen", "-", "ja", "number", "num", None]
-"""区切り記号
-- **slash** | **/**: スラッシュ(ex: %Y/%m/%d)
-- **hyphen** | **-**: ハイフン(ex: %Y-%m-%d)
-- **number** | **num**: 無し (ex: %Y%m%d)
-- **ja**: Japanese Style (ex: %Y%年m%月d日)
-- **None**: 未指定
-"""
 
 DATE_RANGE_MAP: dict[str, DateRangeSpec] = {
     "today": {
@@ -205,9 +199,6 @@ class ExtendedDatetime:
     - **datetime** / **ExtendedDatetime**: オブジェクトをそのまま利用
     """
 
-    FormatType: TypeAlias = FormatType
-    DelimiterStyle: TypeAlias = DelimiterStyle
-
     def __init__(self, value: Optional[AcceptedType] = None, **relativedelta_kwargs):
         """ExtendedDatetimeの初期化
 
@@ -222,10 +213,10 @@ class ExtendedDatetime:
             self._dt += relativedelta(**relativedelta_kwargs)
 
     def __str__(self) -> str:
-        return self.format("sql")
+        return self.format(Format.SQL)
 
     def __repr__(self) -> str:
-        return self.format("sql")
+        return self.format(Format.SQL)
 
     def __eq__(self, other):
         if isinstance(other, ExtendedDatetime):
@@ -233,7 +224,7 @@ class ExtendedDatetime:
         if isinstance(other, datetime):
             return self.dt == other
         if isinstance(other, str):
-            return self.format("sql") == other
+            return self.format(Format.SQL) == other
         return NotImplemented
 
     def __lt__(self, other):
@@ -294,12 +285,12 @@ class ExtendedDatetime:
 
         self._dt = self.convert(value)
 
-    def format(self, fmt: FormatType, delimiter: DelimiterStyle = None) -> str:
+    def format(self, fmt: Format, delimiter: Delimiter = Delimiter.UNDEFINED) -> str:
         """フォーマット変換
 
         Args:
-            fmt (FormatType): 変換形式
-            delimiter (DelimiterStyle): 区切り
+            fmt (Format): 変換形式
+            delimiter (Delimiter): 区切り
 
         Raises:
             ValueError: 受け付けない変換形式
@@ -310,73 +301,73 @@ class ExtendedDatetime:
 
         ret: str
         match fmt:
-            case "ts":
+            case Format.TS:
                 ret = str(self._dt.timestamp())
-            case "y":
+            case Format.Y | Format.JY_O:
                 match delimiter:
-                    case "ja":
+                    case Delimiter.JAPANESE:
                         ret = self._dt.strftime("%Y年")
                     case _:
                         ret = self._dt.strftime("%Y")
-            case "ym":
+            case Format.YM | Format.JYM_O:
                 match delimiter:
-                    case "slash" | "/":
+                    case Delimiter.SLASH:
                         ret = self._dt.strftime("%Y/%m")
-                    case "hyphen" | "-":
+                    case Delimiter.HYPHEN:
                         ret = self._dt.strftime("%Y-%m")
-                    case "ja":
+                    case Delimiter.JAPANESE:
                         ret = self._dt.strftime("%Y年%m月")
-                    case "number" | "num":
+                    case Delimiter.NUMBER:
                         ret = self._dt.strftime("%Y%m")
                     case _:
                         ret = self._dt.strftime("%Y/%m")
-            case "ymd":
+            case Format.YMD | Format.JYM_O:
                 match delimiter:
-                    case "slash" | "/":
+                    case Delimiter.SLASH:
                         ret = self._dt.strftime("%Y/%m/%d")
-                    case "hyphen" | "-":
+                    case Delimiter.HYPHEN:
                         ret = self._dt.strftime("%Y-%m-%d")
-                    case "ja":
+                    case Delimiter.JAPANESE:
                         ret = self._dt.strftime("%Y年%m月%d日")
-                    case "number" | "num":
+                    case Delimiter.NUMBER:
                         ret = self._dt.strftime("%Y%m%d")
                     case _:
                         ret = self._dt.strftime("%Y/%m/%d")
-            case "ymdhm":
+            case Format.YMDHM:
                 match delimiter:
-                    case "slash" | "/":
+                    case Delimiter.SLASH:
                         ret = self._dt.strftime("%Y/%m/%d %H:%M")
-                    case "hyphen" | "-":
+                    case Delimiter.HYPHEN:
                         ret = self._dt.strftime("%Y-%m-%d %H:%M")
-                    case "ja":
+                    case Delimiter.JAPANESE:
                         ret = self._dt.strftime("%Y年%m月%d日 %H時%M分")
-                    case "number" | "num":
+                    case Delimiter.NUMBER:
                         ret = self._dt.strftime("%Y%m%d%H%M")
                     case _:
                         ret = self._dt.strftime("%Y/%m/%d %H:%M")
-            case "ymdhms":
+            case Format.YMDHMS:
                 match delimiter:
-                    case "slash" | "/":
+                    case Delimiter.SLASH:
                         ret = self._dt.strftime("%Y/%m/%d %H:%M:%S")
-                    case "hyphen" | "-":
+                    case Delimiter.HYPHEN:
                         ret = self._dt.strftime("%Y-%m-%d %H:%M:%S")
-                    case "ja":
+                    case Delimiter.JAPANESE:
                         ret = self._dt.strftime("%Y年%m月%d日 %H時%M分%S秒")
-                    case "number" | "num":
+                    case Delimiter.NUMBER:
                         ret = self._dt.strftime("%Y%m%d%H%M%S")
                     case _:
                         ret = self._dt.strftime("%Y/%m/%d %H:%M:%S")
-            case "sql":
+            case Format.SQL:
                 match delimiter:
-                    case "slash" | "/":
+                    case Delimiter.SLASH:
                         ret = self._dt.strftime("%Y/%m/%d %H:%M:%S.%f")
-                    case "hyphen" | "-":
+                    case Delimiter.HYPHEN:
                         ret = self._dt.strftime("%Y-%m-%d %H:%M:%S.%f")
-                    case "number" | "num":
+                    case Delimiter.NUMBER:
                         ret = self._dt.strftime("%Y%m%d%H%M%S%f")
                     case _:
                         ret = self._dt.strftime("%Y-%m-%d %H:%M:%S.%f")
-            case "ext":
+            case Format.EXT:
                 ret = self._dt.strftime("%Y%m%d-%H%M%S")
             case _:
                 raise ValueError(f"Unknown format: {fmt}")
@@ -445,7 +436,7 @@ class ExtendedDatetime:
 
         for _, val in DATE_RANGE_MAP.items():
             for label in val["keyword"]:
-                scope = " ～ ".join(base_instance.range(label).format("ymd"))
+                scope = " ～ ".join(base_instance.range(label).format(Format.YMD))
                 ret += f"{label}：{scope}\n"
 
         return ret.strip()
@@ -482,8 +473,7 @@ class ExtendedDatetime:
 class ExtendedDatetimeList(list):
     """ExtendedDatetimeを要素とする日付リストを扱う補助クラス"""
 
-    FormatType: TypeAlias = FormatType
-    DelimiterStyle: TypeAlias = DelimiterStyle
+    Delimiter: TypeAlias = Delimiter
 
     def __add__(self, other):
         if isinstance(other, dict):
@@ -513,12 +503,12 @@ class ExtendedDatetimeList(list):
 
         return [min_dt, max_dt]
 
-    def format(self, fmt: FormatType = "sql", delimiter: DelimiterStyle = None) -> list[str]:
+    def format(self, fmt: Format = Format.SQL, delimiter: Delimiter = Delimiter.UNDEFINED) -> list[str]:
         """全要素にformatを適用した文字列リストを返す
 
         Args:
-            fmt (FormatType, optional): フォーマット変換. Defaults to "sql".
-            delimiter (DelimiterStyle, optional): 区切り記号指定. Defaults to None.
+            fmt (Format, optional): フォーマット変換. Defaults to "sql".
+            delimiter (Delimiter, optional): 区切り記号指定. Defaults to None.
 
         Returns:
             list[str]: 生成したリスト
@@ -526,12 +516,12 @@ class ExtendedDatetimeList(list):
 
         return [dt.format(fmt, delimiter) for dt in self if isinstance(dt, ExtendedDatetime)]
 
-    def dict_format(self, fmt: FormatType = "sql", delimiter: DelimiterStyle = None) -> dict[str, str]:
+    def dict_format(self, fmt: Format = Format.SQL, delimiter: Delimiter = Delimiter.UNDEFINED) -> dict[str, str]:
         """全要素にformatを適用し、最小日付と最大日付を辞書で返す
 
         Args:
-            fmt (FormatType, optional): フォーマット変換. Defaults to "sql".
-            delimiter (DelimiterStyle, optional): 区切り記号指定. Defaults to None.
+            fmt (Format, optional): フォーマット変換. Defaults to "sql".
+            delimiter (Delimiter, optional): 区切り記号指定. Defaults to None.
 
         Returns:
             dict[str, str]: 生成した辞書

@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING, cast
 import libs.global_value as g
 from cls.score import GameResult
 from cls.timekit import ExtendedDatetime as ExtDt
+from cls.timekit import Format
 from libs.data import lookup, modify, search
 from libs.datamodels import ComparisonResults
 from libs.types import StyleOptions
@@ -97,7 +98,7 @@ def check_omission(results: ComparisonResults):
     if slack_score:
         first_ts = float(min(x.ts for x in slack_score))
     else:
-        first_ts = float(results.after.format("ts"))
+        first_ts = float(results.after.format(Format.TS))
 
     db_score = search.for_db_score(first_ts)
 
@@ -109,13 +110,13 @@ def check_omission(results: ComparisonResults):
             target = db_score[ts_list.index(score.ts)]
             if score != target:  # 不一致(更新)
                 results.mismatch.append({"before": target, "after": score})
-                logging.info("mismatch: %s (%s)", score.ts, ExtDt(float(score.ts)).format("ymdhms"))
+                logging.info("mismatch: %s (%s)", score.ts, ExtDt(float(score.ts)).format(Format.YMDHMS))
                 logging.debug("  * slack: %s", score.to_text("detail"))
                 logging.debug("  *    db: %s", target.to_text("detail"))
                 modify.db_update(score, work_m)
         else:  # 取りこぼし(追加)
             results.missing.append(score)
-            logging.info("missing: %s (%s)", score.ts, ExtDt(float(score.ts)).format("ymdhms"))
+            logging.info("missing: %s (%s)", score.ts, ExtDt(float(score.ts)).format(Format.YMDHMS))
             logging.debug(score.to_text("logging"))
             modify.db_insert(score, work_m)
 
@@ -130,7 +131,7 @@ def check_omission(results: ComparisonResults):
                 work_m.data.channel_id = score.source.replace("slack_", "")
             if work_m.data.channel_id in set(keep_channel_id):
                 results.delete.append(score)
-                logging.info("delete (Only database): %s (%s)", score.ts, ExtDt(float(score.ts)).format("ymdhms"))
+                logging.info("delete (Only database): %s (%s)", score.ts, ExtDt(float(score.ts)).format(Format.YMDHMS))
                 modify.db_delete(work_m)
 
 
@@ -175,7 +176,7 @@ def check_remarks(results: ComparisonResults):
                 }
             )
 
-    db_remarks = search.for_db_remarks(float(results.after.format("ts")))
+    db_remarks = search.for_db_remarks(float(results.after.format(Format.TS)))
 
     # SLACK -> DATABASE
     work_m = cast("MessageParserProtocol", g.adapter.parser())
@@ -236,7 +237,7 @@ def check_pending(m: "MessageParserProtocol") -> bool:
 
     g.adapter = cast("ServiceAdapter", g.adapter)
 
-    now_ts = float(ExtDt().format("ts"))
+    now_ts = float(ExtDt().format(Format.TS))
 
     if m.data.edited_ts == "undetermined":
         check_ts = float(m.data.event_ts) + g.adapter.conf.search_wait

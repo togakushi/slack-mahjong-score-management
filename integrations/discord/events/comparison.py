@@ -13,6 +13,7 @@ from discord.channel import TextChannel
 import libs.global_value as g
 from cls.score import GameResult
 from cls.timekit import ExtendedDatetime as ExtDt
+from cls.timekit import Format
 from libs.data import modify, search
 from libs.datamodels import ComparisonResults
 from libs.types import RemarkDict, StyleOptions
@@ -77,7 +78,7 @@ async def search_messages(results: ComparisonResults, messages_list: list["Messa
             if not isinstance(channel, TextChannel):
                 continue
 
-            logging.debug("channel: %s, after: %s", ch.name, results.after.format("ymdhms"))
+            logging.debug("channel: %s, after: %s", ch.name, results.after.format(Format.YMDHMS))
 
             messages = await channel.history(after=results.after.dt, oldest_first=True).flatten()
             for message in messages:
@@ -118,7 +119,7 @@ async def check_omission(results: ComparisonResults, messages_list: list["Messag
             results.score_list.update({work_m.data.event_ts: work_m})
             logging.debug(score.to_text("logging"))
 
-    db_score = search.for_db_score(float(results.after.format("ts")))
+    db_score = search.for_db_score(float(results.after.format(Format.TS)))
 
     # DISCORD -> DATABASE
     ts_list = [x.ts for x in db_score]
@@ -128,13 +129,13 @@ async def check_omission(results: ComparisonResults, messages_list: list["Messag
             target = db_score[ts_list.index(score.ts)]
             if score != target:  # 不一致(更新)
                 results.mismatch.append({"before": target, "after": score})
-                logging.info("mismatch: %s (%s)", score.ts, ExtDt(float(score.ts)).format("ymdhms"))
+                logging.info("mismatch: %s (%s)", score.ts, ExtDt(float(score.ts)).format(Format.YMDHMS))
                 logging.debug("  * discord: %s", score.to_text("detail"))
                 logging.debug("  *      db: %s", target.to_text("detail"))
                 modify.db_update(score, work_m)
         else:  # 取りこぼし(追加)
             results.missing.append(score)
-            logging.info("missing: %s (%s)", score.ts, ExtDt(float(score.ts)).format("ymdhms"))
+            logging.info("missing: %s (%s)", score.ts, ExtDt(float(score.ts)).format(Format.YMDHMS))
             logging.debug(score.to_text("logging"))
             modify.db_insert(score, work_m)
 
@@ -148,7 +149,7 @@ async def check_omission(results: ComparisonResults, messages_list: list["Messag
             work_m.data.event_ts = score.ts
             if score.source:
                 work_m.data.channel_id = score.source.replace("discord_", "")
-            logging.info("delete (Only database): %s (%s)", score.ts, ExtDt(float(score.ts)).format("ymdhms"))
+            logging.info("delete (Only database): %s (%s)", score.ts, ExtDt(float(score.ts)).format(Format.YMDHMS))
             modify.db_delete(work_m)
 
 
@@ -193,7 +194,7 @@ async def check_remarks(results: ComparisonResults, messages_list: list["Message
                     }
                 )
 
-    db_remarks = search.for_db_remarks(float(results.after.format("ts")))
+    db_remarks = search.for_db_remarks(float(results.after.format(Format.TS)))
 
     # DISCORD -> DATABASE
     work_m = g.adapter.parser()

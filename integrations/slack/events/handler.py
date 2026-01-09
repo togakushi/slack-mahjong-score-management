@@ -8,6 +8,7 @@ import sys
 from typing import TYPE_CHECKING, cast
 
 import libs.dispatcher
+from cls.timekit import Delimiter, Format
 from cls.timekit import ExtendedDatetime as ExtDt
 from integrations.slack.events.handler_registry import register, register_all
 from integrations.slack.events.home_tab import home
@@ -105,8 +106,8 @@ def register_event_handlers(app: "App", adapter: "ServiceAdapter"):
             "view_id": None,
             "screen": None,
             "operation": None,
-            "sday": adapter.conf.tab_var.get("sday", ExtDt().format("ymd", "-")),
-            "eday": adapter.conf.tab_var.get("eday", ExtDt().format("ymd", "-")),
+            "sday": adapter.conf.tab_var.get("sday", ExtDt().format(Format.YMD, Delimiter.HYPHEN)),
+            "eday": adapter.conf.tab_var.get("eday", ExtDt().format(Format.YMD, Delimiter.HYPHEN)),
         }
 
         adapter.conf.tab_var["user_id"] = event["user"]

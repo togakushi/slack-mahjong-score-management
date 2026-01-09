@@ -11,6 +11,7 @@ from typing import TYPE_CHECKING
 
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
+from cls.timekit import Format
 from libs.functions import compose
 
 if TYPE_CHECKING:
@@ -67,8 +68,8 @@ def random_reply(m: "MessageParserProtocol", message_type: str) -> str:
             msg.format(
                 user_id=m.data.user_id,
                 keyword=g.cfg.setting.keyword,
-                start=ExtDt(g.params.get("starttime", ExtDt())).format("ymd"),
-                end=ExtDt(g.params.get("onday", ExtDt())).format("ymd"),
+                start=ExtDt(g.params.get("starttime", ExtDt())).format(Format.YMD),
+                end=ExtDt(g.params.get("onday", ExtDt())).format(Format.YMD),
                 rpoint_diff=rpoint_diff * 100,
                 rpoint_sum=m.status.rpoint_sum * 100,
             )
@@ -102,8 +103,8 @@ def header(game_info: "GameInfo", m: "MessageParserProtocol", add_text="", inden
         game_range1 = f"最初のゲーム：{game_info.first_comment}\n"
         game_range1 += f"最後のゲーム：{game_info.last_comment}\n"
     else:
-        game_range1 = f"最初のゲーム：{game_info.first_game.format('ymdhms')}\n"
-        game_range1 += f"最後のゲーム：{game_info.last_game.format('ymdhms')}\n"
+        game_range1 = f"最初のゲーム：{game_info.first_game.format(Format.YMDHMS)}\n"
+        game_range1 += f"最後のゲーム：{game_info.last_game.format(Format.YMDHMS)}\n"
     game_range2 = f"集計範囲：{compose.text_item.aggregation_range(game_info)}\n"
 
     # ゲーム数

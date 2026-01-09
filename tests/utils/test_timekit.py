@@ -40,4 +40,4 @@ def test_keyword_range(date: str, keyword_list: list, period: list):
         dt = ExtDt(date).range(keyword)
 
         print(f"{date}, {keyword} -> {dt.period} = {period}")
-        assert list(map(str, dt.period)) == period
+        assert dt.period == period

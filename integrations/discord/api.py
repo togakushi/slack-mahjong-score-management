@@ -12,6 +12,7 @@ import pandas as pd
 from table2ascii import PresetStyle, table2ascii
 
 import integrations.discord.events.audioop as _audioop
+from cls.timekit import Delimiter, Format
 from cls.timekit import ExtendedDatetime as ExtDt
 from integrations.base.interface import APIInterface
 from libs.types import StyleOptions
@@ -160,7 +161,7 @@ class AdapterAPI(APIInterface):
                 post_msg = formatter.group_strings(post_msg, limit=1800)
 
         if thread_msg and m.post.thread:
-            date_suffix = ExtDt(float(m.data.event_ts)).format("ymdhm", delimiter="slash")
+            date_suffix = ExtDt(float(m.data.event_ts)).format(Format.YMDHMS, Delimiter.SLASH)
             if not m.post.thread_title.isnumeric() and m.post.thread_title:
                 thread = await thread_msg.create_thread(name=f"{m.post.thread_title} - {date_suffix}")
                 for msg in post_msg:

@@ -6,6 +6,7 @@ test.py
 import configparser
 import random
 import re
+from pathlib import Path
 from pprint import pprint
 
 import libs.global_value as g
@@ -219,9 +220,7 @@ def main():
     """メイン処理"""
 
     g.args = arg_parser()
-
-    if not g.args.testcase.exists():
-        return
+    assert isinstance(g.args.testcase, Path)
 
     configuration.setup()
     test_conf = configparser.ConfigParser()
