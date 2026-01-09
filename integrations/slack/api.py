@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING, cast
 import pandas as pd
 
 from integrations.base.interface import APIInterface
+from integrations.protocols import CommandType
 from libs.types import StyleOptions
 from libs.utils import converter, formatter
 
@@ -116,7 +117,7 @@ class AdapterAPI(APIInterface):
                         header = _header_text(title)
 
                     match m.status.command_type:
-                        case "results":
+                        case CommandType.RESULTS:
                             match title:
                                 case "通算ポイント" | "ポイント差分":
                                     post_msg.extend(_table_data(converter.df_to_text_table(msg, step=40)))
@@ -136,9 +137,9 @@ class AdapterAPI(APIInterface):
                                         post_msg.extend(_table_data(converter.df_to_results_simple(msg)))
                                 case _:
                                     post_msg.extend(_table_data(converter.df_to_remarks(msg)))
-                        case "rating":
+                        case CommandType.RATING:
                             post_msg.extend(_table_data(converter.df_to_text_table(msg, step=20)))
-                        case "ranking":
+                        case CommandType.RANKING:
                             post_msg.extend(_table_data(converter.df_to_ranking(msg, title, step=50)))
                         case _:
                             pass

@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING, cast
 import libs.global_value as g
 from cls.timekit import Delimiter, Format
 from cls.timekit import ExtendedDatetime as ExtDt
+from integrations.protocols import CommandType
 from integrations.slack.adapter import ServiceAdapter
 from integrations.slack.events.handler_registry import register
 from integrations.slack.events.home_tab import ui_parts
@@ -135,7 +136,7 @@ def register_personal_handlers(app, adapter: ServiceAdapter):
         app_msg.pop()
         app_msg.append("集計完了")
 
-        m.status.command_type = "results"
+        m.status.command_type = CommandType.RESULTS
         results.detail.aggregation(m)
         adapter.api.post(m)
 

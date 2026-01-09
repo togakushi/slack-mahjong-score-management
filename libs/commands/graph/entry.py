@@ -5,6 +5,7 @@ libs/commands/graph/entry.py
 from typing import TYPE_CHECKING
 
 import libs.global_value as g
+from integrations.protocols import CommandType
 from libs.commands import graph
 from libs.utils import dictutil
 
@@ -19,7 +20,7 @@ def main(m: "MessageParserProtocol"):
         m (MessageParserProtocol): メッセージデータ
     """
 
-    m.status.command_type = "graph"
+    m.status.command_type = CommandType.GRAPH
     g.params = dictutil.placeholder(g.cfg.graph, m)
 
     if len(g.params["player_list"]) == 1:  # 対象がひとり

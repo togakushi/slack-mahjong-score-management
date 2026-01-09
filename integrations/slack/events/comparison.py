@@ -9,6 +9,7 @@ import libs.global_value as g
 from cls.score import GameResult
 from cls.timekit import ExtendedDatetime as ExtDt
 from cls.timekit import Format
+from integrations.protocols import CommandType
 from libs.data import lookup, modify, search
 from libs.datamodels import ComparisonResults
 from libs.types import StyleOptions
@@ -123,7 +124,7 @@ def check_omission(results: ComparisonResults):
     # DATABASE -> SLACK
     ts_list = [x.ts for x in slack_score]
     work_m = g.adapter.parser()
-    work_m.status.command_type = "comparison"
+    work_m.status.command_type = CommandType.COMPARISON
     for score in db_score:
         if score.ts not in ts_list:  # 削除漏れ
             work_m.data.event_ts = score.ts
@@ -191,9 +192,9 @@ def check_remarks(results: ComparisonResults):
     if results.remark_mod:
         for remark in results.remark_mod:
             work_m.data.event_ts = remark["event_ts"]
-            work_m.status.command_type = "comparison"
+            work_m.status.command_type = CommandType.COMPARISON
             work_m.data.channel_id = remark["source"].replace("slack_", "")
-        work_m.status.command_type = "comparison"  # リセットがかかるので再セット
+        work_m.status.command_type = CommandType.COMPARISON  # リセットがかかるので再セット
         work_m.data.channel_id = remark["source"].replace("slack_", "")
         modify.remarks_delete(work_m)
         modify.remarks_append(work_m, results.remark_mod)

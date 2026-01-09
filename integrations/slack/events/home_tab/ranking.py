@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING, cast
 import libs.global_value as g
 from cls.timekit import Delimiter, Format
 from cls.timekit import ExtendedDatetime as ExtDt
+from integrations.protocols import CommandType
 from integrations.slack.adapter import ServiceAdapter
 from integrations.slack.events.handler_registry import register
 from integrations.slack.events.home_tab import ui_parts
@@ -128,7 +129,7 @@ def register_ranking_handlers(app, adapter: ServiceAdapter):
         app_msg.pop()
         app_msg.append("集計完了")
 
-        m.status.command_type = "ranking"
+        m.status.command_type = CommandType.RANKING
         ranking.ranking.aggregation(m)
         adapter.api.post(m)
 

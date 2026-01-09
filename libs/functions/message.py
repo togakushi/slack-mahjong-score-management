@@ -12,6 +12,7 @@ from typing import TYPE_CHECKING
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
 from cls.timekit import Format
+from integrations.protocols import CommandType
 from libs.functions import compose
 
 if TYPE_CHECKING:
@@ -112,7 +113,7 @@ def header(game_info: "GameInfo", m: "MessageParserProtocol", add_text="", inden
         msg += f"{random_reply(m, 'no_hits')}"
     else:
         match m.status.command_type:
-            case "results":
+            case CommandType.RESULTS:
                 if g.params.get("target_count"):  # 直近指定がない場合は検索範囲を付ける
                     msg += game_range1
                     msg += f"集計対象：{game_info.count} ゲーム {add_text}\n"
@@ -120,7 +121,7 @@ def header(game_info: "GameInfo", m: "MessageParserProtocol", add_text="", inden
                     msg += f"検索範囲：{str(compose.text_item.search_range(time_pattern='time'))}\n"
                     msg += game_range1
                     msg += f"集計対象：{game_info.count} ゲーム {add_text}\n"
-            case "ranking" | "report":
+            case CommandType.RANKING | CommandType.REPORT:
                 msg += game_range2
                 msg += f"集計対象：{game_info.count} ゲーム\n"
             case _:

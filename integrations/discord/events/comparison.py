@@ -14,6 +14,7 @@ import libs.global_value as g
 from cls.score import GameResult
 from cls.timekit import ExtendedDatetime as ExtDt
 from cls.timekit import Format
+from integrations.protocols import CommandType
 from libs.data import modify, search
 from libs.datamodels import ComparisonResults
 from libs.types import RemarkDict, StyleOptions
@@ -142,7 +143,7 @@ async def check_omission(results: ComparisonResults, messages_list: list["Messag
     # DATABASE -> DISCORD
     ts_list = [x.ts for x in discord_score]
     work_m = g.adapter.parser()
-    work_m.status.command_type = "comparison"
+    work_m.status.command_type = CommandType.COMPARISON
     for score in db_score:
         if score.ts not in ts_list:  # 削除漏れ
             results.delete.append(score)
@@ -198,7 +199,7 @@ async def check_remarks(results: ComparisonResults, messages_list: list["Message
 
     # DISCORD -> DATABASE
     work_m = g.adapter.parser()
-    work_m.status.command_type = "comparison"
+    work_m.status.command_type = CommandType.COMPARISON
 
     for remark in discord_remarks:
         if remark in db_remarks:  # 変化なし

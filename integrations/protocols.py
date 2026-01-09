@@ -29,6 +29,25 @@ class MessageStatus(StrEnum):
     """未定義状態"""
 
 
+class CommandType(StrEnum):
+    """実行(する/した)サブコマンド"""
+
+    RESULTS = "results"
+    """成績サマリ"""
+    GRAPH = "graph"
+    """グラフ生成"""
+    RANKING = "ranking"
+    """ランキング"""
+    RATING = "rating"
+    """レーティング"""
+    REPORT = "report"
+    """レポート"""
+    COMPARISON = "comparison"
+    """突合処理"""
+    UNKNOWN = "unknown"
+    """未定義"""
+
+
 class DataMixin:
     """共通処理"""
 
@@ -105,24 +124,7 @@ class PostData(DataMixin):
 class StatusData(DataMixin):
     """処理した結果"""
 
-    command_type: Literal[
-        "results",
-        "graph",
-        "ranking",
-        "rating",
-        "report",
-        "comparison",
-        "unknown",
-    ] = field(default="unknown")
-    """実行(する/した)サブコマンド
-    - *results*: 成績サマリ
-    - *graph*: グラフ生成
-    - *ranking*: ランキング
-    - *rating*: レーティング
-    - *report*: レポート
-    - *comparison*: 突合処理
-    - *unknown*: 未定義
-    """
+    command_type: CommandType = field(default=CommandType.UNKNOWN)
 
     command_flg: bool = field(default=False)
     """コマンドとして実行されたかチェック
