@@ -28,7 +28,7 @@ def append(argument: list) -> str:
     msg: str = "使い方が間違っています。"
 
     if len(argument) == 1:  # 新規追加
-        new_name = textutil.str_conv(argument[0], "h2z")
+        new_name = textutil.str_conv(argument[0], textutil.ConversionType.HtoZ)
         rows = resultdb.execute("select count() from member")
         count = rows.fetchone()[0]
         if count > g.cfg.member.registration_limit:
@@ -48,8 +48,8 @@ def append(argument: list) -> str:
                 logging.info("add new member: %s", new_name)
 
     if len(argument) == 2:  # 別名登録
-        new_name = textutil.str_conv(argument[0], "h2z")
-        nic_name = textutil.str_conv(argument[1], "h2z")
+        new_name = textutil.str_conv(argument[0], textutil.ConversionType.HtoZ)
+        nic_name = textutil.str_conv(argument[1], textutil.ConversionType.HtoZ)
         registration_flg = True
         rows = resultdb.execute(
             "select count() from alias where member=?",
@@ -88,7 +88,11 @@ def append(argument: list) -> str:
             )
             name_list = [row["name"] for row in rows.fetchall()]
 
-            if {nic_name, textutil.str_conv(nic_name, "k2h"), textutil.str_conv(nic_name, "h2k")} & set(name_list):
+            if {
+                nic_name,
+                textutil.str_conv(nic_name, textutil.ConversionType.KtoH),
+                textutil.str_conv(nic_name, textutil.ConversionType.HtoK),
+            } & set(name_list):
                 msg += modify.db_backup()
                 for tbl, col in [("result", f"p{x}_name") for x in range(1, 5)] + [("remarks", "name")]:
                     resultdb.execute(
@@ -97,11 +101,11 @@ def append(argument: list) -> str:
                     )
                     resultdb.execute(
                         f"update {tbl} set {col}=? where {col}=?",
-                        (new_name, textutil.str_conv(nic_name, "k2h")),
+                        (new_name, textutil.str_conv(nic_name, textutil.ConversionType.KtoH)),
                     )
                     resultdb.execute(
                         f"update {tbl} set {col}=? where {col}=?",
-                        (new_name, textutil.str_conv(nic_name, "h2k")),
+                        (new_name, textutil.str_conv(nic_name, textutil.ConversionType.HtoK)),
                     )
                 msg += "\nデータベースを更新しました。"
 
@@ -128,7 +132,7 @@ def remove(argument: list) -> str:
     msg = "使い方が間違っています。"
 
     if len(argument) == 1:  # メンバー削除
-        new_name = textutil.str_conv(argument[0], "h2z")
+        new_name = textutil.str_conv(argument[0], textutil.ConversionType.HtoZ)
         if new_name in g.cfg.member.lists:
             resultdb.execute(
                 "delete from member where name=?",
@@ -144,8 +148,8 @@ def remove(argument: list) -> str:
             msg = f"「{new_name}」は登録されていません。"
 
     if len(argument) == 2:  # 別名削除
-        new_name = textutil.str_conv(argument[0], "h2z")
-        nic_name = textutil.str_conv(argument[1], "h2z")
+        new_name = textutil.str_conv(argument[0], textutil.ConversionType.HtoZ)
+        nic_name = textutil.str_conv(argument[1], textutil.ConversionType.HtoZ)
         if nic_name in g.cfg.member.lists:
             resultdb.execute(
                 "delete from alias where name=? and member=?",

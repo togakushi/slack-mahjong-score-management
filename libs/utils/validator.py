@@ -33,8 +33,8 @@ def check_namepattern(name: str, kind: Literal["member", "team"]) -> tuple[bool,
         ret: list = []
         for x in check_list:
             ret.append(x)
-            ret.append(textutil.str_conv(x, "k2h"))  # ひらがな
-            ret.append(textutil.str_conv(x, "h2k"))  # カタカナ
+            ret.append(textutil.str_conv(x, textutil.ConversionType.KtoH))  # ひらがな
+            ret.append(textutil.str_conv(x, textutil.ConversionType.HtoK))  # カタカナ
 
         return list(set(ret))
 

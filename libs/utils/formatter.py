@@ -129,13 +129,13 @@ def name_replace(target: str, add_mark: bool = False, not_replace: bool = False)
 
     chk_pattern = [
         target,  # 無加工
-        textutil.str_conv(target, "h2z"),  # 半角数字 -> 全角数字
-        textutil.str_conv(target, "k2h"),  # カタカナ -> ひらがな
-        textutil.str_conv(target, "h2k"),  # ひらがな -> カタカナ
+        textutil.str_conv(target, textutil.ConversionType.HtoZ),  # 半角数字 -> 全角数字
+        textutil.str_conv(target, textutil.ConversionType.KtoH),  # カタカナ -> ひらがな
+        textutil.str_conv(target, textutil.ConversionType.HtoK),  # ひらがな -> カタカナ
         honor_remove(target),  # 敬称削除
-        honor_remove(textutil.str_conv(target, "h2z")),
-        honor_remove(textutil.str_conv(target, "k2h")),
-        honor_remove(textutil.str_conv(target, "h2k")),
+        honor_remove(textutil.str_conv(target, textutil.ConversionType.HtoZ)),
+        honor_remove(textutil.str_conv(target, textutil.ConversionType.KtoH)),
+        honor_remove(textutil.str_conv(target, textutil.ConversionType.HtoK)),
     ]
     chk_pattern = sorted(set(chk_pattern), key=chk_pattern.index)  # 順序を維持したまま重複排除
 

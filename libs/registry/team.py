@@ -23,7 +23,7 @@ def create(argument: list) -> str:
     msg = "使い方が間違っています。"
 
     if len(argument) == 1:  # 新規追加
-        team_name = textutil.str_conv(argument[0], "h2z")
+        team_name = textutil.str_conv(argument[0], textutil.ConversionType.HtoZ)
         if len(g.cfg.team.lists) > g.cfg.team.registration_limit:
             msg = "登録上限を超えています。"
         else:  # 登録処理
@@ -56,7 +56,7 @@ def delete(argument: list) -> str:
     msg = "使い方が間違っています。"
 
     if len(argument) == 1:  # 新規追加
-        team_name = textutil.str_conv(argument[0], "h2z")
+        team_name = textutil.str_conv(argument[0], textutil.ConversionType.HtoZ)
         if team_name not in g.cfg.team.lists:  # 未登録チームチェック
             msg = f"チーム「{team_name}」は登録されていません。"
         else:
@@ -97,7 +97,7 @@ def append(argument: list) -> str:
     if len(argument) == 2:  # チーム所属
         g.params.update({"unregistered_replace": False})
 
-        team_name = textutil.str_conv(argument[0], "h2z")
+        team_name = textutil.str_conv(argument[0], textutil.ConversionType.HtoZ)
         player_name = formatter.name_replace(argument[1])
         registration_flg = True
         team_id = None
@@ -156,7 +156,7 @@ def remove(argument: list) -> str:
 
     if len(argument) == 2:  # チーム名指
         g.params.update({"unregistered_replace": False})
-        team_name = textutil.str_conv(argument[0], "h2z")
+        team_name = textutil.str_conv(argument[0], textutil.ConversionType.HtoZ)
         player_name = formatter.name_replace(argument[1])
 
         registration_flg = True

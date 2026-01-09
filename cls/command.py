@@ -198,7 +198,7 @@ class CommandParser:
                 m = re.match(pattern, word)
                 if m:
                     return True
-                m = re.match(pattern, textutil.str_conv(word.lower(), "h2k"))
+                m = re.match(pattern, textutil.str_conv(word.lower(), textutil.ConversionType.HtoK))
                 if m:
                     return True
 
@@ -220,7 +220,7 @@ class CommandParser:
         search_range: list = []
 
         for keyword in argument:
-            check_word = textutil.str_conv(keyword.lower(), "h2k")
+            check_word = textutil.str_conv(keyword.lower(), textutil.ConversionType.HtoK)
             check_word = check_word.replace("無シ", "ナシ").replace("有リ", "アリ")
 
             if re.match(r"^([0-9]{8}|[0-9/.-]{8,10})$", check_word):
