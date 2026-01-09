@@ -9,6 +9,7 @@ from discord.channel import TextChannel
 
 from cls.timekit import ExtendedDatetime as ExtDt
 from integrations.base.interface import FunctionsInterface
+from integrations.protocols import ActionStatus
 
 if TYPE_CHECKING:
     from discord import ClientUser, Message
@@ -37,11 +38,11 @@ class SvcFunctions(FunctionsInterface):
         """
 
         match m.status.action:
-            case "nothing":
+            case ActionStatus.NOTHING:
                 return
-            case "change":
+            case ActionStatus.CHANGE:
                 self.api.bot.loop.create_task(self.update_reaction(m))
-            case "delete":
+            case ActionStatus.DELETE:
                 self.api.bot.loop.create_task(self.delete_reaction(m))
 
     async def update_reaction(self, m: "MessageParserProtocol"):

@@ -10,6 +10,7 @@ import pytest
 import libs.dispatcher
 import libs.global_value as g
 from integrations import factory
+from integrations.protocols import MessageStatus
 from libs import configuration
 from tests.events import param_data
 
@@ -38,7 +39,7 @@ def test_help_event(config, keyword, monkeypatch):
     ):
         m = _init()
         m.data.text = keyword
-        m.data.status = "message_append"
+        m.data.status = MessageStatus.APPEND
         m.set_command_flag(False)
 
         libs.dispatcher.by_keyword(m)
@@ -59,7 +60,7 @@ def test_keyword_event(module, config, keyword, monkeypatch):
     ):
         m = _init()
         m.data.text = keyword
-        m.data.status = "message_append"
+        m.data.status = MessageStatus.APPEND
         m.set_command_flag(False)
 
         libs.dispatcher.by_keyword(m)

@@ -13,6 +13,7 @@ import pandas as pd
 import libs.global_value as g
 from cls.score import GameResult
 from cls.timekit import ExtendedDatetime as ExtDt
+from cls.timekit import Format
 from libs.utils import dbutil
 
 if TYPE_CHECKING:
@@ -96,8 +97,8 @@ def member_info(params: "PlaceholderDict") -> dict:
     )
 
     with closing(dbutil.connection(g.cfg.setting.database_file)) as conn:
-        params["starttime"] = cast(ExtDt, params["starttime"]).format("sql")
-        params["endtime"] = cast(ExtDt, params["endtime"]).format("sql")
+        params["starttime"] = cast(ExtDt, params["starttime"]).format(Format.SQL)
+        params["endtime"] = cast(ExtDt, params["endtime"]).format(Format.SQL)
         rows = conn.execute(sql, params)
         ret = dict(rows.fetchone())
 

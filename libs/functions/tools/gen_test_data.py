@@ -14,6 +14,7 @@ from tqdm import tqdm
 import libs.global_value as g
 from cls.score import GameResult
 from cls.timekit import ExtendedDatetime as ExtDt
+from cls.timekit import Format
 from libs.data import lookup
 from libs.functions.tools import score_simulator
 from libs.utils import dbutil
@@ -86,7 +87,7 @@ def main(season_times: int = 1):
 
                     # データ投入
                     param = {
-                        "playtime": ExtDt(dt).format("sql"),
+                        "playtime": ExtDt(dt).format(Format.SQL),
                     }
                     param.update(cast(dict, result.to_dict()))
                     cur.execute(dbutil.query("RESULT_INSERT"), param)

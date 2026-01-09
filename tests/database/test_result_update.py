@@ -10,6 +10,7 @@ import pytest
 import libs.global_value as g
 from cls.score import GameResult
 from cls.timekit import ExtendedDatetime as ExtDt
+from cls.timekit import Format
 from integrations import factory
 from libs import configuration
 from libs.data import modify
@@ -33,7 +34,7 @@ def test_score_insert(draw_split, game_result, get_point, get_rank, monkeypatch)
 
     m = g.adapter.parser()
     m.data.text = game_result
-    m.data.event_ts = ExtDt().format("ts")
+    m.data.event_ts = ExtDt().format(Format.TS)
 
     score_data = GameResult(**validator.check_score(m))
     score_data.set(rule_version="test", draw_split=draw_split)

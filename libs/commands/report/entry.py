@@ -5,6 +5,7 @@ libs/commands/report/entry.py
 from typing import TYPE_CHECKING
 
 import libs.global_value as g
+from integrations.protocols import CommandType
 from libs.commands import report
 from libs.utils import dictutil
 
@@ -19,7 +20,7 @@ def main(m: "MessageParserProtocol"):
         m (MessageParserProtocol): メッセージデータ
     """
 
-    m.status.command_type = "report"
+    m.status.command_type = CommandType.REPORT
     g.params = dictutil.placeholder(g.cfg.report, m)
 
     if len(g.params["player_list"]) == 1:  # 成績レポート

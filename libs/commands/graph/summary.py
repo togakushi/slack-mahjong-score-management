@@ -10,6 +10,7 @@ import pandas as pd
 import plotly.express as px  # type: ignore
 
 import libs.global_value as g
+from cls.timekit import Format
 from libs.data import loader
 from libs.datamodels import GameInfo
 from libs.functions import compose, message
@@ -397,7 +398,7 @@ def _graph_title(graph_params: GraphParams):
     """
 
     if g.params.get("target_count"):
-        kind = "ymd_o"
+        kind = Format.YMD_O
         graph_params.update({"xlabel_text": f"集計日（{graph_params['total_game_count']} ゲーム）"})
         match graph_params.get("graph_type"):
             case "point":
@@ -409,19 +410,19 @@ def _graph_title(graph_params: GraphParams):
     else:
         match g.params.get("collection"):
             case "daily":
-                kind = "ymd_o"
+                kind = Format.YMD_O
                 graph_params.update({"xlabel_text": f"集計日（{graph_params['total_game_count']} ゲーム）"})
             case "monthly":
-                kind = "jym_o"
+                kind = Format.JYM_O
                 graph_params.update({"xlabel_text": f"集計月（{graph_params['total_game_count']} ゲーム）"})
             case "yearly":
-                kind = "jy_o"
+                kind = Format.JY_O
                 graph_params.update({"xlabel_text": f"集計年（{graph_params['total_game_count']} ゲーム）"})
             case "all":
-                kind = "ymdhm"
+                kind = Format.YMDHM
                 graph_params.update({"xlabel_text": f"ゲーム数：{graph_params['total_game_count']} ゲーム"})
             case _:
-                kind = "ymdhm"
+                kind = Format.YMDHM
                 if g.params.get("search_word"):
                     graph_params.update({"xlabel_text": f"ゲーム数：{graph_params['total_game_count']} ゲーム"})
                 else:

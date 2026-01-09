@@ -6,7 +6,9 @@ import logging
 from typing import TYPE_CHECKING, cast
 
 import libs.global_value as g
+from cls.timekit import Delimiter, Format
 from cls.timekit import ExtendedDatetime as ExtDt
+from integrations.protocols import CommandType
 from integrations.slack.adapter import ServiceAdapter
 from integrations.slack.events.handler_registry import register
 from integrations.slack.events.home_tab import ui_parts
@@ -23,12 +25,12 @@ def build_summary_menu(adapter: ServiceAdapter):
     adapter.conf.tab_var["screen"] = "SummaryMenu"
     adapter.conf.tab_var["no"] = 0
     adapter.conf.tab_var["view"] = {"type": "home", "blocks": []}
-    adapter.conf.tab_var.setdefault("sday", ExtDt().format("ymd", "-"))
-    adapter.conf.tab_var.setdefault("eday", ExtDt().format("ymd", "-"))
+    adapter.conf.tab_var.setdefault("sday", ExtDt().format(Format.YMD, Delimiter.HYPHEN))
+    adapter.conf.tab_var.setdefault("eday", ExtDt().format(Format.YMD, Delimiter.HYPHEN))
     ui_parts.header(adapter, text="【成績サマリ】")
 
     # 検索範囲設定
-    date_dict = {x: ExtDt(hours=-g.cfg.setting.time_adjust).range(x).dict_format("ymd", "-") for x in ["今月", "先月", "全部"]}
+    date_dict = {x: ExtDt(hours=-g.cfg.setting.time_adjust).range(x).dict_format(Format.YMD, Delimiter.HYPHEN) for x in ["今月", "先月", "全部"]}
     ui_parts.divider(adapter)
     ui_parts.radio_buttons(
         adapter=adapter,
@@ -129,20 +131,20 @@ def register_summary_handlers(app, adapter: ServiceAdapter):
 
         match adapter.conf.tab_var.get("operation"):
             case "point":
-                m.status.command_type = "graph"
+                m.status.command_type = CommandType.GRAPH
                 graph.summary.point_plot(m)
                 adapter.api.post(m)
             case "rank":
-                m.status.command_type = "graph"
+                m.status.command_type = CommandType.GRAPH
                 graph.summary.rank_plot(m)
                 adapter.api.post(m)
             case "rating":
-                m.status.command_type = "rating"
+                m.status.command_type = CommandType.RATING
                 g.params["command"] = "ranking"
                 ranking.rating.aggregation(m)
                 adapter.api.post(m)
             case _:
-                m.status.command_type = "results"
+                m.status.command_type = CommandType.RESULTS
                 results.summary.aggregation(m)
                 adapter.api.post(m)
 

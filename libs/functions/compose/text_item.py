@@ -2,9 +2,10 @@
 libs/functions/compose/text_item.py
 """
 
-from typing import TYPE_CHECKING, Literal, Optional, cast
+from typing import TYPE_CHECKING, Literal, Optional
 
 import libs.global_value as g
+from cls.timekit import Delimiter, Format
 from cls.timekit import ExtendedDatetime as ExtDt
 
 if TYPE_CHECKING:
@@ -106,14 +107,14 @@ def search_range(kind: Literal["str", "list"] = "str", time_pattern=None) -> lis
 
     match time_pattern:
         case "day":
-            starttime = ExtDt(g.params["starttime"]).format("ts")
-            endtime = ExtDt(g.params["endtime"]).format("ts")
+            starttime = ExtDt(g.params["starttime"]).format(Format.TS)
+            endtime = ExtDt(g.params["endtime"]).format(Format.TS)
         case "time":
-            starttime = ExtDt(g.params["starttime"]).format("ymdhm")
-            endtime = ExtDt(g.params["endtime"]).format("ymdhm")
+            starttime = ExtDt(g.params["starttime"]).format(Format.YMDHM)
+            endtime = ExtDt(g.params["endtime"]).format(Format.YMDHM)
         case _:
-            starttime = ExtDt(g.params["starttime"]).format("ymdhms")
-            endtime = ExtDt(g.params["endtime"]).format("ymdhms")
+            starttime = ExtDt(g.params["starttime"]).format(Format.YMDHMS)
+            endtime = ExtDt(g.params["endtime"]).format(Format.YMDHMS)
 
     match kind:
         case "list":
@@ -147,8 +148,8 @@ def aggregation_range(
         first = game_info.first_comment
         last = game_info.last_comment
     else:
-        first = game_info.first_game.format("ymdhm")
-        last = game_info.last_game.format("ymdhm")
+        first = game_info.first_game.format(Format.YMDHM)
+        last = game_info.last_game.format(Format.YMDHM)
 
     match kind:
         case "list":
@@ -158,15 +159,14 @@ def aggregation_range(
 
 
 def date_range(
-    kind: str,
+    kind: Format,
     prefix_a: Optional[str] = None,
     prefix_b: Optional[str] = None,
 ) -> str:
     """日付範囲文字列
 
     Args:
-        kind (str): ExtendedDatetimeのformatメソッドに渡す引数
-            - *_o:  表示にondayを使用
+        kind (Format): ExtendedDatetimeのformatメソッドに渡す引数
         prefix_a (Optional[str], optional): 単独で返った時の接頭辞. Defaults to None.
         prefix_b (Optional[str], optional): 範囲で返った時の接頭辞. Defaults to None.
 
@@ -181,21 +181,19 @@ def date_range(
     et = ExtDt(g.params["endtime"])
     ot = ExtDt(g.params["onday"])
 
-    if kind.startswith("j"):
-        kind = kind.replace("j", "")
-        delimiter = "ja"
+    if kind.value.startswith("j"):
+        delimiter = Delimiter.JAPANESE
     else:
-        delimiter = "slash"
+        delimiter = Delimiter.SLASH
 
-    if kind.endswith("_o"):
-        kind = kind.replace("_o", "")
-        str_st = st.format(cast(ExtDt.FormatType, kind), delimiter=cast(ExtDt.DelimiterStyle, delimiter))
-        str_et = ot.format(cast(ExtDt.FormatType, kind), delimiter=cast(ExtDt.DelimiterStyle, delimiter))
+    if kind.value.endswith("_o"):
+        str_st = st.format(kind, delimiter)
+        str_et = ot.format(kind, delimiter)
     else:
-        str_st = st.format(cast(ExtDt.FormatType, kind), delimiter=cast(ExtDt.DelimiterStyle, delimiter))
-        str_et = et.format(cast(ExtDt.FormatType, kind), delimiter=cast(ExtDt.DelimiterStyle, delimiter))
+        str_st = st.format(kind, delimiter)
+        str_et = et.format(kind, delimiter)
 
-    if st.format(cast(ExtDt.FormatType, kind), delimiter="num") == ot.format(cast(ExtDt.FormatType, kind), delimiter="num"):
+    if st.format(kind, Delimiter.NUMBER) == ot.format(kind, Delimiter.NUMBER):
         if prefix_a and prefix_b:
             ret = f"{prefix_a} ({str_st})"
         else:

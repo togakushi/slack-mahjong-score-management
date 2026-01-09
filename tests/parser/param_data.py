@@ -5,6 +5,7 @@
 from typing import Any
 
 from cls.timekit import ExtendedDatetime as ExtDt
+from cls.timekit import Format
 
 # フラグ更新
 flag_test_case_01: dict[str, tuple[Any, ...]] = {
@@ -64,11 +65,11 @@ flag_test_case_04: dict[str, tuple[Any, ...]] = {
 
 # 日付
 flag_test_case_05: dict[str, tuple[Any, ...]] = {
-    "keyword": ("今月", ExtDt().range("今月").format("sql")),
-    "number only": ("20250101", ExtDt("20250101").format("sql")),
-    "hyphen delimiter": ("2025-01-01", ExtDt("20250101").format("sql")),
-    "slash delimiter": ("2025/01/01", ExtDt("20250101").format("sql")),
-    "dot delimiter": ("2025.01.01", ExtDt("20250101").format("sql")),
+    "keyword": ("今月", ExtDt().range("今月").format(Format.SQL)),
+    "number only": ("20250101", ExtDt("20250101").format(Format.SQL)),
+    "hyphen delimiter": ("2025-01-01", ExtDt("20250101").format(Format.SQL)),
+    "slash delimiter": ("2025/01/01", ExtDt("20250101").format(Format.SQL)),
+    "dot delimiter": ("2025.01.01", ExtDt("20250101").format(Format.SQL)),
 }
 
 # プレイヤーテスト

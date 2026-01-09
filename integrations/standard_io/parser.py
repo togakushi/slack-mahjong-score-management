@@ -6,7 +6,7 @@ from datetime import datetime
 from typing import cast
 
 from integrations.base.interface import MessageParserDataMixin, MessageParserInterface
-from integrations.protocols import MsgData, PostData, StatusData
+from integrations.protocols import ChannelType, MessageStatus, MsgData, PostData, StatusData
 
 
 class MessageParser(MessageParserDataMixin, MessageParserInterface):
@@ -19,7 +19,7 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
         self.status: StatusData = StatusData()
 
     def parser(self, body: dict):
-        self.data.status = "message_append"
+        self.data.status = MessageStatus.APPEND
         self.data.channel_id = "dummy"
         self.data.event_ts = str(datetime.now().timestamp())
         self.data.thread_ts = self.data.event_ts
@@ -35,7 +35,7 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
 
         if body.get("channel_name") == "directmessage":  # スラッシュコマンド扱い
             self.status.command_flg = True
-            self.data.channel_type = "im"
+            self.data.channel_type = ChannelType.DIRECT_MESSAGE
             self.data.channel_id = body.get("channel_id", "")
 
     def set_command_flag(self, flg: bool):

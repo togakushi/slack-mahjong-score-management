@@ -12,8 +12,10 @@ import pandas as pd
 from table2ascii import PresetStyle, table2ascii
 
 import integrations.discord.events.audioop as _audioop
+from cls.timekit import Delimiter, Format
 from cls.timekit import ExtendedDatetime as ExtDt
 from integrations.base.interface import APIInterface
+from integrations.protocols import CommandType
 from libs.types import StyleOptions
 from libs.utils import converter, formatter, textutil
 
@@ -126,7 +128,7 @@ class AdapterAPI(APIInterface):
                     if style.key_title and (title != header_title):
                         header = _header_text(title)
                     match m.status.command_type:
-                        case "results":
+                        case CommandType.RESULTS:
                             match title:
                                 case "通算ポイント" | "ポイント差分":
                                     post_msg.extend(_table_data(converter.df_to_text_table(msg, step=40)))
@@ -146,21 +148,21 @@ class AdapterAPI(APIInterface):
                                         post_msg.extend(_table_data(converter.df_to_results_simple(msg)))
                                 case _:
                                     post_msg.extend(_table_data(converter.df_to_remarks(msg)))
-                        case "rating":
+                        case CommandType.RATING:
                             post_msg.extend(_table_data(converter.df_to_text_table(msg, step=20)))
-                        case "ranking":
+                        case CommandType.RANKING:
                             post_msg.extend(_table_data(converter.df_to_ranking(msg, title, step=0)))
                         case _:
                             pass
 
         if style.summarize:
-            if m.status.command_type == "ranking":
+            if m.status.command_type == CommandType.RANKING:
                 post_msg = textutil.split_text_blocks("".join(post_msg), 1900)
             else:
                 post_msg = formatter.group_strings(post_msg, limit=1800)
 
         if thread_msg and m.post.thread:
-            date_suffix = ExtDt(float(m.data.event_ts)).format("ymdhm", delimiter="slash")
+            date_suffix = ExtDt(float(m.data.event_ts)).format(Format.YMDHMS, Delimiter.SLASH)
             if not m.post.thread_title.isnumeric() and m.post.thread_title:
                 thread = await thread_msg.create_thread(name=f"{m.post.thread_title} - {date_suffix}")
                 for msg in post_msg:

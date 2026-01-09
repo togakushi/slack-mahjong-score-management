@@ -3,7 +3,8 @@ integrations/protocols.py
 """
 
 from dataclasses import dataclass, field, fields, is_dataclass
-from typing import TYPE_CHECKING, Any, Literal, Protocol
+from enum import StrEnum
+from typing import TYPE_CHECKING, Any, Protocol
 
 if TYPE_CHECKING:
     from pathlib import Path  # noqa: F401
@@ -11,6 +12,66 @@ if TYPE_CHECKING:
     import pandas as pd  # noqa: F401
 
     from libs.types import MessageType, MessageTypeDict, StyleOptions
+
+
+class MessageStatus(StrEnum):
+    """メッセージステータス"""
+
+    APPEND = "message_append"
+    """新規ポストイベント"""
+    CHANGED = "message_changed"
+    """編集イベント"""
+    DELETED = "message_deleted"
+    """削除イベント"""
+    DO_NOTHING = "do_nothing"
+    """何もしなくてよいイベント"""
+    UNDETERMINED = "undetermined"
+    """未定義状態"""
+
+
+class ChannelType(StrEnum):
+    """チャンネルタイプ"""
+
+    CHANNEL = "normal"
+    """通常チャンネル"""
+    PRIVATE = "private"
+    """プライベートチャンネル"""
+    DIRECT_MESSAGE = "direct_message"
+    """ダイレクトメッセージ"""
+    SEARCH = "search_api"
+    """検索API"""
+    UNDETERMINED = "undetermined"
+    """未定義状態"""
+
+
+class CommandType(StrEnum):
+    """実行(する/した)サブコマンド"""
+
+    RESULTS = "results"
+    """成績サマリ"""
+    GRAPH = "graph"
+    """グラフ生成"""
+    RANKING = "ranking"
+    """ランキング"""
+    RATING = "rating"
+    """レーティング"""
+    REPORT = "report"
+    """レポート"""
+    COMPARISON = "comparison"
+    """突合処理"""
+    UNKNOWN = "unknown"
+    """未定義"""
+
+
+class ActionStatus(StrEnum):
+    """DBに対する操作"""
+
+    CHANGE = "change"
+    """insert/updateが実行された"""
+    DELETE = "delete"
+    """deleteが実行された"""
+    NOTHING = "nothing"
+    """何もしてない"""
 
 
 class DataMixin:
@@ -43,36 +104,12 @@ class MsgData(DataMixin):
     """イベント編集タイムスタンプ"""
     channel_id: str = field(default=str())
     """チャンネルID"""
-    channel_type: Literal[
-        "channel",
-        "group",
-        "im",
-        "search_messages",
-        "undetermined",
-    ] = field(default="undetermined")
-    """チャンネルタイプ
-    - *channel*: 通常チャンネル
-    - *group*: プライベートチャンネル
-    - *im*: ダイレクトメッセージ
-    - *search_messages*: 検索API
-    - *undetermined*: 未定義状態
-    """
+    channel_type: ChannelType = field(default=ChannelType.UNDETERMINED)
+    """チャンネルタイプ"""
     user_id: str = field(default=str())
     """ユーザーID"""
-    status: Literal[
-        "message_append",
-        "message_changed",
-        "message_deleted",
-        "do_nothing",
-        "undetermined",
-    ] = field(default="undetermined")
-    """イベントステータス
-    - *message_append*: 新規ポストイベント
-    - *message_changed*: 編集イベント
-    - *message_deleted*: 削除イベント
-    - *do_nothing*: 何もしなくてよいイベント
-    - *undetermined*: 未定義状態
-    """
+    status: MessageStatus = field(default=MessageStatus.UNDETERMINED)
+    """イベントステータス"""
     reaction_ok: list = field(default_factory=list)
     reaction_ng: list = field(default_factory=list)
     remarks: list = field(default_factory=list)
@@ -101,25 +138,8 @@ class PostData(DataMixin):
 class StatusData(DataMixin):
     """処理した結果"""
 
-    command_type: Literal[
-        "results",
-        "graph",
-        "ranking",
-        "rating",
-        "report",
-        "comparison",
-        "unknown",
-    ] = field(default="unknown")
-    """実行(する/した)サブコマンド
-    - *results*: 成績サマリ
-    - *graph*: グラフ生成
-    - *ranking*: ランキング
-    - *rating*: レーティング
-    - *report*: レポート
-    - *comparison*: 突合処理
-    - *unknown*: 未定義
-    """
-
+    command_type: CommandType = field(default=CommandType.UNKNOWN)
+    """実行(する/した)サブコマンド"""
     command_flg: bool = field(default=False)
     """コマンドとして実行されたかチェック
     - *True*: コマンド実行
@@ -133,12 +153,8 @@ class StatusData(DataMixin):
     - *True*: 矛盾なくデータを取り込んだ(OK)
     - *False*: 矛盾があったがデータを取り込んだ or データを取り込めなかった(NG)
     """
-    action: Literal["change", "delete", "nothing"] = field(default="nothing")
-    """DBに対する操作
-    - *change*: insert/updateが実行された
-    - *delete*: deleteが実行された
-    - *nothing*: 何もしてない
-    """
+    action: ActionStatus = field(default=ActionStatus.NOTHING)
+    """DBに対する操作"""
     target_ts: list = field(default_factory=list)
     """同じ処理をしたタイムスタンプリスト(1件だけの処理でもセットされる)"""
     rpoint_sum: int = field(default=0)

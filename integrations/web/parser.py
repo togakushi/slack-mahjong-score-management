@@ -3,7 +3,7 @@ integrations/web/parser.py
 """
 
 from integrations.base.interface import MessageParserDataMixin, MessageParserInterface
-from integrations.protocols import MsgData, PostData, StatusData
+from integrations.protocols import MessageStatus, MsgData, PostData, StatusData
 
 
 class MessageParser(MessageParserDataMixin, MessageParserInterface):
@@ -18,7 +18,7 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
         self.data = MsgData()
         self.post = PostData()
         self.status = StatusData()
-        self.data.status = "message_append"
+        self.data.status = MessageStatus.APPEND
         self.status.command_flg = False
 
     def parser(self, body: dict):

@@ -6,8 +6,10 @@ import logging
 from typing import TYPE_CHECKING, cast
 
 import libs.global_value as g
+from cls.timekit import Delimiter, Format
 from cls.timekit import ExtendedDatetime as ExtDt
 from integrations.base.interface import FunctionsInterface
+from integrations.protocols import ActionStatus
 from libs.data import lookup
 from libs.utils import validator
 
@@ -34,6 +36,7 @@ class SvcFunctions(FunctionsInterface):
             raise ModuleNotFoundError(err.msg) from None
 
         self.api = api
+        """API操作オブジェクト"""
         self.conf = conf
         """個別設定"""
 
@@ -44,13 +47,13 @@ class SvcFunctions(FunctionsInterface):
             word (str): 検索するワード
 
         Returns:
-            list["MessageParserProtocol"]: 検索した結果
+            list[MessageParserProtocol]: 検索した結果
         """
 
         g.adapter = cast("ServiceAdapter", g.adapter)
 
         # 検索クエリ
-        after = ExtDt(days=-self.conf.search_after, hours=g.cfg.setting.time_adjust).format("ymd", "-")
+        after = ExtDt(days=-self.conf.search_after, hours=g.cfg.setting.time_adjust).format(Format.YMD, Delimiter.HYPHEN)
         channel = " ".join([f"in:{x}" for x in self.conf.search_channel])
         query = f"{word} {channel} after:{after}"
         logging.info("query=%s, check_db=%s", query, g.cfg.setting.database_file)
@@ -76,10 +79,10 @@ class SvcFunctions(FunctionsInterface):
         """メッセージ詳細情報取得
 
         Args:
-            matches (list["MessageParserProtocol"]): 対象データ
+            matches (list[MessageParserProtocol]): 対象データ
 
         Returns:
-            list["MessageParserProtocol"]: 詳細情報追加データ
+            list[MessageParserProtocol]: 詳細情報追加データ
         """
 
         new_matches: list["MessageParserProtocol"] = []
@@ -291,7 +294,7 @@ class SvcFunctions(FunctionsInterface):
         """過去ログからスコア記録を検索して返す
 
         Returns:
-            list["MessageParserProtocol"]: 検索した結果
+            list[MessageParserProtocol]: 検索した結果
         """
 
         # ゲーム結果の抽出
@@ -315,7 +318,7 @@ class SvcFunctions(FunctionsInterface):
         """slackログからメモを検索して返す
 
         Returns:
-            list["MessageParserProtocol"]: 検索した結果
+            list[MessageParserProtocol]: 検索した結果
         """
 
         remarks_matches: list["MessageParserProtocol"] = []
@@ -363,9 +366,9 @@ class SvcFunctions(FunctionsInterface):
 
         # リアクション処理
         match m.status.action:
-            case "nothing":
+            case ActionStatus.NOTHING:
                 return
-            case "change":
+            case ActionStatus.CHANGE:
                 for ts in m.status.target_ts:
                     reaction_data = self.reaction_status(ch=m.data.channel_id, ts=ts)
                     if m.status.reaction:  # NGを外してOKを付ける
@@ -379,7 +382,7 @@ class SvcFunctions(FunctionsInterface):
                         if not reaction_data.get("ng"):
                             self.reaction_append(icon=reaction_ng, ch=m.data.channel_id, ts=ts)
                 m.status.reset()
-            case "delete":
+            case ActionStatus.DELETE:
                 for ts in m.status.target_ts:
                     self.reaction_remove(icon=reaction_ok, ch=m.data.channel_id, ts=ts)
                     self.reaction_remove(icon=reaction_ng, ch=m.data.channel_id, ts=ts)

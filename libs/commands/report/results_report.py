@@ -21,6 +21,7 @@ from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import Image, LongTable, PageBreak, Paragraph, SimpleDocTemplate, Spacer, TableStyle
 
 import libs.global_value as g
+from cls.timekit import Format
 from libs.data import lookup
 from libs.functions import message
 from libs.types import StyleOptions
@@ -39,9 +40,9 @@ def get_game_results() -> list:
     """
 
     if "starttime" in g.params:
-        g.params.update({"starttime": cast("ExtDt", g.params["starttime"]).format("sql")})
+        g.params.update({"starttime": cast("ExtDt", g.params["starttime"]).format(Format.SQL)})
     if "endtime" in g.params:
-        g.params.update({"endtime": cast("ExtDt", g.params["endtime"]).format("sql")})
+        g.params.update({"endtime": cast("ExtDt", g.params["endtime"]).format(Format.SQL)})
 
     resultdb = dbutil.connection(g.cfg.setting.database_file)
     rows = resultdb.execute(

@@ -12,6 +12,7 @@ from typing import TYPE_CHECKING, Any, cast
 import pandas as pd
 
 import libs.global_value as g
+from cls.timekit import Format
 from libs.utils import dbutil
 
 if TYPE_CHECKING:
@@ -67,9 +68,9 @@ def read_data(keyword: str) -> pd.DataFrame:
     sql = dbutil.query_modification(dbutil.query(keyword))
 
     if starttime := g.params.get("starttime"):
-        g.params.update({"starttime": cast("ExtDt", starttime).format("sql")})
+        g.params.update({"starttime": cast("ExtDt", starttime).format(Format.SQL)})
     if endtime := g.params.get("endtime"):
-        g.params.update({"endtime": cast("ExtDt", endtime).format("sql")})
+        g.params.update({"endtime": cast("ExtDt", endtime).format(Format.SQL)})
 
     if g.args.verbose & 0x01:
         print(f">>> {g.params=}")

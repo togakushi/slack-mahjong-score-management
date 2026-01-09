@@ -5,6 +5,7 @@ libs/commands/results/entry.py
 from typing import TYPE_CHECKING
 
 import libs.global_value as g
+from integrations.protocols import CommandType
 from libs.commands import results
 from libs.utils import dictutil
 
@@ -19,7 +20,7 @@ def main(m: "MessageParserProtocol"):
         m (MessageParserProtocol): メッセージデータ
     """
 
-    m.status.command_type = "results"
+    m.status.command_type = CommandType.RESULTS
     g.params = dictutil.placeholder(g.cfg.results, m)
 
     if g.params.get("versus_matrix", False) and g.params["competition_list"]:
