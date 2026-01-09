@@ -36,6 +36,7 @@ class SvcFunctions(FunctionsInterface):
             raise ModuleNotFoundError(err.msg) from None
 
         self.api = api
+        """API操作オブジェクト"""
         self.conf = conf
         """個別設定"""
 
@@ -46,7 +47,7 @@ class SvcFunctions(FunctionsInterface):
             word (str): 検索するワード
 
         Returns:
-            list["MessageParserProtocol"]: 検索した結果
+            list[MessageParserProtocol]: 検索した結果
         """
 
         g.adapter = cast("ServiceAdapter", g.adapter)
@@ -78,10 +79,10 @@ class SvcFunctions(FunctionsInterface):
         """メッセージ詳細情報取得
 
         Args:
-            matches (list["MessageParserProtocol"]): 対象データ
+            matches (list[MessageParserProtocol]): 対象データ
 
         Returns:
-            list["MessageParserProtocol"]: 詳細情報追加データ
+            list[MessageParserProtocol]: 詳細情報追加データ
         """
 
         new_matches: list["MessageParserProtocol"] = []
@@ -293,7 +294,7 @@ class SvcFunctions(FunctionsInterface):
         """過去ログからスコア記録を検索して返す
 
         Returns:
-            list["MessageParserProtocol"]: 検索した結果
+            list[MessageParserProtocol]: 検索した結果
         """
 
         # ゲーム結果の抽出
@@ -317,7 +318,7 @@ class SvcFunctions(FunctionsInterface):
         """slackログからメモを検索して返す
 
         Returns:
-            list["MessageParserProtocol"]: 検索した結果
+            list[MessageParserProtocol]: 検索した結果
         """
 
         remarks_matches: list["MessageParserProtocol"] = []
