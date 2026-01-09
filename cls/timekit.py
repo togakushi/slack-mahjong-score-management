@@ -216,6 +216,8 @@ class ExtendedDatetime:
             return self.dt == other.dt
         if isinstance(other, datetime):
             return self.dt == other
+        if isinstance(other, str):
+            return self.format("sql") == other
         return NotImplemented
 
     def __lt__(self, other):
