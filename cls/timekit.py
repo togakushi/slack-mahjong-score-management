@@ -33,10 +33,26 @@ Examples:
 """
 
 from datetime import datetime
+from enum import StrEnum
 from functools import total_ordering
 from typing import Callable, List, Literal, Optional, TypeAlias, TypedDict, Union, cast
 
 from dateutil.relativedelta import MO, SU, relativedelta
+
+
+class FormatStr(StrEnum):
+    """フォーマット変換で指定する種類"""
+
+    TS = "ts"
+    Y = "y"
+    YM = "ym"
+    YMD = "ymd"
+    YMDHM = "ymdhm"
+    YMDHMS = "ymdhms"
+    HM = "hm"
+    HMS = "hms"
+    SQL = "sql"
+    EXT = "ext"
 
 
 class DateRangeSpec(TypedDict):
