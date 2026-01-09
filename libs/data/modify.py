@@ -13,7 +13,7 @@ from typing import TYPE_CHECKING, cast
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
 from cls.timekit import Format
-from integrations.protocols import MessageStatus
+from integrations.protocols import ActionStatus, MessageStatus
 from libs.data import lookup
 from libs.functions import message
 from libs.types import StyleOptions
@@ -122,7 +122,7 @@ def db_delete(m: "MessageParserProtocol"):
                     m.status.target_ts.extend([x.get("event_ts") for x in list(map(dict, remark_list))])
                     logging.info("remark: ts=%s, count=%s", m.data.event_ts, delete_remark)
             cur.commit()
-        m.status.action = "delete"
+        m.status.action = ActionStatus.DELETE
         g.adapter.functions.post_processing(m)
     else:
         logging.warning("A post to a restricted channel was detected.")
@@ -187,10 +187,10 @@ def remarks_append(m: "MessageParserProtocol", remarks: list["RemarkDict"]) -> N
 
         # 後処理
         if count:
-            m.status.action = "change"
+            m.status.action = ActionStatus.CHANGE
             m.status.reaction = True
         else:
-            m.status.action = "nothing"
+            m.status.action = ActionStatus.NOTHING
 
         g.adapter.functions.post_processing(m)
 
@@ -210,7 +210,7 @@ def remarks_delete(m: "MessageParserProtocol"):
                 m.status.target_ts.append(m.data.event_ts)
                 logging.info("ts=%s, count=%s", m.data.event_ts, count)
         # 後処理
-        m.status.action = "delete"
+        m.status.action = ActionStatus.DELETE
         g.adapter.functions.post_processing(m)
 
 
@@ -229,11 +229,11 @@ def remarks_delete_compar(para: "RemarkDict", m: "MessageParserProtocol") -> Non
         left = cur.execute("select count() from remarks where event_ts=:event_ts;", para).fetchone()[0]
 
     # 後処理
-    m.status.action = "delete"
+    m.status.action = ActionStatus.DELETE
     m.status.target_ts.append(para["event_ts"])
     m.data.channel_id = para["source"].replace(f"{g.adapter.interface_type}_", "")
     if left > 0:  # メモデータが残っているなら
-        m.status.action = "change"
+        m.status.action = ActionStatus.CHANGE
     g.adapter.functions.post_processing(m)
 
 
@@ -310,7 +310,7 @@ def _score_check(detection: "GameResult", m: "MessageParserProtocol"):
     """
 
     # 結果
-    m.status.action = "change"
+    m.status.action = ActionStatus.CHANGE
     m.status.target_ts.append(m.data.event_ts)
     m.status.reaction = True
     m.status.message = detection.to_text("detail")

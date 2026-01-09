@@ -4,7 +4,7 @@ integrations/protocols.py
 
 from dataclasses import dataclass, field, fields, is_dataclass
 from enum import StrEnum
-from typing import TYPE_CHECKING, Any, Literal, Protocol
+from typing import TYPE_CHECKING, Any, Protocol
 
 if TYPE_CHECKING:
     from pathlib import Path  # noqa: F401
@@ -61,6 +61,17 @@ class CommandType(StrEnum):
     """突合処理"""
     UNKNOWN = "unknown"
     """未定義"""
+
+
+class ActionStatus(StrEnum):
+    """DBに対する操作"""
+
+    CHANGE = "change"
+    """insert/updateが実行された"""
+    DELETE = "delete"
+    """deleteが実行された"""
+    NOTHING = "nothing"
+    """何もしてない"""
 
 
 class DataMixin:
@@ -142,12 +153,8 @@ class StatusData(DataMixin):
     - *True*: 矛盾なくデータを取り込んだ(OK)
     - *False*: 矛盾があったがデータを取り込んだ or データを取り込めなかった(NG)
     """
-    action: Literal["change", "delete", "nothing"] = field(default="nothing")
-    """DBに対する操作
-    - *change*: insert/updateが実行された
-    - *delete*: deleteが実行された
-    - *nothing*: 何もしてない
-    """
+    action: ActionStatus = field(default=ActionStatus.NOTHING)
+    """DBに対する操作"""
     target_ts: list = field(default_factory=list)
     """同じ処理をしたタイムスタンプリスト(1件だけの処理でもセットされる)"""
     rpoint_sum: int = field(default=0)

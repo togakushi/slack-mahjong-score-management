@@ -9,7 +9,7 @@ import libs.global_value as g
 from cls.score import GameResult
 from cls.timekit import ExtendedDatetime as ExtDt
 from cls.timekit import Format
-from integrations.protocols import CommandType
+from integrations.protocols import ActionStatus, CommandType
 from libs.data import lookup, modify, search
 from libs.datamodels import ComparisonResults
 from libs.types import StyleOptions
@@ -65,7 +65,7 @@ def main(m: "MessageParserProtocol") -> None:
 
     m.post.thread = True
     m.post.ts = m.data.event_ts
-    m.status.action = "nothing"
+    m.status.action = ActionStatus.NOTHING
     m.status.message = results
 
 

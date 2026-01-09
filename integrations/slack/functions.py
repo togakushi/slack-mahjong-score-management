@@ -9,6 +9,7 @@ import libs.global_value as g
 from cls.timekit import Delimiter, Format
 from cls.timekit import ExtendedDatetime as ExtDt
 from integrations.base.interface import FunctionsInterface
+from integrations.protocols import ActionStatus
 from libs.data import lookup
 from libs.utils import validator
 
@@ -364,9 +365,9 @@ class SvcFunctions(FunctionsInterface):
 
         # リアクション処理
         match m.status.action:
-            case "nothing":
+            case ActionStatus.NOTHING:
                 return
-            case "change":
+            case ActionStatus.CHANGE:
                 for ts in m.status.target_ts:
                     reaction_data = self.reaction_status(ch=m.data.channel_id, ts=ts)
                     if m.status.reaction:  # NGを外してOKを付ける
@@ -380,7 +381,7 @@ class SvcFunctions(FunctionsInterface):
                         if not reaction_data.get("ng"):
                             self.reaction_append(icon=reaction_ng, ch=m.data.channel_id, ts=ts)
                 m.status.reset()
-            case "delete":
+            case ActionStatus.DELETE:
                 for ts in m.status.target_ts:
                     self.reaction_remove(icon=reaction_ok, ch=m.data.channel_id, ts=ts)
                     self.reaction_remove(icon=reaction_ng, ch=m.data.channel_id, ts=ts)

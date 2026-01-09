@@ -14,7 +14,7 @@ import libs.global_value as g
 from cls.score import GameResult
 from cls.timekit import ExtendedDatetime as ExtDt
 from cls.timekit import Format
-from integrations.protocols import CommandType
+from integrations.protocols import ActionStatus, CommandType
 from libs.data import modify, search
 from libs.datamodels import ComparisonResults
 from libs.types import RemarkDict, StyleOptions
@@ -55,7 +55,7 @@ async def _wrapper(m: "MessageParserProtocol"):
         m.set_data("供託残り", results.output("invalid_score"), StyleOptions(key_title=False))
 
     m.post.thread = True
-    m.status.action = "nothing"
+    m.status.action = ActionStatus.NOTHING
     g.adapter.api.post(m)
 
 
