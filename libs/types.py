@@ -3,7 +3,6 @@ cls/types.py
 """
 
 from dataclasses import dataclass
-from enum import StrEnum
 from typing import TYPE_CHECKING, Any, Literal, Optional, TypeAlias, TypedDict, Union
 
 if TYPE_CHECKING:
@@ -386,18 +385,3 @@ class GradeTableDict(TypedDict, total=False):
     """素点評価式(昇段ポイントに加算)"""
     table: list[RankTableDict]
     """昇段ポイント計算テーブル"""
-
-
-class MessageStatus(StrEnum):
-    """メッセージステータス"""
-
-    APPEND = "message_append"
-    """新規ポストイベント"""
-    CHANGED = "message_changed"
-    """編集イベント"""
-    DELETED = "message_deleted"
-    """削除イベント"""
-    DO_NOTHING = "do_nothing"
-    """何もしなくてよいイベント"""
-    UNDETERMINED = "undetermined"
-    """未定義状態"""

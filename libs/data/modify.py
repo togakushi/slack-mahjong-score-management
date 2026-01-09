@@ -13,9 +13,10 @@ from typing import TYPE_CHECKING, cast
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
 from cls.timekit import Format
+from integrations.protocols import MessageStatus
 from libs.data import lookup
 from libs.functions import message
-from libs.types import MessageStatus, StyleOptions
+from libs.types import StyleOptions
 from libs.utils import dbutil, formatter
 
 if TYPE_CHECKING:

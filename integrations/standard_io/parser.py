@@ -6,8 +6,7 @@ from datetime import datetime
 from typing import cast
 
 from integrations.base.interface import MessageParserDataMixin, MessageParserInterface
-from integrations.protocols import MsgData, PostData, StatusData
-from libs.types import MessageStatus
+from integrations.protocols import MessageStatus, MsgData, PostData, StatusData
 
 
 class MessageParser(MessageParserDataMixin, MessageParserInterface):

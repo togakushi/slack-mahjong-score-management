@@ -9,9 +9,10 @@ from typing import TYPE_CHECKING
 import libs.global_value as g
 from cls.score import GameResult
 from integrations import factory
+from integrations.protocols import MessageStatus
 from libs.data import lookup, modify
 from libs.functions import message
-from libs.types import MessageStatus, StyleOptions
+from libs.types import StyleOptions
 from libs.utils import formatter, validator
 
 if TYPE_CHECKING:

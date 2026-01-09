@@ -7,8 +7,7 @@ from typing import TYPE_CHECKING, cast
 
 import libs.global_value as g
 from integrations.base.interface import MessageParserDataMixin, MessageParserInterface
-from integrations.protocols import MsgData, PostData, StatusData
-from libs.types import MessageStatus
+from integrations.protocols import MessageStatus, MsgData, PostData, StatusData
 
 if TYPE_CHECKING:
     from integrations.slack.adapter import ServiceAdapter

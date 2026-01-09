@@ -3,9 +3,8 @@ integrations/protocols.py
 """
 
 from dataclasses import dataclass, field, fields, is_dataclass
+from enum import StrEnum
 from typing import TYPE_CHECKING, Any, Literal, Protocol
-
-from libs.types import MessageStatus
 
 if TYPE_CHECKING:
     from pathlib import Path  # noqa: F401
@@ -13,6 +12,21 @@ if TYPE_CHECKING:
     import pandas as pd  # noqa: F401
 
     from libs.types import MessageType, MessageTypeDict, StyleOptions
+
+
+class MessageStatus(StrEnum):
+    """メッセージステータス"""
+
+    APPEND = "message_append"
+    """新規ポストイベント"""
+    CHANGED = "message_changed"
+    """編集イベント"""
+    DELETED = "message_deleted"
+    """削除イベント"""
+    DO_NOTHING = "do_nothing"
+    """何もしなくてよいイベント"""
+    UNDETERMINED = "undetermined"
+    """未定義状態"""
 
 
 class DataMixin:
