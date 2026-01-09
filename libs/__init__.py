@@ -12,4 +12,5 @@
 - `libs.datamodels`: データモジュール
 - `libs.configuration`: 初期設定関数
 - `libs.global_value`: モジュール間共通変数
+- `libs.dispatcher`: コマンドディスパッチャ
 """
