@@ -18,7 +18,7 @@ from (
         --[not_collection] --[group_by] count() as count,
         results.playtime,
         --[collection_daily] collection_daily as collection,
-        --[collection_weekly] date(collection_daily, '-' || (strftime('%w', collection_daily) -1) || ' days') as collection,
+        --[collection_weekly] date(collection_daily, '-' || strftime('%w', collection_daily) || ' days', 'weekday 1') as collection,
         --[collection_monthly] strftime('%Y-%m', collection_daily) as collection,
         --[collection_yearly] strftime('%Y', collection_daily) as collection,
         --[collection_all] '' as collection,
