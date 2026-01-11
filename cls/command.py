@@ -105,6 +105,10 @@ COMMANDS: CommandsDict = {
         "match": [r"^daily$", r"^日次$", r"^デイリー$"],
         "action": lambda _: {"collection": "daily"},
     },
+    "weekly": {
+        "match": [r"^weekly$", r"^週次$", r"^ウイークリー$"],
+        "action": lambda _: {"collection": "weekly"},
+    },
     "monthly": {
         "match": [r"^monthly$", r"^月次$", r"^マンスリー$"],
         "action": lambda _: {"collection": "monthly"},
