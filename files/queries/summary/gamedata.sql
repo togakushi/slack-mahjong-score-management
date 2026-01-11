@@ -18,7 +18,7 @@ from (
         --[not_collection] --[group_by] count() as count,
         results.playtime,
         --[collection_daily] collection_daily as collection,
-        --[collection_weekly] strftime('%Y-%W', collection_daily) as collection,
+        --[collection_weekly] date(collection_daily, '-' || (strftime('%w', collection_daily) -1) || ' days') as collection,
         --[collection_monthly] strftime('%Y-%m', collection_daily) as collection,
         --[collection_yearly] strftime('%Y', collection_daily) as collection,
         --[collection_all] '' as collection,
@@ -59,18 +59,18 @@ from (
     --[not_collection] --[group_by]     --[comment] game_info.comment, name
     --[not_collection] --[group_by]     --[group_length] substr(game_info.comment, 1, :group_length), name
     --[collection] group by
-    --[collection_daily]     collection_daily, name -- 日次集計
-    --[collection_weekly]     strftime('%Y-%W', collection_daily), name
-    --[collection_monthly]     strftime('%Y-%m', collection_daily), name
-    --[collection_yearly]     strftime('%Y', collection_daily), name
+    --[collection_daily]     collection, name -- 日次集計
+    --[collection_weekly]     collection, name
+    --[collection_monthly]     collection, name
+    --[collection_yearly]     collection, name
     --[collection_all]     name -- 全体集計
     order by
         --[not_collection] results.playtime desc
-        --[collection_daily] collection_daily desc
-        --[collection_weekly] strftime('%Y-%W', collection_daily) desc
-        --[collection_monthly] strftime('%Y-%m', collection_daily) desc
-        --[collection_yearly] strftime('%Y', collection_daily) desc
-        --[collection_all] collection_daily desc
+        --[collection_daily] collection desc
+        --[collection_weekly] collection desc
+        --[collection_monthly] collection desc
+        --[collection_yearly] collection desc
+        --[collection_all] collection desc
 )
 window
     --[not_collection] moving as (partition by name order by playtime)
