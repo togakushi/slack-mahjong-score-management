@@ -413,7 +413,7 @@ def _graph_title(graph_params: GraphParams):
                 kind = Format.YMD_O
                 graph_params.update({"xlabel_text": f"集計日（{graph_params['total_game_count']} ゲーム）"})
             case "weekly":
-                kind = Format.JYM_O
+                kind = Format.YMD_O
                 graph_params.update({"xlabel_text": f"集計週（{graph_params['total_game_count']} ゲーム）"})
             case "monthly":
                 kind = Format.JYM_O

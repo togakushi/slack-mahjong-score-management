@@ -319,13 +319,13 @@ class ExtendedDatetime:
         match fmt:
             case Format.TS:
                 ret = str(self._dt.timestamp())
-            case Format.Y | Format.JY | Format.JY_O:
+            case Format.Y | Format.JY | Format.Y_O | Format.JY_O:
                 match delimiter:
                     case Delimiter.JAPANESE:
                         ret = self._dt.strftime("%Y年")
                     case _:
                         ret = self._dt.strftime("%Y")
-            case Format.YM | Format.JYM | Format.JYM_O:
+            case Format.YM | Format.JYM | Format.YM_O | Format.JYM_O:
                 match delimiter:
                     case Delimiter.SLASH:
                         ret = self._dt.strftime("%Y/%m")
@@ -337,7 +337,7 @@ class ExtendedDatetime:
                         ret = self._dt.strftime("%Y%m")
                     case _:
                         ret = self._dt.strftime("%Y/%m")
-            case Format.YMD | Format.JYMD | Format.JYMD_O:
+            case Format.YMD | Format.JYMD | Format.YMD_O | Format.JYMD_O:
                 match delimiter:
                     case Delimiter.SLASH:
                         ret = self._dt.strftime("%Y/%m/%d")
