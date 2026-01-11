@@ -258,7 +258,7 @@ def _graph_generation(graph_params: GraphParams) -> "Path":
             bbox_to_anchor=(1, 1),
             loc="upper left",
             borderaxespad=0.5,
-            ncol=int(len(target_data) / 25 + 1),
+            ncol=int(len(target_data) / 20 + 1),
         )
 
         # X軸修正
