@@ -1,7 +1,7 @@
 -- report.winner
 with target_data as (
     select
-        substr(collection_daily, 1, 7) as collection,
+        strftime('%Y-%m', collection_daily) as collection,
         --[individual] --[unregistered_replace] case when results.guest = 0 then results.name else :guest_name end as name, -- ゲスト有効
         --[individual] --[unregistered_not_replace] case when results.guest = 0 then results.name else results.name || '(<<guest_mark>>)' end as name, -- ゲスト無効
         --[team] results.team as name,

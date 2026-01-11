@@ -3,8 +3,9 @@ libs/utils/textutil.py
 """
 
 import os
+from enum import Enum, auto
 from math import ceil, floor
-from typing import TYPE_CHECKING, Literal
+from typing import TYPE_CHECKING
 
 import libs.global_value as g
 
@@ -12,16 +13,25 @@ if TYPE_CHECKING:
     from pathlib import Path
 
 
-def str_conv(text: str, kind: Literal["h2z", "z2h", "h2k", "k2h"]) -> str:
+class ConversionType(Enum):
+    """変換タイプ"""
+
+    HtoZ = auto()
+    """半角文字を全角文字に変換(数字のみ)"""
+    ZtoH = auto()
+    """全角文字を半角文字に変換(数字のみ)"""
+    HtoK = auto()
+    """ひらがなをカタカナに変換"""
+    KtoH = auto()
+    """カタカナをひらがなに変換"""
+
+
+def str_conv(text: str, kind: ConversionType) -> str:
     """文字列変換
 
     Args:
         text (str): 変換対象文字列
-        kind (str): 変換種類
-            - h2z: 半角文字を全角文字に変換(数字のみ)
-            - z2h: 全角文字を半角文字に変換(数字のみ)
-            - h2k: ひらがなをカタカナに変換
-            - k2h: カタカナをひらがなに変換
+        kind (ConversionType): 変換種類
 
     Returns:
         str: 変換後の文字列
@@ -33,13 +43,13 @@ def str_conv(text: str, kind: Literal["h2z", "z2h", "h2k", "k2h"]) -> str:
     kana = "".join(chr(0x30A1 + i) for i in range(86))
 
     match kind:
-        case "h2z":  # 半角文字を全角文字に変換(数字のみ)
+        case ConversionType.HtoZ:
             trans_table = str.maketrans(han, zen)
-        case "z2h":  # 全角文字を半角文字に変換(数字のみ)
+        case ConversionType.ZtoH:
             trans_table = str.maketrans(zen, han)
-        case "h2k":  # ひらがなをカタカナに変換
+        case ConversionType.HtoK:
             trans_table = str.maketrans(hira, kana)
-        case "k2h":  # カタカナをひらがなに変換
+        case ConversionType.KtoH:
             trans_table = str.maketrans(kana, hira)
         case _:
             return text

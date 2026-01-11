@@ -105,6 +105,10 @@ COMMANDS: CommandsDict = {
         "match": [r"^daily$", r"^日次$", r"^デイリー$"],
         "action": lambda _: {"collection": "daily"},
     },
+    "weekly": {
+        "match": [r"^weekly$", r"^週次$", r"^ウイークリー$"],
+        "action": lambda _: {"collection": "weekly"},
+    },
     "monthly": {
         "match": [r"^monthly$", r"^月次$", r"^マンスリー$"],
         "action": lambda _: {"collection": "monthly"},
@@ -198,7 +202,7 @@ class CommandParser:
                 m = re.match(pattern, word)
                 if m:
                     return True
-                m = re.match(pattern, textutil.str_conv(word.lower(), "h2k"))
+                m = re.match(pattern, textutil.str_conv(word.lower(), textutil.ConversionType.HtoK))
                 if m:
                     return True
 
@@ -220,7 +224,7 @@ class CommandParser:
         search_range: list = []
 
         for keyword in argument:
-            check_word = textutil.str_conv(keyword.lower(), "h2k")
+            check_word = textutil.str_conv(keyword.lower(), textutil.ConversionType.HtoK)
             check_word = check_word.replace("無シ", "ナシ").replace("有リ", "アリ")
 
             if re.match(r"^([0-9]{8}|[0-9/.-]{8,10})$", check_word):

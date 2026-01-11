@@ -87,8 +87,8 @@ def main():
         db = dbutil.connection(g.cfg.setting.database_file)
         for name in g.cfg.member.all_lists:
             check_list: list = [
-                textutil.str_conv(name, "k2h"),
-                textutil.str_conv(name, "h2k"),
+                textutil.str_conv(name, textutil.ConversionType.KtoH),
+                textutil.str_conv(name, textutil.ConversionType.HtoK),
             ]
             for check in list(set(check_list)):
                 if check == name:

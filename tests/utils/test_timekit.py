@@ -2,36 +2,16 @@
 tests/utils/test_timekit.py
 """
 
-from typing import Any
-
 import pytest
 
 from cls.timekit import ExtendedDatetime as ExtDt
-
-date_range: dict[str, tuple[Any, ...]] = {
-    # date, keyword_list, period
-    "today": ("20250101", ["今日", "本日", "当日"], ["2025-01-01 00:00:00.000000", "2025-01-01 23:59:59.999999"]),
-    "yesterday": ("20250101", ["昨日"], ["2024-12-31 00:00:00.000000", "2024-12-31 23:59:59.999999"]),
-    "this week": ("20250101", ["今週"], ["2024-12-30 00:00:00.000000", "2025-01-05 23:59:59.999999"]),
-    "this week(MO)": ("20250106", ["今週"], ["2025-01-06 00:00:00.000000", "2025-01-12 23:59:59.999999"]),
-    "last_week": ("20250101", ["先週"], ["2024-12-23 00:00:00.000000", "2024-12-29 23:59:59.999999"]),
-    "last_week(MO)": ("20250101", ["先週"], ["2024-12-23 00:00:00.000000", "2024-12-29 23:59:59.999999"]),
-    "this_month": ("20250101", ["今月"], ["2025-01-01 00:00:00.000000", "2025-01-31 23:59:59.999999"]),
-    "last_month": ("20250101", ["先月", "昨月"], ["2024-12-01 00:00:00.000000", "2024-12-31 23:59:59.999999"]),
-    "two_months_ago": ("20250101", ["先々月"], ["2024-11-01 00:00:00.000000", "2024-11-30 23:59:59.999999"]),
-    "this_year": ("20250101", ["今年"], ["2025-01-01 00:00:00.000000", "2025-12-31 23:59:59.999999"]),
-    "last_year": ("20250101", ["去年", "昨年"], ["2024-01-01 00:00:00.000000", "2024-12-31 23:59:59.999999"]),
-    "year_before_last": ("20250101", ["一昨年"], ["2023-01-01 00:00:00.000000", "2023-12-31 23:59:59.999999"]),
-    "first_day": ("20250101", ["最初"], ["1900-01-01 00:00:00.000000", "1900-01-01 00:00:00.000000"]),
-    "last_day": ("20250101", ["最後"], ["2025-01-02 23:59:59.999999", "2025-01-02 23:59:59.999999"]),
-    "all": ("20250101", ["全部"], ["1900-01-01 00:00:00.000000", "2025-01-02 23:59:59.999999"]),
-}
+from tests.utils import param_data
 
 
 @pytest.mark.parametrize(
     "date, keyword_list, period",
-    list(date_range.values()),
-    ids=list(date_range.keys()),
+    list(param_data.date_range.values()),
+    ids=list(param_data.date_range.keys()),
 )
 def test_keyword_range(date: str, keyword_list: list, period: list):
     """日付範囲キーワード"""
@@ -41,3 +21,22 @@ def test_keyword_range(date: str, keyword_list: list, period: list):
 
         print(f"{date}, {keyword} -> {dt.period} = {period}")
         assert dt.period == period
+
+
+@pytest.mark.parametrize(
+    "date, option, output",
+    list(param_data.format_conv.values()),
+    ids=list(param_data.format_conv.keys()),
+)
+def test_format_conv(date: str, option: list, output: str):
+    """フォーマット変換"""
+
+    args: dict = {}
+    for x in option:
+        if isinstance(x, ExtDt.FMT):
+            args.update(fmt=x)
+        if isinstance(x, ExtDt.DEM):
+            args.update(delimiter=x)
+
+    dt = ExtDt(date)
+    assert dt.format(**args) == output

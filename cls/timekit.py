@@ -63,8 +63,17 @@ class Format(StrEnum):
     """SQLite用フォーマット(%Y-%m-%d %H:%M:%S.%f)"""
     EXT = "ext"
     """ファイル拡張子用(%Y%m%d-%H%M%S)"""
+
+    JY = "jy"
+    JYM = "jym"
+    JYMD = "jymd"
+
     JY_O = "jy_o"
     JYM_O = "jym_o"
+    JYMD_O = "jymd_o"
+
+    Y_O = "y_o"
+    YM_O = "ym_o"
     YMD_O = "ymd_o"
 
 
@@ -188,6 +197,9 @@ DATE_RANGE_MAP: dict[str, DateRangeSpec] = {
 class ExtendedDatetime:
     """datetime拡張クラス"""
 
+    FMT = Format
+    DEM = Delimiter
+
     _dt: datetime
     """操作対象"""
 
@@ -300,16 +312,20 @@ class ExtendedDatetime:
         """
 
         ret: str
+
+        if fmt.name.startswith("J"):
+            delimiter = Delimiter.JAPANESE
+
         match fmt:
             case Format.TS:
                 ret = str(self._dt.timestamp())
-            case Format.Y | Format.JY_O:
+            case Format.Y | Format.JY | Format.JY_O:
                 match delimiter:
                     case Delimiter.JAPANESE:
                         ret = self._dt.strftime("%Y年")
                     case _:
                         ret = self._dt.strftime("%Y")
-            case Format.YM | Format.JYM_O:
+            case Format.YM | Format.JYM | Format.JYM_O:
                 match delimiter:
                     case Delimiter.SLASH:
                         ret = self._dt.strftime("%Y/%m")
@@ -321,7 +337,7 @@ class ExtendedDatetime:
                         ret = self._dt.strftime("%Y%m")
                     case _:
                         ret = self._dt.strftime("%Y/%m")
-            case Format.YMD | Format.JYM_O:
+            case Format.YMD | Format.JYMD | Format.JYMD_O:
                 match delimiter:
                     case Delimiter.SLASH:
                         ret = self._dt.strftime("%Y/%m/%d")
@@ -357,6 +373,30 @@ class ExtendedDatetime:
                         ret = self._dt.strftime("%Y%m%d%H%M%S")
                     case _:
                         ret = self._dt.strftime("%Y/%m/%d %H:%M:%S")
+            case Format.HM:
+                match delimiter:
+                    case Delimiter.SLASH:
+                        ret = self._dt.strftime("%H:%M")
+                    case Delimiter.HYPHEN:
+                        ret = self._dt.strftime("%H:%M")
+                    case Delimiter.JAPANESE:
+                        ret = self._dt.strftime("%H時%M分")
+                    case Delimiter.NUMBER:
+                        ret = self._dt.strftime("%H%M")
+                    case _:
+                        ret = self._dt.strftime("%H:%M")
+            case Format.HMS:
+                match delimiter:
+                    case Delimiter.SLASH:
+                        ret = self._dt.strftime("%H:%M:%S")
+                    case Delimiter.HYPHEN:
+                        ret = self._dt.strftime("%H:%M:%S")
+                    case Delimiter.JAPANESE:
+                        ret = self._dt.strftime("%H時%M分%S秒")
+                    case Delimiter.NUMBER:
+                        ret = self._dt.strftime("%H%M%S")
+                    case _:
+                        ret = self._dt.strftime("%H:%M:%S")
             case Format.SQL:
                 match delimiter:
                     case Delimiter.SLASH:

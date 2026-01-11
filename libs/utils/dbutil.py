@@ -136,6 +136,9 @@ def query_modification(sql: str) -> str:
         case "daily":
             sql = sql.replace("--[collection_daily] ", "")
             sql = sql.replace("--[collection] ", "")
+        case "weekly":
+            sql = sql.replace("--[collection_weekly] ", "")
+            sql = sql.replace("--[collection] ", "")
         case "monthly":
             sql = sql.replace("--[collection_monthly] ", "")
             sql = sql.replace("--[collection] ", "")

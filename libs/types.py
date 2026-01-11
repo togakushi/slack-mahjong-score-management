@@ -182,7 +182,7 @@ class PlaceholderDict(TypedDict, total=False):
     - *True*: チーム同卓ゲームを集計(同じチームのポイントは合算される)
     - *False*: チーム同卓ゲームを集計対象外にする
     """
-    collection: Literal["daily", "monthly", "yearly", "all"]
+    collection: Literal["daily", "weekly", "monthly", "yearly", "all"]
     """集約範囲"""
 
     ranked: int

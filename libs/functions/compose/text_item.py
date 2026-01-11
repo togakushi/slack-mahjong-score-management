@@ -181,17 +181,12 @@ def date_range(
     et = ExtDt(g.params["endtime"])
     ot = ExtDt(g.params["onday"])
 
-    if kind.value.startswith("j"):
-        delimiter = Delimiter.JAPANESE
+    if kind.name.endswith("_O"):
+        str_st = st.format(kind)
+        str_et = ot.format(kind)
     else:
-        delimiter = Delimiter.SLASH
-
-    if kind.value.endswith("_o"):
-        str_st = st.format(kind, delimiter)
-        str_et = ot.format(kind, delimiter)
-    else:
-        str_st = st.format(kind, delimiter)
-        str_et = et.format(kind, delimiter)
+        str_st = st.format(kind)
+        str_et = et.format(kind)
 
     if st.format(kind, Delimiter.NUMBER) == ot.format(kind, Delimiter.NUMBER):
         if prefix_a and prefix_b:
