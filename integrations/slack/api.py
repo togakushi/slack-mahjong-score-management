@@ -11,7 +11,6 @@ import pandas as pd
 
 from integrations.base.interface import APIInterface
 from integrations.protocols import CommandType
-from libs.types import StyleOptions
 from libs.utils import converter, formatter
 
 if TYPE_CHECKING:
@@ -57,10 +56,10 @@ class AdapterAPI(APIInterface):
             text_data = iter(data.values())
             # 先頭ブロックの処理(ヘッダ追加)
             v = next(text_data)
-            ret_list.append(f"{header}```\n{v}\n```\n" if style.codeblock else f"{header}{v}\n")
+            ret_list.append(f"{header}```\n{v}\n```\n" if options.codeblock else f"{header}{v}\n")
             # 残りのブロック
             for v in text_data:
-                ret_list.append(f"```\n{v}\n```\n" if style.codeblock else f"```\n{v}\n```\n")
+                ret_list.append(f"```\n{v}\n```\n" if options.codeblock else f"```\n{v}\n```\n")
             return ret_list
 
         def _post_header():
@@ -84,67 +83,63 @@ class AdapterAPI(APIInterface):
             header_title, header_text = next(iter(m.post.headline.items()))
             if not m.post.message:  # メッセージなし
                 _post_header()
-            elif not all(v["options"].header_hidden for x in m.post.message for v in x.values()):
+            elif not all(options.header_hidden for _, options in m.post.message):
                 _post_header()
 
         # 本文
         post_msg: list[str] = []
-        style = StyleOptions()
-        for data in m.post.message:
-            for title, val in data.items():
-                msg = val.get("data")
-                style = val.get("options", StyleOptions())
-                header = ""
+        for data, options in m.post.message:
+            header = ""
 
-                if isinstance(msg, PosixPath) and msg.exists():
-                    comment = textwrap.dedent(f"{_header_text(header_title)}{header_text.rstrip()}") if style.use_comment else ""
-                    self._call_files_upload(
-                        channel=m.data.channel_id,
-                        title=title,
-                        file=str(msg),
-                        initial_comment=comment,
-                        thread_ts=m.reply_ts,
-                        request_file_info=False,
-                    )
+            if isinstance(data, PosixPath) and data.exists():
+                comment = textwrap.dedent(f"{_header_text(header_title)}{header_text.rstrip()}") if options.use_comment else ""
+                self._call_files_upload(
+                    channel=m.data.channel_id,
+                    title=options.title,
+                    file=str(data),
+                    initial_comment=comment,
+                    thread_ts=m.reply_ts,
+                    request_file_info=False,
+                )
 
-                if isinstance(msg, str):
-                    if style.key_title and (title != header_title):
-                        header = _header_text(title)
-                    post_msg.append(f"{header}```\n{msg.rstrip()}\n```\n" if style.codeblock else f"{header}{msg.rstrip()}\n")
+            if isinstance(data, str):
+                if options.key_title and (options.title != header_title):
+                    header = _header_text(options.title)
+                post_msg.append(f"{header}```\n{data.rstrip()}\n```\n" if options.codeblock else f"{header}{data.rstrip()}\n")
 
-                if isinstance(msg, pd.DataFrame):
-                    if style.key_title and (title != header_title):
-                        header = _header_text(title)
+            if isinstance(data, pd.DataFrame):
+                if options.key_title and (options.title != header_title):
+                    header = _header_text(options.title)
 
-                    match m.status.command_type:
-                        case CommandType.RESULTS:
-                            match title:
-                                case "通算ポイント" | "ポイント差分":
-                                    post_msg.extend(_table_data(converter.df_to_text_table(msg, step=40)))
-                                case "役満和了" | "卓外清算" | "その他":
-                                    if "回数" in msg.columns:
-                                        post_msg.extend(_table_data(converter.df_to_count(msg, title, 1)))
-                                    else:
-                                        post_msg.extend(_table_data(converter.df_to_remarks(msg)))
-                                case "成績詳細比較":
-                                    post_msg.extend(_table_data(converter.df_to_text_table2(msg, style, 3800)))
-                                case "座席データ":
-                                    post_msg.extend(_table_data(converter.df_to_seat_data(msg, 1)))
-                                case "戦績":
-                                    if "東家 名前" in msg.columns:  # 縦持ちデータ
-                                        post_msg.extend(_table_data(converter.df_to_results_details(msg)))
-                                    else:
-                                        post_msg.extend(_table_data(converter.df_to_results_simple(msg)))
-                                case _:
-                                    post_msg.extend(_table_data(converter.df_to_remarks(msg)))
-                        case CommandType.RATING:
-                            post_msg.extend(_table_data(converter.df_to_text_table(msg, step=20)))
-                        case CommandType.RANKING:
-                            post_msg.extend(_table_data(converter.df_to_ranking(msg, title, step=50)))
-                        case _:
-                            pass
+                match m.status.command_type:
+                    case CommandType.RESULTS:
+                        match options.title:
+                            case "通算ポイント" | "ポイント差分":
+                                post_msg.extend(_table_data(converter.df_to_text_table(data, step=40)))
+                            case "役満和了" | "卓外清算" | "その他":
+                                if "回数" in data.columns:
+                                    post_msg.extend(_table_data(converter.df_to_count(data, options.title, 1)))
+                                else:
+                                    post_msg.extend(_table_data(converter.df_to_remarks(data)))
+                            case "成績詳細比較":
+                                post_msg.extend(_table_data(converter.df_to_text_table2(data, options, 3800)))
+                            case "座席データ":
+                                post_msg.extend(_table_data(converter.df_to_seat_data(data, 1)))
+                            case "戦績":
+                                if "東家 名前" in data.columns:  # 縦持ちデータ
+                                    post_msg.extend(_table_data(converter.df_to_results_details(data)))
+                                else:
+                                    post_msg.extend(_table_data(converter.df_to_results_simple(data)))
+                            case _:
+                                post_msg.extend(_table_data(converter.df_to_remarks(data)))
+                    case CommandType.RATING:
+                        post_msg.extend(_table_data(converter.df_to_text_table(data, step=20)))
+                    case CommandType.RANKING:
+                        post_msg.extend(_table_data(converter.df_to_ranking(data, options.title, step=50)))
+                    case _:
+                        pass
 
-        if style.summarize:
+        if options.summarize:
             post_msg = formatter.group_strings(post_msg)
 
         for msg in post_msg:

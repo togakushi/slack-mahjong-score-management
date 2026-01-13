@@ -74,9 +74,9 @@ def main(m: "MessageParserProtocol"):
     m.post.headline = {title: message.header(game_info, m)}
     match g.adapter.interface_type:
         case "slack":
-            m.set_data(title, file_path, StyleOptions(use_comment=True, header_hidden=True))
+            m.set_data(file_path, StyleOptions(title=title, use_comment=True, header_hidden=True))
         case "web":
-            m.set_data("", df_generation(df), StyleOptions())
+            m.set_data(df_generation(df), StyleOptions())
 
 
 def graph_generation(game_info: GameInfo, df: "pd.DataFrame", title: str) -> "MessageType":

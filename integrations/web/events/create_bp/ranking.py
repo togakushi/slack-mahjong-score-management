@@ -42,19 +42,16 @@ def ranking_bp(adapter: "ServiceAdapter") -> Blueprint:
 
         message = adapter.functions.header_message(m)
 
-        for data in m.post.message:
-            for k, v in data.items():
-                msg = v.get("data")
+        for data, options in m.post.message:
+            if not options.title.isnumeric() and options.title:
+                message += f"<h2>{options.title}</h2>\n"
 
-                if not k.isnumeric() and k:
-                    message += f"<h2>{k}</h2>\n"
+            if isinstance(data, pd.DataFrame):
+                show_index = options.show_index
+                message += adapter.functions.to_styled_html(data, padding, show_index)
 
-                if isinstance(msg, pd.DataFrame):
-                    show_index = v["options"].show_index
-                    message += adapter.functions.to_styled_html(msg, padding, show_index)
-
-                if isinstance(msg, str):
-                    message += adapter.functions.to_text_html(msg)
+            if isinstance(data, str):
+                message += adapter.functions.to_text_html(data)
 
         cookie_data.update(body=message, **asdict(adapter.conf))
         page = adapter.functions.set_cookie("ranking.html", request, cookie_data)

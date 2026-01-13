@@ -56,28 +56,25 @@ class AdapterAPI(APIInterface):
                 print("=" * 80)
 
         # 本文
-        for data in m.post.message:
-            for title, msg in data.items():
-                style = msg.get("options", StyleOptions())
+        for data, options in m.post.message:
+            if options.key_title and options.title:
+                print(f"【{options.title}】")
 
-                if style.key_title and title:
-                    print(f"【{title}】")
+            match data:
+                case x if isinstance(x, str):
+                    print(self._text_formatter(x, options))
+                case x if isinstance(x, pd.DataFrame):
+                    disp = x.to_markdown(
+                        index=options.show_index,
+                        tablefmt="simple_outline",
+                        floatfmt=formatter.floatfmt_adjust(x, index=options.show_index),
+                    ).replace(" nan ", "-----")
+                    if title == "座席データ":
+                        disp = disp.replace("0.00", "-.--")
+                    print(disp)
+                case x if isinstance(x, Path):
+                    print(f"{title}: {x.absolute()}")
+                case _:
+                    pass
 
-                match msg.get("data"):
-                    case x if isinstance(x, str):
-                        print(self._text_formatter(x, style))
-                    case x if isinstance(x, pd.DataFrame):
-                        disp = x.to_markdown(
-                            index=style.show_index,
-                            tablefmt="simple_outline",
-                            floatfmt=formatter.floatfmt_adjust(x, index=style.show_index),
-                        ).replace(" nan ", "-----")
-                        if title == "座席データ":
-                            disp = disp.replace("0.00", "-.--")
-                        print(disp)
-                    case x if isinstance(x, Path):
-                        print(f"{title}: {x.absolute()}")
-                    case _:
-                        pass
-
-                print("")
+            print("")

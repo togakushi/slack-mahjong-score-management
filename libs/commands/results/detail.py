@@ -138,10 +138,10 @@ def aggregation(m: "MessageParserProtocol"):
         ).replace("-", "▲")
 
     if g.params.get("statistics"):
-        m.set_data("座席データ", seat_data, StyleOptions())
+        m.set_data(seat_data, StyleOptions(title="座席データ"))
         for k, v in get_record(data).items():  # ベスト/ワーストレコード
-            m.set_data(k, v, StyleOptions())
-        m.set_data("平均収支", textwrap.indent(balance_data.strip(), "\t"), StyleOptions())
+            m.set_data(v, StyleOptions(title=k))
+        m.set_data(textwrap.indent(balance_data.strip(), "\t"), StyleOptions(title="平均収支"))
 
     # レギュレーション
     remarks_df = loader.read_data("REMARKS_INFO")
@@ -150,31 +150,31 @@ def aggregation(m: "MessageParserProtocol"):
 
     if not g.cfg.dropitems.results & g.cfg.dropitems.yakuman:
         work_df = count_df.query("type == 0").filter(items=["matter", "matter_count"])
-        m.set_data("役満和了", formatter.df_rename(work_df, kind=0), StyleOptions())
+        m.set_data(formatter.df_rename(work_df, kind=0), StyleOptions(title="役満和了"))
 
     if not g.cfg.dropitems.results & g.cfg.dropitems.regulation:
         if g.params.get("individual"):
             work_df = count_df.query("type == 2").filter(items=["matter", "matter_count", "ex_total"])
         else:
             work_df = count_df.query("type == 2 or type == 3").filter(items=["matter", "matter_count", "ex_total"])
-        m.set_data("卓外清算", formatter.df_rename(work_df, kind=1), StyleOptions())
+        m.set_data(formatter.df_rename(work_df, kind=1), StyleOptions(title="卓外清算"))
 
     if not g.cfg.dropitems.results & g.cfg.dropitems.other:
         work_df = count_df.query("type == 1").filter(items=["matter", "matter_count"])
-        m.set_data("その他", formatter.df_rename(work_df, kind=2), StyleOptions())
+        m.set_data(formatter.df_rename(work_df, kind=2), StyleOptions(title="その他"))
 
     # 戦績
     if g.params.get("game_results"):
         if g.params.get("verbose"):
-            m.set_data("戦績", get_results_details(mapping_dict), StyleOptions())
+            m.set_data(get_results_details(mapping_dict), StyleOptions(title="戦績"))
         else:
-            m.set_data("戦績", get_results_simple(mapping_dict), StyleOptions())
+            m.set_data(get_results_simple(mapping_dict), StyleOptions(title="戦績"))
 
     if g.params.get("versus_matrix"):
-        m.set_data("対戦結果", get_versus_matrix(mapping_dict), StyleOptions())
+        m.set_data(get_versus_matrix(mapping_dict), StyleOptions(title="対戦結果"))
 
     # 非表示項目を除外
-    m.post.message = [d for d in m.post.message if next(iter(d.keys())) not in g.cfg.dropitems.results]
+    m.post.message = [(data, options) for data, options in m.post.message if options.title not in g.cfg.dropitems.results]
 
     m.post.headline = {title: message_build(msg_data)}
 
@@ -290,6 +290,7 @@ def comparison(m: "MessageParserProtocol"):
 
     # 出力
     options: StyleOptions = StyleOptions(
+        title=title,
         base_name=title,
         show_index=True,
         codeblock=True,
@@ -306,7 +307,7 @@ def comparison(m: "MessageParserProtocol"):
             options.key_title = False
             data = df.T
 
-    m.set_data(title, data, options)
+    m.set_data(data, options)
     m.post.thread = True
 
 

@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 
     import pandas as pd  # noqa: F401
 
-    from libs.types import MessageType, MessageTypeDict, StyleOptions
+    from libs.types import MessageType, StyleOptions
 
 
 class MessageStatus(StrEnum):
@@ -122,7 +122,7 @@ class PostData(DataMixin):
 
     headline: dict[str, str] = field(default_factory=dict)
     """ヘッダ文"""
-    message: list[dict[str, "MessageTypeDict"]] = field(default_factory=list)
+    message: list[tuple["MessageType", "StyleOptions"]] = field(default_factory=list)
     """本文
     識別子(タイトルなど)をキーにした辞書型
     """
@@ -225,7 +225,7 @@ class MessageParserProtocol(Protocol):
     def ignore_user(self) -> bool:
         """コマンドを拒否するユーザか判定"""
 
-    def set_data(self, title: str, data: "MessageType", options: "StyleOptions"):
+    def set_data(self, data: "MessageType", options: "StyleOptions"):
         """メッセージデータをセット"""
 
     def get_remarks(self, keyword: str) -> list:

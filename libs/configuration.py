@@ -314,38 +314,38 @@ def register():
         m.post.thread_title = "ヘルプメッセージ"
 
     def dispatch_download(m: "MessageParserProtocol"):
-        m.set_data("成績記録DB", g.cfg.setting.database_file, StyleOptions())
+        m.set_data(g.cfg.setting.database_file, StyleOptions(title="成績記録DB"))
 
     def dispatch_members_list(m: "MessageParserProtocol"):
-        m.set_data("登録済みメンバー", compose.msg_print.get_members_list(), StyleOptions(codeblock=True))
+        m.set_data(compose.msg_print.get_members_list(), StyleOptions(title="登録済みメンバー", codeblock=True))
         m.post.ts = m.data.event_ts
         m.post.thread_title = "登録済みメンバー"
 
     def dispatch_team_list(m: "MessageParserProtocol"):
-        m.set_data("登録済みチーム", compose.msg_print.get_team_list(), StyleOptions(codeblock=True))
+        m.set_data(compose.msg_print.get_team_list(), StyleOptions(title="登録済みチーム", codeblock=True))
         m.post.ts = m.data.event_ts
         m.post.thread_title = "登録済みチーム"
 
     def dispatch_member_append(m: "MessageParserProtocol"):
-        m.set_data("メンバー追加", member.append(m.argument), StyleOptions(key_title=False))
+        m.set_data(member.append(m.argument), StyleOptions(title="メンバー追加", key_title=False))
 
     def dispatch_member_remove(m: "MessageParserProtocol"):
-        m.set_data("メンバー削除", member.remove(m.argument), StyleOptions(key_title=False))
+        m.set_data(member.remove(m.argument), StyleOptions(title="メンバー削除", key_title=False))
 
     def dispatch_team_create(m: "MessageParserProtocol"):
-        m.set_data("チーム作成", team.create(m.argument), StyleOptions(key_title=False))
+        m.set_data(team.create(m.argument), StyleOptions(title="チーム作成", key_title=False))
 
     def dispatch_team_delete(m: "MessageParserProtocol"):
-        m.set_data("チーム削除", team.delete(m.argument), StyleOptions(key_title=False))
+        m.set_data(team.delete(m.argument), StyleOptions(title="チーム削除", key_title=False))
 
     def dispatch_team_append(m: "MessageParserProtocol"):
-        m.set_data("チーム所属", team.append(m.argument), StyleOptions(key_title=False))
+        m.set_data(team.append(m.argument), StyleOptions(title="チーム所属", key_title=False))
 
     def dispatch_team_remove(m: "MessageParserProtocol"):
-        m.set_data("チーム脱退", team.remove(m.argument), StyleOptions(key_title=False))
+        m.set_data(team.remove(m.argument), StyleOptions(title="チーム脱退", key_title=False))
 
     def dispatch_team_clear(m: "MessageParserProtocol"):
-        m.set_data("全チーム削除", team.clear(), StyleOptions(key_title=False))
+        m.set_data(team.clear(), StyleOptions(title="全チーム削除", key_title=False))
 
     dispatch_table: dict = {
         "results": libs.commands.results.entry.main,

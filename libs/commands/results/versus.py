@@ -90,9 +90,9 @@ def aggregation(m: "MessageParserProtocol"):
     # 結果
     if len(game_result):
         for k, v in game_result.items():
-            m.set_data(k, v, StyleOptions())
+            m.set_data(v, StyleOptions(title=k))
     else:
-        m.set_data("", "対戦記録が見つかりません。", StyleOptions(key_title=False))
+        m.set_data("対戦記録が見つかりません。", StyleOptions(title="対戦記録が見つかりません。", key_title=False))
         m.status.result = False
         return
 
@@ -134,27 +134,11 @@ def aggregation(m: "MessageParserProtocol"):
 
     match str(g.params.get("format", "default")).lower():
         case "csv":
-            m.set_data(
-                "対戦結果",
-                converter.save_output(df_data, StyleOptions(format_type="csv", base_name="result")),
-                StyleOptions(),
-            )
-            m.set_data(
-                "成績",
-                converter.save_output(df_vs2, StyleOptions(format_type="csv", base_name="versus")),
-                StyleOptions(),
-            )
+            m.set_data(converter.save_output(df_data, StyleOptions(format_type="csv", base_name="result")), StyleOptions(title="対戦結果"))
+            m.set_data(converter.save_output(df_vs2, StyleOptions(format_type="csv", base_name="versus")), StyleOptions(title="成績"))
         case "text" | "txt":
-            m.set_data(
-                "対戦結果",
-                converter.save_output(df_data, StyleOptions(format_type="txt", base_name="result")),
-                StyleOptions(),
-            )
-            m.set_data(
-                "成績",
-                converter.save_output(df_vs2, StyleOptions(format_type="txt", base_name="versus")),
-                StyleOptions(),
-            )
+            m.set_data(converter.save_output(df_data, StyleOptions(format_type="txt", base_name="result")), StyleOptions(title="対戦結果"))
+            m.set_data(converter.save_output(df_vs2, StyleOptions(format_type="txt", base_name="versus")), StyleOptions(title="成績"))
         case _:
             pass
 

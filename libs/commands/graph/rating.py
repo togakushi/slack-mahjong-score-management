@@ -78,11 +78,7 @@ def plot(m: "MessageParserProtocol"):
         case "plotly":
             save_file = _graph_generation_plotly(game_info, df_sorted, "rating.html")
 
-    m.set_data(
-        title,
-        save_file,
-        StyleOptions(use_comment=True, header_hidden=True, key_title=False),
-    )
+    m.set_data(save_file, StyleOptions(title=title, use_comment=True, header_hidden=True, key_title=False))
 
 
 def _graph_generation(game_info: GameInfo, df: "pd.DataFrame", filename: str) -> "Path":

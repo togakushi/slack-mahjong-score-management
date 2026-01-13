@@ -12,7 +12,7 @@ from typing import TYPE_CHECKING, Any, Generic, Literal, Optional, Type, TypeVar
 import pandas as pd
 
 from integrations.protocols import MsgData, PostData, StatusData
-from libs.types import MessageTypeDict, StyleOptions
+from libs.types import StyleOptions
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -163,7 +163,6 @@ class MessageParserDataMixin:
 
     def set_data(
         self,
-        title: str,
         data: "MessageType",
         options: StyleOptions,
     ):
@@ -179,11 +178,7 @@ class MessageParserDataMixin:
         if isinstance(data, NoneType) or (isinstance(data, pd.DataFrame) and data.empty):
             return
 
-        msg = MessageTypeDict(
-            data=data,
-            options=options,
-        )
-        self.post.message.append({title: msg})
+        self.post.message.append((data, options))
 
     def get_remarks(self, keyword: str) -> list:
         """textからメモを抽出する

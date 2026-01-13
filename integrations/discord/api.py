@@ -16,7 +16,6 @@ from cls.timekit import Delimiter, Format
 from cls.timekit import ExtendedDatetime as ExtDt
 from integrations.base.interface import APIInterface
 from integrations.protocols import CommandType
-from libs.types import StyleOptions
 from libs.utils import converter, formatter, textutil
 
 sys.modules["audioop"] = _audioop
@@ -73,10 +72,10 @@ class AdapterAPI(APIInterface):
             text_data = iter(data.values())
             # 先頭ブロックの処理(ヘッダ追加)
             v = next(text_data)
-            ret_list.append(f"{header}```\n{v}\n```\n" if style.codeblock else f"{header}{v}\n")
+            ret_list.append(f"{header}```\n{v}\n```\n" if options.codeblock else f"{header}{v}\n")
             # 残りのブロック
             for v in text_data:
-                ret_list.append(f"```\n{v}\n```\n" if style.codeblock else f"```\n{v}\n```\n")
+                ret_list.append(f"```\n{v}\n```\n" if options.codeblock else f"```\n{v}\n```\n")
             return ret_list
 
         if not m.in_thread:
@@ -85,7 +84,6 @@ class AdapterAPI(APIInterface):
         # 見出しポスト
         header_title = ""
         header_text = ""
-        thread_msg: Optional["Message"] = None
 
         if m.post.headline:
             header_title, header_text = next(iter(m.post.headline.items()))
@@ -93,7 +91,7 @@ class AdapterAPI(APIInterface):
             if not m.post.message:
                 thread_msg = await self.response.reply(f"{_header_text(header_title)}{header_text.rstrip()}")
                 m.post.thread = True
-            elif not all(v["options"].header_hidden for x in m.post.message for _, v in x.items()):
+            elif not all(options.header_hidden for _, options in m.post.message):
                 thread_msg = await self.response.reply(f"{_header_text(header_title)}{header_text.rstrip()}")
                 m.post.thread = True
         elif m.post.thread_title:
@@ -102,60 +100,56 @@ class AdapterAPI(APIInterface):
 
         # 本文
         post_msg: list[str] = []
-        style = StyleOptions()
-        for data in m.post.message:
-            for title, val in data.items():
-                msg = val.get("data")
-                style = val.get("options", StyleOptions())
-                header = ""
+        for data, options in m.post.message:
+            header = ""
 
-                if isinstance(msg, PosixPath) and msg.exists():
-                    comment = textwrap.dedent(f"{_header_text(header_title)}{header_text.rstrip()}") if style.use_comment else ""
-                    file = self.discord_file(
-                        str(msg),
-                        description=comment,
-                    )
-                    asyncio.create_task(self.response.channel.send(file=file))
+            if isinstance(data, PosixPath) and data.exists():
+                comment = textwrap.dedent(f"{_header_text(header_title)}{header_text.rstrip()}") if options.use_comment else ""
+                file = self.discord_file(
+                    str(data),
+                    description=comment,
+                )
+                asyncio.create_task(self.response.channel.send(file=file))
 
-                if isinstance(msg, str):
-                    if style.key_title and (title != header_title):
-                        header = _header_text(title)
+            if isinstance(data, str):
+                if options.key_title and (options.title != header_title):
+                    header = _header_text(options.title)
 
-                    message_text = msg.rstrip().replace("<@>", f"<@{self.response.author.id}>")
-                    post_msg.append(f"{header}```\n{message_text}\n```\n" if style.codeblock else f"{header}{message_text}\n")
+                message_text = data.rstrip().replace("<@>", f"<@{self.response.author.id}>")
+                post_msg.append(f"{header}```\n{message_text}\n```\n" if options.codeblock else f"{header}{message_text}\n")
 
-                if isinstance(msg, pd.DataFrame):
-                    if style.key_title and (title != header_title):
-                        header = _header_text(title)
-                    match m.status.command_type:
-                        case CommandType.RESULTS:
-                            match title:
-                                case "通算ポイント" | "ポイント差分":
-                                    post_msg.extend(_table_data(converter.df_to_text_table(msg, step=40)))
-                                case "役満和了" | "卓外清算" | "その他":
-                                    if "回数" in msg.columns:
-                                        post_msg.extend(_table_data(converter.df_to_count(msg, title, 1)))
-                                    else:
-                                        post_msg.extend(_table_data(converter.df_to_remarks(msg)))
-                                case "成績詳細比較":
-                                    post_msg.extend(_table_data(converter.df_to_text_table2(msg, style, 2000)))
-                                case "座席データ":
-                                    post_msg.extend(_table_data(converter.df_to_seat_data(msg, 1)))
-                                case "戦績":
-                                    if "東家 名前" in msg.columns:  # 縦持ちデータ
-                                        post_msg.extend(_table_data(converter.df_to_results_details(msg)))
-                                    else:
-                                        post_msg.extend(_table_data(converter.df_to_results_simple(msg)))
-                                case _:
-                                    post_msg.extend(_table_data(converter.df_to_remarks(msg)))
-                        case CommandType.RATING:
-                            post_msg.extend(_table_data(converter.df_to_text_table(msg, step=20)))
-                        case CommandType.RANKING:
-                            post_msg.extend(_table_data(converter.df_to_ranking(msg, title, step=0)))
-                        case _:
-                            pass
+            if isinstance(data, pd.DataFrame):
+                if options.key_title and (options.title != header_title):
+                    header = _header_text(options.title)
+                match m.status.command_type:
+                    case CommandType.RESULTS:
+                        match options.title:
+                            case "通算ポイント" | "ポイント差分":
+                                post_msg.extend(_table_data(converter.df_to_text_table(data, step=40)))
+                            case "役満和了" | "卓外清算" | "その他":
+                                if "回数" in data.columns:
+                                    post_msg.extend(_table_data(converter.df_to_count(data, options.title, 1)))
+                                else:
+                                    post_msg.extend(_table_data(converter.df_to_remarks(data)))
+                            case "成績詳細比較":
+                                post_msg.extend(_table_data(converter.df_to_text_table2(data, options, 2000)))
+                            case "座席データ":
+                                post_msg.extend(_table_data(converter.df_to_seat_data(data, 1)))
+                            case "戦績":
+                                if "東家 名前" in data.columns:  # 縦持ちデータ
+                                    post_msg.extend(_table_data(converter.df_to_results_details(data)))
+                                else:
+                                    post_msg.extend(_table_data(converter.df_to_results_simple(data)))
+                            case _:
+                                post_msg.extend(_table_data(converter.df_to_remarks(data)))
+                    case CommandType.RATING:
+                        post_msg.extend(_table_data(converter.df_to_text_table(data, step=20)))
+                    case CommandType.RANKING:
+                        post_msg.extend(_table_data(converter.df_to_ranking(data, options.title, step=0)))
+                    case _:
+                        pass
 
-        if style.summarize:
+        if options.summarize:
             if m.status.command_type == CommandType.RANKING:
                 post_msg = textutil.split_text_blocks("".join(post_msg), 1900)
             else:
@@ -186,25 +180,20 @@ class AdapterAPI(APIInterface):
 
         self.response = cast("ApplicationContext", self.response)
 
-        style = StyleOptions()
-        for data in m.post.message:
-            for _, val in data.items():
-                msg = val.get("data")
-                style = val.get("options", StyleOptions())
-
-            if isinstance(msg, PosixPath) and msg.exists():
-                file = self.discord_file(str(msg))
+        for data, options in m.post.message:
+            if isinstance(data, PosixPath) and data.exists():
+                file = self.discord_file(str(data))
                 await self.response.send(file=file)
 
-            if isinstance(msg, str):
-                if style.codeblock:
-                    msg = f"```\n{msg}\n```"
-                await self.response.respond(msg)
+            if isinstance(data, str):
+                if options.codeblock:
+                    data = f"```\n{data}\n```"
+                await self.response.respond(data)
 
-            if isinstance(msg, pd.DataFrame):
+            if isinstance(data, pd.DataFrame):
                 output = table2ascii(
-                    header=msg.columns.to_list(),
-                    body=msg.to_dict(orient="split")["data"],
+                    header=data.columns.to_list(),
+                    body=data.to_dict(orient="split")["data"],
                     style=PresetStyle.ascii_borderless,
                 )
                 await self.response.respond(f"```\n{output}\n```")

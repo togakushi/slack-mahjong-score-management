@@ -62,17 +62,16 @@ def plot(m: "MessageParserProtocol"):
 
     m.post.headline = {title_text: message.header(game_info, m)}
     m.set_data(
-        "個人成績",
         formatter.df_rename(df.drop(columns=["count", "name"]), False),
-        StyleOptions(header_hidden=True, key_title=False),
+        StyleOptions(title="個人成績", header_hidden=True, key_title=False),
     )
 
     # --- グラフ生成
     graphutil.setup()
     match g.adapter.conf.plotting_backend:
         case "plotly":
-            m.set_data("通算ポイント", plotly_point(df, title_range, total_game_count), StyleOptions())
-            m.set_data("獲得順位", plotly_rank(df, title_range, total_game_count), StyleOptions())
+            m.set_data(plotly_point(df, title_range, total_game_count), StyleOptions(title="通算ポイント"))
+            m.set_data(plotly_rank(df, title_range, total_game_count), StyleOptions(title="獲得順位"))
         case "matplotlib":
             save_file = textutil.save_file_path("graph.png")
             fig = plt.figure(figsize=(12, 8))
@@ -121,11 +120,7 @@ def plot(m: "MessageParserProtocol"):
             rank_ax.axhline(y=(1 + g.params.get("mode", 4)) / 2, linewidth=0.5, ls="dashed", color="grey")
 
             plt.savefig(save_file, bbox_inches="tight")
-            m.set_data(
-                f"『{player}』の成績",
-                save_file,
-                StyleOptions(use_comment=True, header_hidden=True, key_title=False),
-            )
+            m.set_data(save_file, StyleOptions(title=f"『{player}』の成績", use_comment=True, header_hidden=True, key_title=False))
 
 
 def statistics_plot(m: "MessageParserProtocol"):
@@ -246,11 +241,11 @@ def statistics_plot(m: "MessageParserProtocol"):
     graphutil.setup()
     match g.adapter.conf.plotting_backend:
         case "plotly":
-            m.set_data("順位/ポイント情報", count_df, StyleOptions(show_index=True))
-            m.set_data("通算ポイント", plotly_line("通算ポイント推移", point_df), StyleOptions())
-            m.set_data("順位分布", plotly_bar("順位分布", count_df.drop(index=["全区間"])), StyleOptions())
-            m.set_data("素点情報", stats_df, StyleOptions(show_index=True))
-            m.set_data("素点分布", plotly_box("素点分布", rpoint_df), StyleOptions())
+            m.set_data(count_df, StyleOptions(title="順位/ポイント情報", show_index=True))
+            m.set_data(plotly_line("通算ポイント推移", point_df), StyleOptions(title="通算ポイント"))
+            m.set_data(plotly_bar("順位分布", count_df.drop(index=["全区間"])), StyleOptions(title="順位分布"))
+            m.set_data(stats_df, StyleOptions(title="素点情報", show_index=True))
+            m.set_data(plotly_box("素点分布", rpoint_df), StyleOptions(title="素点分布"))
         case "matplotlib":
             fig = plt.figure(figsize=(20, 10))
             fig.suptitle(title_text, size=20, weight="bold")
@@ -280,7 +275,7 @@ def statistics_plot(m: "MessageParserProtocol"):
             save_file = textutil.save_file_path("graph.png")
             plt.savefig(save_file, bbox_inches="tight")
 
-            m.set_data("個人成績", save_file, StyleOptions(use_comment=True, header_hidden=True))
+            m.set_data(save_file, StyleOptions(title="個人成績", use_comment=True, header_hidden=True))
 
 
 def get_data(df: pd.Series, interval: int) -> pd.DataFrame:
