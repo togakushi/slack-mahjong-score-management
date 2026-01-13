@@ -164,9 +164,12 @@ def test_download(config, keyword, monkeypatch):
 
         mock_set_data.assert_called_once()
         # 引数の検証
-        assert mock_set_data.call_args[0][0] == g.cfg.setting.database_file
-        assert isinstance(mock_set_data.call_args[0][1], StyleOptions)
-        assert cast(StyleOptions, mock_set_data.call_args[0][1]).title == "成績記録DB"
+        contents = mock_set_data.call_args[0][0]
+        options = mock_set_data.call_args[0][1]
+
+        assert contents == g.cfg.setting.database_file
+        assert isinstance(options, StyleOptions)
+        assert options.title == "成績記録DB"
 
 
 @pytest.mark.parametrize(

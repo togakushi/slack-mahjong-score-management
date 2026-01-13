@@ -6,7 +6,7 @@ import asyncio
 import sys
 import textwrap
 from pathlib import PosixPath
-from typing import TYPE_CHECKING, Optional, Union, cast
+from typing import TYPE_CHECKING, Union, cast
 
 import pandas as pd
 from table2ascii import PresetStyle, table2ascii
