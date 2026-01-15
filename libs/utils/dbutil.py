@@ -61,6 +61,7 @@ def query(keyword: str) -> str:
         "CREATE_VIEW_REGULATIONS": "view/regulations.sql",
         # 情報取得
         "GAME_INFO": "game.info.sql",
+        "RESULTS_INFO": "results.info.sql",
         "MEMBER_INFO": "member.info.sql",
         "TEAM_INFO": "team.info.sql",
         "REMARKS_INFO": "remarks.info.sql",
