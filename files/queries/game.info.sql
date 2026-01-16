@@ -1,45 +1,32 @@
 -- game.info
-with game_data as (
-    select
-        game_info.playtime as playtime,
-        --[group_length] substr(game_info.comment, 1, :group_length) as comment,
-        --[not_group_length] game_info.comment as comment,
-        individual_results.name as name,
-        individual_results.team as team
-    from
-        game_info
-    join individual_results on
-        individual_results.playtime = game_info.playtime
+with target_data as (
+	select
+        *
+    from (
+        select
+            *,
+            sum(guest) over (partition by playtime) as guest_count,
+            count() over (partition by playtime, team) as same_team
+        from
+            individual_results
+    )
     where
-        individual_results.mode = :mode
-        and game_info.rule_version in (<<rule_list>>)
-        and game_info.playtime between :starttime and :endtime
-        --[separate] and game_info.source = :source
+        mode = :mode
+        and rule_version in (<<rule_list>>)
+        and playtime between :starttime and :endtime
+        --[separate] and source = :source
         --[individual] --[guest_not_skip] and guest_count <= 1 -- ゲストあり(2ゲスト戦除外)
-        --[friendly_fire] and same_team = 0
-        --[search_word] and game_info.comment like :search_word
-    order by
-        game_info.playtime asc
+        --[friendly_fire] and same_team != 0
+        --[search_word] and comment like :search_word
 )
-select
-    game_count as count,
-    first_game, last_game,
-    first_comment, last_comment,
-    unique_name, unique_team
-from (
-    select
-        dense_rank() over(order by playtime, name, team) as no,
-        (select count(distinct playtime) from game_data) as game_count,
-        first_value(playtime) over(order by playtime asc) as first_game,
-        last_value(playtime) over(order by playtime desc) as last_game,
-        first_value(comment) over(order by playtime asc) as first_comment,
-        last_value(comment) over(order by playtime desc) as last_comment,
-        (select count(distinct name) from game_data) as unique_name,
-        (select count(distinct team) from game_data) as unique_team
-    from
-        game_data
-)
-order by
-    no desc
-limit 1
+select distinct
+	(select count(distinct playtime) from target_data) as count,
+	first_value(playtime) over (order by playtime rows between unbounded preceding and unbounded following) as first_game,
+	last_value(playtime) over (order by playtime rows between unbounded preceding and unbounded following) as last_game,
+	first_value(comment) over (order by playtime rows between unbounded preceding and unbounded following) as first_comment,
+	last_value(comment) over (order by playtime rows between unbounded preceding and unbounded following) as last_comment,
+	(select count(distinct name) from target_data) as unique_name,
+	(select count(distinct team) from target_data) as unique_team
+from
+	target_data
 ;
