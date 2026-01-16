@@ -34,6 +34,12 @@ def execute(sql: str, params: dict = {}) -> list[dict[str, Any]]:
     ret: list[dict[str, Any]] = []
     sql = dbutil.query_modification(sql)
 
+    params.update(
+        **params.get("rule_set", {}),
+        **params.get("player_list", {}),
+        **params.get("competition_list", {}),
+    )
+
     if g.args.verbose & 0x01:
         print(f">>> {params=}")
         print(f">>> SQL -> {g.cfg.setting.database_file}\n{named_query(sql, params)}")
