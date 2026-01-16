@@ -157,8 +157,12 @@ class RuleSet:
             if self.data_set(section_name, mode=int(rule.get("mode", 4))):  # type: ignore
                 self.data[section_name].update(rule)
 
-    def status_update(self):
-        """ステータス更新"""
+    def status_update(self, params: dict):
+        """ステータス更新
+
+        Args:
+            params (dict): プレースホルダ
+        """
 
         # ステータスリセット
         for rule_version in self.rule_list:
@@ -179,7 +183,8 @@ class RuleSet:
             group by
                 rule_version
             ;
-            """
+            """,
+            params,
         )
 
         # ステータス更新

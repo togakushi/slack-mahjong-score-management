@@ -19,11 +19,12 @@ if TYPE_CHECKING:
     from cls.timekit import ExtendedDatetime as ExtDt
 
 
-def execute(sql: str) -> list[dict[str, Any]]:
+def execute(sql: str, params: dict = {}) -> list[dict[str, Any]]:
     """クエリ実行
 
     Args:
         sql (str): 実行クエリ
+        params (dict): プレースホルダ
 
     Returns:
         list[dict[str, Any]]: 実行結果
@@ -33,15 +34,16 @@ def execute(sql: str) -> list[dict[str, Any]]:
     sql = dbutil.query_modification(sql)
 
     if g.args.verbose & 0x01:
-        print(f">>> {g.params=}")
+        print(f">>> {params=}")
         print(f">>> SQL -> {g.cfg.setting.database_file}\n{named_query(sql)}")
 
     with closing(dbutil.connection(g.cfg.setting.database_file)) as conn:
         try:
-            rows = conn.execute(sql, g.params)
+            rows = conn.execute(sql, params)
+            conn.commit()
         except sqlite3.OperationalError as err:
             logging.error("OperationalError: %s", err)
-            logging.error("params=%s", g.params)
+            logging.error("params=%s", params)
             logging.error("query: %s", named_query(sql))
             return ret
 
@@ -81,6 +83,8 @@ def read_data(keyword: str) -> pd.DataFrame:
             sql=sql,
             con=dbutil.connection(g.cfg.setting.database_file),
             params={
+                "origin_point": 250,
+                "return_point": 300,
                 **cast(dict, g.params),
                 **g.params.get("rule_set", {}),
                 **g.params.get("player_list", {}),

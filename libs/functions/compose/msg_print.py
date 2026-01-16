@@ -3,7 +3,7 @@ libs/functions/compose/msg_help.py
 """
 
 import textwrap
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 from table2ascii import Alignment, PresetStyle, table2ascii
 
@@ -29,7 +29,7 @@ def help_message(m: "MessageParserProtocol"):
             "separate": g.cfg.resolve_separate_flag(m.status.source),
         }
     )
-    g.cfg.rule.status_update()
+    g.cfg.rule.status_update(cast(dict, g.params))
 
     m.set_data(
         "使い方：<呼び出しキーワード> [検索範囲] [対象メンバー] [オプション]",
