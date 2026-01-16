@@ -68,14 +68,14 @@ select
         ifnull(sum(yakuman_count), 0)
     ) as 'yakuman_rate-count',
     -- 収支
-    round((avg(rpoint * 100) - :origin_point * 100), 1) as '平均収支',
-    round((avg(rpoint * 100) - :return_point * 100), 1) as '平均収支2',
-    ifnull(round(avg(case when rank <= 2  then rpoint * 100 else null end) - :origin_point * 100, 1), 0) as '連対収支',
-    ifnull(round(avg(case when rank >= 3 then rpoint * 100 else null end) - :origin_point * 100, 1), 0) as '逆連対収支',
-    ifnull(round(avg(case when rank = 1 then rpoint * 100  else null end) - :origin_point * 100, 1), 0) as 'rank1_balance',
-    ifnull(round(avg(case when rank = 2 then rpoint * 100  else null end) - :origin_point * 100, 1), 0) as 'rank2_balance',
-    ifnull(round(avg(case when rank = 3 then rpoint * 100  else null end) - :origin_point * 100, 1), 0) as 'rank3_balance',
-    ifnull(round(avg(case when rank = 4 then rpoint * 100  else null end) - :origin_point * 100, 1), 0) as 'rank4_balance',
+    round((avg(rpoint * 100) - origin_point * 100), 1) as '平均収支',
+    round((avg(rpoint * 100) - return_point * 100), 1) as '平均収支2',
+    ifnull(round(avg(case when rank <= 2  then rpoint * 100 else null end) - origin_point * 100, 1), 0) as '連対収支',
+    ifnull(round(avg(case when rank >= 3 then rpoint * 100 else null end) - origin_point * 100, 1), 0) as '逆連対収支',
+    ifnull(round(avg(case when rank = 1 then rpoint * 100  else null end) - origin_point * 100, 1), 0) as 'rank1_balance',
+    ifnull(round(avg(case when rank = 2 then rpoint * 100  else null end) - origin_point * 100, 1), 0) as 'rank2_balance',
+    ifnull(round(avg(case when rank = 3 then rpoint * 100  else null end) - origin_point * 100, 1), 0) as 'rank3_balance',
+    ifnull(round(avg(case when rank = 4 then rpoint * 100  else null end) - origin_point * 100, 1), 0) as 'rank4_balance',
     count(rank <= 2 or null) as '連対',
     round(cast(count(rank <= 2 or null) as real) / count() * 100, 2) as '連対率',
     printf("%.2f%%(%d)",
@@ -191,11 +191,17 @@ from (
         seat,
         yakuman,
         ifnull(count, 0) as yakuman_count,
-        results.mode
+        results.mode,
+        origin_point,
+        return_point
     from
         individual_results as results
-    join game_info on
-        game_info.ts = results.ts
+    join game_info
+        on
+            game_info.ts = results.ts
+    join rule
+        on
+            results.rule_version = rule.rule_version
     left join regulations as yakuman
         on
             yakuman.type = 0

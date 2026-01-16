@@ -83,8 +83,6 @@ def read_data(keyword: str) -> pd.DataFrame:
             sql=sql,
             con=dbutil.connection(g.cfg.setting.database_file),
             params={
-                "origin_point": 250,
-                "return_point": 300,
                 **cast(dict, g.params),
                 **g.params.get("rule_set", {}),
                 **g.params.get("player_list", {}),
