@@ -372,6 +372,26 @@ class RuleSet:
             logging.critical("%s", err)
             sys.exit(1)
 
+    def register_to_database(self):
+        """ルールセット情報をDBに登録する"""
+
+        loader.execute("delete from rule;")
+        for rule in self.rule_list:
+            params = self.to_dict(rule)
+            params.update(rank_point=" ".join(map(str, params["rank_point"])))
+            loader.execute(
+                """
+                insert into
+                rule (
+                    rule_version, mode, origin_point, return_point, rank_point, ignore_flying, draw_split
+                ) values (
+                    :rule_version, :mode, :origin_point, :return_point, :rank_point, :ignore_flying, :draw_split
+                )
+                ;
+                """,
+                params,
+            )
+
     @property
     def rule_list(self) -> list[str]:
         """定義済みルールセットの列挙
