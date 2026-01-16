@@ -1,6 +1,6 @@
 -- game.info
 with target_data as (
-	select
+    select
         *
     from (
         select
@@ -20,13 +20,13 @@ with target_data as (
         --[search_word] and comment like :search_word
 )
 select distinct
-	(select count(distinct playtime) from target_data) as count,
-	first_value(playtime) over (order by playtime rows between unbounded preceding and unbounded following) as first_game,
-	last_value(playtime) over (order by playtime rows between unbounded preceding and unbounded following) as last_game,
-	first_value(comment) over (order by playtime rows between unbounded preceding and unbounded following) as first_comment,
-	last_value(comment) over (order by playtime rows between unbounded preceding and unbounded following) as last_comment,
-	(select count(distinct name) from target_data) as unique_name,
-	(select count(distinct team) from target_data) as unique_team
+    (select count(distinct playtime) from target_data) as count,
+    first_value(playtime) over (order by playtime rows between unbounded preceding and unbounded following) as first_game,
+    last_value(playtime) over (order by playtime rows between unbounded preceding and unbounded following) as last_game,
+    first_value(comment) over (order by playtime rows between unbounded preceding and unbounded following) as first_comment,
+    last_value(comment) over (order by playtime rows between unbounded preceding and unbounded following) as last_comment,
+    (select count(distinct name) from target_data) as unique_name,
+    (select count(distinct team) from target_data) as unique_team
 from
-	target_data
+    target_data
 ;
