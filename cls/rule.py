@@ -386,8 +386,7 @@ class RuleSet:
                     rule_version, mode, origin_point, return_point, rank_point, ignore_flying, draw_split
                 ) values (
                     :rule_version, :mode, :origin_point, :return_point, :rank_point, :ignore_flying, :draw_split
-                )
-                ;
+                );
                 """,
                 params,
             )
