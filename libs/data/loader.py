@@ -5,6 +5,7 @@ libs/data/loader.py
 import logging
 import re
 import sqlite3
+import textwrap
 from contextlib import closing
 from datetime import datetime
 from typing import TYPE_CHECKING, Any, cast
@@ -35,16 +36,17 @@ def execute(sql: str, params: dict = {}) -> list[dict[str, Any]]:
 
     if g.args.verbose & 0x01:
         print(f">>> {params=}")
-        print(f">>> SQL -> {g.cfg.setting.database_file}\n{named_query(sql)}")
+        print(f">>> SQL -> {g.cfg.setting.database_file}\n{named_query(sql, params)}")
 
     with closing(dbutil.connection(g.cfg.setting.database_file)) as conn:
         try:
             rows = conn.execute(sql, params)
-            conn.commit()
+            if conn.total_changes:
+                conn.commit()
         except sqlite3.OperationalError as err:
             logging.error("OperationalError: %s", err)
             logging.error("params=%s", params)
-            logging.error("query: %s", named_query(sql))
+            logging.error("query: %s", named_query(sql, params))
             return ret
 
         for row in rows.fetchall():
@@ -76,7 +78,7 @@ def read_data(keyword: str) -> pd.DataFrame:
 
     if g.args.verbose & 0x01:
         print(f">>> {g.params=}")
-        print(f">>> SQL: {keyword} -> {g.cfg.setting.database_file}\n{named_query(sql)}")
+        print(f">>> SQL: {keyword} -> {g.cfg.setting.database_file}\n{named_query(sql, cast(dict, g.params))}")
 
     try:
         df = pd.read_sql(
@@ -93,7 +95,7 @@ def read_data(keyword: str) -> pd.DataFrame:
         logging.error("DatabaseError: %s", err)
         logging.error("SQL: %s, DATABASE: %s", keyword, g.cfg.setting.database_file)
         logging.error("params=%s", g.params)
-        logging.error("query: %s", named_query(sql))
+        logging.error("query: %s", named_query(sql, cast(dict, g.params)))
 
     if g.args.verbose & 0x02:
         print("=" * 80)
@@ -102,17 +104,17 @@ def read_data(keyword: str) -> pd.DataFrame:
     return df
 
 
-def named_query(query: str) -> str:
+def named_query(query: str, params: dict) -> str:
     """クエリにパラメータをバインドして返す
 
     Args:
         query (str): SQL
+        params (dict): プレースホルダ
 
     Returns:
         str: バインド済みSQL
     """
 
-    params: dict = cast(dict, g.params.copy())
     params.update(
         **g.params.get("rule_set", {}),
         **g.params.get("player_list", {}),
@@ -123,4 +125,4 @@ def named_query(query: str) -> str:
         if isinstance(v, datetime):
             params[k] = v.strftime("%Y-%m-%d %H:%M:%S")
 
-    return re.sub(r":(\w+)", lambda m: repr(params.get(m.group(1), m.group(0))), query)
+    return textwrap.dedent(re.sub(r":(\w+)", lambda m: repr(params.get(m.group(1), m.group(0))), query)).strip()
