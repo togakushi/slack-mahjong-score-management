@@ -17,7 +17,7 @@ import libs.commands.results.entry
 import libs.global_value as g
 from cls.config import AppConfig
 from integrations import factory
-from libs.data import initialization, lookup
+from libs.data import initialization, loader, lookup
 from libs.functions import compose
 from libs.registry import member, team
 from libs.types import Args, StyleOptions
@@ -291,7 +291,24 @@ def setup(init_db: bool = True):
         else:
             g.cfg.rule.keyword_mapping = {"終局": g.cfg.mahjong.rule_version}
 
-    g.cfg.rule.status_update()
+    loader.execute("delete from rule;")
+    for rule in g.cfg.rule.rule_list:
+        params = g.cfg.rule.to_dict(rule)
+        params.update(rank_point=" ".join(map(str, params["rank_point"])))
+        loader.execute(
+            """
+            insert into
+            rule (
+                rule_version, mode, origin_point, return_point, rank_point, ignore_flying, draw_split
+            ) values (
+                :rule_version, :mode, :origin_point, :return_point, :rank_point, :ignore_flying, :draw_split
+            )
+            ;
+            """,
+            params,
+        )
+
+    g.cfg.rule.status_update(cast(dict, g.params))
     g.cfg.rule.info()
 
     g.cfg.initialization()

@@ -54,6 +54,7 @@ def query(keyword: str) -> str:
         "CREATE_TABLE_RESULT": "table/result.sql",
         "CREATE_TABLE_REMARKS": "table/remarks.sql",
         "CREATE_TABLE_WORDS": "table/words.sql",
+        "CREATE_TABLE_RULE": "table/rule.sql",
         # VIEW作成
         "CREATE_VIEW_INDIVIDUAL_RESULTS": "view/individual_results.sql",
         "CREATE_VIEW_GAME_RESULTS": "view/game_results.sql",
