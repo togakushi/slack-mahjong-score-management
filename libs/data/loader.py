@@ -65,25 +65,29 @@ def execute(sql: str, params: dict = {}) -> list[dict[str, Any]]:
     return ret
 
 
-def read_data(keyword: str) -> pd.DataFrame:
+def read_data(keyword: str, params: dict = {}) -> pd.DataFrame:
     """データベースからデータを取得する
 
     Args:
         keyword (str): SQL選択キーワード
+        params (dict): プレースホルダ
 
     Returns:
         pd.DataFrame: 集計結果
     """
 
+    if not params:
+        params = cast(dict, g.params)
+
     sql = dbutil.query_modification(dbutil.query(keyword))
 
-    if starttime := g.params.get("starttime"):
-        g.params.update({"starttime": cast("ExtDt", starttime).format(Format.SQL)})
-    if endtime := g.params.get("endtime"):
-        g.params.update({"endtime": cast("ExtDt", endtime).format(Format.SQL)})
+    if starttime := params.get("starttime"):
+        params.update({"starttime": cast("ExtDt", starttime).format(Format.SQL)})
+    if endtime := params.get("endtime"):
+        params.update({"endtime": cast("ExtDt", endtime).format(Format.SQL)})
 
     if g.args.verbose & 0x01:
-        print(f">>> {g.params=}")
+        print(f">>> {params=}")
         print(f">>> SQL: {keyword} -> {g.cfg.setting.database_file}\n{named_query(sql, cast(dict, g.params))}")
 
     try:
@@ -91,7 +95,7 @@ def read_data(keyword: str) -> pd.DataFrame:
             sql=sql,
             con=dbutil.connection(g.cfg.setting.database_file),
             params={
-                **cast(dict, g.params),
+                **params,
                 **g.params.get("rule_set", {}),
                 **g.params.get("player_list", {}),
                 **g.params.get("competition_list", {}),
@@ -100,8 +104,8 @@ def read_data(keyword: str) -> pd.DataFrame:
     except pd.errors.DatabaseError as err:
         logging.error("DatabaseError: %s", err)
         logging.error("SQL: %s, DATABASE: %s", keyword, g.cfg.setting.database_file)
-        logging.error("params=%s", g.params)
-        logging.error("query: %s", named_query(sql, cast(dict, g.params)))
+        logging.error("params=%s", params)
+        logging.error("query: %s", named_query(sql, params))
 
     if g.args.verbose & 0x02:
         print("=" * 80)
