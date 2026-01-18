@@ -6,6 +6,7 @@ from dataclasses import dataclass, field, fields
 from typing import TYPE_CHECKING, Literal, Optional, Union, get_type_hints
 
 from cls.timekit import ExtendedDatetime as ExtDt
+from libs.data import loader
 
 if TYPE_CHECKING:
     import pandas as pd
@@ -229,6 +230,23 @@ class ResultsInfo:
     # 検索ワード
     search_word: str = field(default="")
 
+    def read(self, params: dict):
+        """_summary_
+
+        Args:
+            params (dict): プレースホルダ
+        """
+
+        result_df = loader.read_data("RESULTS_INFO", params)
+        record_df = loader.read_data("RECORD_INFO", params)
+
+        if result_df.empty or record_df.empty:
+            return
+
+        self.set_parameter(**params)
+        self.set_data(result_df)
+        self.set_data(record_df)
+
     def set_data(self, df: "pd.DataFrame"):
         """集計結果取り込み
 
@@ -251,7 +269,10 @@ class ResultsInfo:
                 self.seat3.mode = self.mode
                 self.seat4.mode = self.mode
             else:
-                RuntimeError
+                raise ValueError(f"Unsupported mode: {kwargs['mode']}")
+
+        if "rule_set" in kwargs and isinstance(kwargs["rule_set"], dict):
+            self.rule_version = list(kwargs["rule_set"].values())
         if "player_name" in kwargs and isinstance(kwargs["player_name"], str):
             self.name = kwargs["player_name"]
         if "starttime" in kwargs and isinstance(kwargs["starttime"], (ExtDt, str)):
