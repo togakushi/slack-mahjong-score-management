@@ -1,15 +1,14 @@
 """
-libs/datamodels.py
+cls/result.py
 """
 
 from dataclasses import dataclass, field, fields
-from typing import TYPE_CHECKING, Literal, Optional, Union, get_type_hints
+from typing import Literal, Optional, Union, get_type_hints
+
+import pandas as pd
 
 from cls.timekit import ExtendedDatetime as ExtDt
 from libs.data import loader
-
-if TYPE_CHECKING:
-    import pandas as pd
 
 
 @dataclass
@@ -230,6 +229,10 @@ class ResultsInfo:
     # 検索ワード
     search_word: str = field(default="")
 
+    # 取り込みデータ
+    result_df: pd.DataFrame = field(default=pd.DataFrame)
+    record_df: pd.DataFrame = field(default=pd.DataFrame)
+
     def read(self, params: dict):
         """_summary_
 
@@ -237,15 +240,15 @@ class ResultsInfo:
             params (dict): プレースホルダ
         """
 
-        result_df = loader.read_data("RESULTS_INFO", params)
-        record_df = loader.read_data("RECORD_INFO", params)
+        self.result_df = loader.read_data("RESULTS_INFO", params)
+        self.record_df = loader.read_data("RECORD_INFO", params)
 
-        if result_df.empty or record_df.empty:
+        if self.result_df.empty or self.record_df.empty:
             return
 
         self.set_parameter(**params)
-        self.set_data(result_df)
-        self.set_data(record_df)
+        self.set_data(self.result_df)
+        self.set_data(self.record_df)
 
     def set_data(self, df: "pd.DataFrame"):
         """集計結果取り込み
@@ -282,6 +285,7 @@ class ResultsInfo:
         if "search_word" in kwargs and isinstance(kwargs["search_word"], str):
             self.search_word = kwargs["search_word"]
 
+    @property
     def rank_distr_list(self) -> list:
         """座席別順位分布
 
@@ -296,6 +300,7 @@ class ResultsInfo:
             self.seat4.rank_distr,
         ][: self.mode]
 
+    @property
     def rank_distr_list2(self) -> list:
         """座席別順位分布
 
@@ -308,4 +313,31 @@ class ResultsInfo:
             self.seat2.rank_distr2,
             self.seat3.rank_distr2,
             self.seat4.rank_distr2,
+        ][: self.mode]
+
+    @property
+    def rank_avg_list(self) -> list:
+        return [
+            self.seat1.rank_avg,
+            self.seat2.rank_avg,
+            self.seat3.rank_avg,
+            self.seat4.rank_avg,
+        ][: self.mode]
+
+    @property
+    def flying_list(self) -> list:
+        return [
+            self.seat1.flying,
+            self.seat2.flying,
+            self.seat3.flying,
+            self.seat4.flying,
+        ][: self.mode]
+
+    @property
+    def yakuman_list(self) -> list:
+        return [
+            self.seat1.yakuman,
+            self.seat2.yakuman,
+            self.seat3.yakuman,
+            self.seat4.yakuman,
         ][: self.mode]
