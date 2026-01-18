@@ -66,6 +66,8 @@ def query(keyword: str) -> str:
         "MEMBER_INFO": "member.info.sql",
         "TEAM_INFO": "team.info.sql",
         "REMARKS_INFO": "remarks.info.sql",
+        "RECORD_INFO": "record.info.sql",
+        # 集計
         "SUMMARY_GAMEDATA": "summary/gamedata.sql",
         "SUMMARY_DETAILS": "summary/details.sql",
         "SUMMARY_DETAILS2": "summary/details2.sql",
