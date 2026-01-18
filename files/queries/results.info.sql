@@ -10,6 +10,7 @@ with target_data as (
         --[individual] point,
         --[team] team_point as point,
         rank,
+        rpoint - origin_point as score,
         yakuman,
         comment
     from (
@@ -19,6 +20,9 @@ with target_data as (
             count() over (partition by playtime, team) as same_team
         from
             individual_results
+        join rule
+            on
+                individual_results.rule_version = rule.rule_version
     )
     where
         mode = :mode and seat <= :mode
@@ -35,7 +39,14 @@ with target_data as (
 )
 select distinct
     name,
-    id as seat,
+    case
+        when id = 1 then '東家'
+        when id = 2 then '南家'
+        when id = 3 then '西家'
+        when id = 4 then '北家'
+        else '全体'
+    end as seat,
+    id,
     round(sum(point) over (partition by name, id), 1) as total_point,
     round(avg(point) over (partition by name, id), 1) as avg_point,
     count(point > 0 or null) over (partition by name, id) as win,
@@ -49,6 +60,13 @@ select distinct
     round(avg(rank) over (partition by name, id), 2) as rank_avg,
     count(rpoint < 0 or null) over (partition by name, id) as flying,
     count(yakuman) over (partition by name, id) as yakuman,
+    sum(score) over (partition by name, id) as score,
+    sum(case when rank = 1 then score else null end) over (partition by name, id) as score_rank1,
+    sum(case when rank = 2 then score else null end) over (partition by name, id) as score_rank2,
+    sum(case when rank = 3 then score else null end) over (partition by name, id) as score_rank3,
+    sum(case when rank = 4 then score else null end) over (partition by name, id) as score_rank4,
+    max(rpoint) over (partition by name, id) as rpoint_max,
+    min(rpoint) over (partition by name, id) as rpoint_min,
     first_value(playtime) over (partition by name, id order by playtime rows between unbounded preceding and unbounded following) as first_game,
     last_value(playtime) over (partition by name, id order by playtime rows between unbounded preceding and unbounded following) as last_game,
     first_value(comment) over (partition by name, id order by playtime rows between unbounded preceding and unbounded following) as first_comment,
