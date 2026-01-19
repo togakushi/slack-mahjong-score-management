@@ -218,7 +218,7 @@
 </span><span id="L-12"><a href="#L-12"><span class="linenos"> 12</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 </span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a>
 </span><span id="L-14"><a href="#L-14"><span class="linenos"> 14</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">integrations.protocols</span><span class="w"> </span><span class="kn">import</span> <span class="n">MsgData</span><span class="p">,</span> <span class="n">PostData</span><span class="p">,</span> <span class="n">StatusData</span>
-</span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">libs.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">MessageTypeDict</span><span class="p">,</span> <span class="n">StyleOptions</span>
+</span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">libs.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">StyleOptions</span>
 </span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a>
 </span><span id="L-17"><a href="#L-17"><span class="linenos"> 17</span></a><span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
 </span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a>    <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
@@ -369,164 +369,159 @@
 </span><span id="L-163"><a href="#L-163"><span class="linenos">163</span></a>
 </span><span id="L-164"><a href="#L-164"><span class="linenos">164</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">set_data</span><span class="p">(</span>
 </span><span id="L-165"><a href="#L-165"><span class="linenos">165</span></a>        <span class="bp">self</span><span class="p">,</span>
-</span><span id="L-166"><a href="#L-166"><span class="linenos">166</span></a>        <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-</span><span id="L-167"><a href="#L-167"><span class="linenos">167</span></a>        <span class="n">data</span><span class="p">:</span> <span class="s2">&quot;MessageType&quot;</span><span class="p">,</span>
-</span><span id="L-168"><a href="#L-168"><span class="linenos">168</span></a>        <span class="n">options</span><span class="p">:</span> <span class="n">StyleOptions</span><span class="p">,</span>
-</span><span id="L-169"><a href="#L-169"><span class="linenos">169</span></a>    <span class="p">):</span>
-</span><span id="L-170"><a href="#L-170"><span class="linenos">170</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;メッセージデータをセット</span>
-</span><span id="L-171"><a href="#L-171"><span class="linenos">171</span></a>
-</span><span id="L-172"><a href="#L-172"><span class="linenos">172</span></a><span class="sd">        Args:</span>
-</span><span id="L-173"><a href="#L-173"><span class="linenos">173</span></a><span class="sd">            title (str): データ識別子</span>
-</span><span id="L-174"><a href="#L-174"><span class="linenos">174</span></a><span class="sd">            data (MessageType): 内容</span>
-</span><span id="L-175"><a href="#L-175"><span class="linenos">175</span></a><span class="sd">            options (StyleOptions): 表示オプション</span>
-</span><span id="L-176"><a href="#L-176"><span class="linenos">176</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-177"><a href="#L-177"><span class="linenos">177</span></a>
-</span><span id="L-178"><a href="#L-178"><span class="linenos">178</span></a>        <span class="c1"># 空データは登録しない</span>
-</span><span id="L-179"><a href="#L-179"><span class="linenos">179</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">NoneType</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="ow">and</span> <span class="n">data</span><span class="o">.</span><span class="n">empty</span><span class="p">):</span>
-</span><span id="L-180"><a href="#L-180"><span class="linenos">180</span></a>            <span class="k">return</span>
-</span><span id="L-181"><a href="#L-181"><span class="linenos">181</span></a>
-</span><span id="L-182"><a href="#L-182"><span class="linenos">182</span></a>        <span class="n">msg</span> <span class="o">=</span> <span class="n">MessageTypeDict</span><span class="p">(</span>
-</span><span id="L-183"><a href="#L-183"><span class="linenos">183</span></a>            <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
-</span><span id="L-184"><a href="#L-184"><span class="linenos">184</span></a>            <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">,</span>
-</span><span id="L-185"><a href="#L-185"><span class="linenos">185</span></a>        <span class="p">)</span>
-</span><span id="L-186"><a href="#L-186"><span class="linenos">186</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="n">title</span><span class="p">:</span> <span class="n">msg</span><span class="p">})</span>
-</span><span id="L-187"><a href="#L-187"><span class="linenos">187</span></a>
-</span><span id="L-188"><a href="#L-188"><span class="linenos">188</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_remarks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keyword</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
-</span><span id="L-189"><a href="#L-189"><span class="linenos">189</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;textからメモを抽出する</span>
-</span><span id="L-190"><a href="#L-190"><span class="linenos">190</span></a>
-</span><span id="L-191"><a href="#L-191"><span class="linenos">191</span></a><span class="sd">        Args:</span>
-</span><span id="L-192"><a href="#L-192"><span class="linenos">192</span></a><span class="sd">            keyword (str): メモ記録キーワード</span>
-</span><span id="L-193"><a href="#L-193"><span class="linenos">193</span></a>
-</span><span id="L-194"><a href="#L-194"><span class="linenos">194</span></a><span class="sd">        Returns:</span>
-</span><span id="L-195"><a href="#L-195"><span class="linenos">195</span></a><span class="sd">            list: 結果</span>
-</span><span id="L-196"><a href="#L-196"><span class="linenos">196</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-197"><a href="#L-197"><span class="linenos">197</span></a>
-</span><span id="L-198"><a href="#L-198"><span class="linenos">198</span></a>        <span class="n">ret</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span id="L-199"><a href="#L-199"><span class="linenos">199</span></a>        <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">rf</span><span class="s2">&quot;^</span><span class="si">{</span><span class="n">keyword</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">text</span><span class="p">):</span>  <span class="c1"># キーワードが先頭に存在するかチェック</span>
-</span><span id="L-200"><a href="#L-200"><span class="linenos">200</span></a>            <span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">keyword</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
-</span><span id="L-201"><a href="#L-201"><span class="linenos">201</span></a>            <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">matter</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">text</span><span class="p">[</span><span class="mi">0</span><span class="p">::</span><span class="mi">2</span><span class="p">],</span> <span class="n">text</span><span class="p">[</span><span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">]):</span>
-</span><span id="L-202"><a href="#L-202"><span class="linenos">202</span></a>                <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">name</span><span class="p">,</span> <span class="n">matter</span><span class="p">])</span>
-</span><span id="L-203"><a href="#L-203"><span class="linenos">203</span></a>
-</span><span id="L-204"><a href="#L-204"><span class="linenos">204</span></a>        <span class="k">return</span> <span class="n">ret</span>
-</span><span id="L-205"><a href="#L-205"><span class="linenos">205</span></a>
-</span><span id="L-206"><a href="#L-206"><span class="linenos">206</span></a>
-</span><span id="L-207"><a href="#L-207"><span class="linenos">207</span></a><span class="k">class</span><span class="w"> </span><span class="nc">MessageParserInterface</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
-</span><span id="L-208"><a href="#L-208"><span class="linenos">208</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メッセージ解析インターフェース&quot;&quot;&quot;</span>
-</span><span id="L-209"><a href="#L-209"><span class="linenos">209</span></a>
-</span><span id="L-210"><a href="#L-210"><span class="linenos">210</span></a>    <span class="n">data</span><span class="p">:</span> <span class="s2">&quot;MsgData&quot;</span>
-</span><span id="L-211"><a href="#L-211"><span class="linenos">211</span></a>    <span class="n">post</span><span class="p">:</span> <span class="s2">&quot;PostData&quot;</span>
-</span><span id="L-212"><a href="#L-212"><span class="linenos">212</span></a>    <span class="n">status</span><span class="p">:</span> <span class="s2">&quot;StatusData&quot;</span>
-</span><span id="L-213"><a href="#L-213"><span class="linenos">213</span></a>
-</span><span id="L-214"><a href="#L-214"><span class="linenos">214</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="L-215"><a href="#L-215"><span class="linenos">215</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">parser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">body</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
-</span><span id="L-216"><a href="#L-216"><span class="linenos">216</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;メッセージ解析</span>
-</span><span id="L-217"><a href="#L-217"><span class="linenos">217</span></a>
-</span><span id="L-218"><a href="#L-218"><span class="linenos">218</span></a><span class="sd">        Args:</span>
-</span><span id="L-219"><a href="#L-219"><span class="linenos">219</span></a><span class="sd">            body (Any): 解析データ</span>
-</span><span id="L-220"><a href="#L-220"><span class="linenos">220</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-166"><a href="#L-166"><span class="linenos">166</span></a>        <span class="n">data</span><span class="p">:</span> <span class="s2">&quot;MessageType&quot;</span><span class="p">,</span>
+</span><span id="L-167"><a href="#L-167"><span class="linenos">167</span></a>        <span class="n">options</span><span class="p">:</span> <span class="n">StyleOptions</span><span class="p">,</span>
+</span><span id="L-168"><a href="#L-168"><span class="linenos">168</span></a>    <span class="p">):</span>
+</span><span id="L-169"><a href="#L-169"><span class="linenos">169</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;メッセージデータをセット</span>
+</span><span id="L-170"><a href="#L-170"><span class="linenos">170</span></a>
+</span><span id="L-171"><a href="#L-171"><span class="linenos">171</span></a><span class="sd">        Args:</span>
+</span><span id="L-172"><a href="#L-172"><span class="linenos">172</span></a><span class="sd">            title (str): データ識別子</span>
+</span><span id="L-173"><a href="#L-173"><span class="linenos">173</span></a><span class="sd">            data (MessageType): 内容</span>
+</span><span id="L-174"><a href="#L-174"><span class="linenos">174</span></a><span class="sd">            options (StyleOptions): 表示オプション</span>
+</span><span id="L-175"><a href="#L-175"><span class="linenos">175</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-176"><a href="#L-176"><span class="linenos">176</span></a>
+</span><span id="L-177"><a href="#L-177"><span class="linenos">177</span></a>        <span class="c1"># 空データは登録しない</span>
+</span><span id="L-178"><a href="#L-178"><span class="linenos">178</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">NoneType</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="ow">and</span> <span class="n">data</span><span class="o">.</span><span class="n">empty</span><span class="p">):</span>
+</span><span id="L-179"><a href="#L-179"><span class="linenos">179</span></a>            <span class="k">return</span>
+</span><span id="L-180"><a href="#L-180"><span class="linenos">180</span></a>
+</span><span id="L-181"><a href="#L-181"><span class="linenos">181</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">data</span><span class="p">,</span> <span class="n">options</span><span class="p">))</span>
+</span><span id="L-182"><a href="#L-182"><span class="linenos">182</span></a>
+</span><span id="L-183"><a href="#L-183"><span class="linenos">183</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_remarks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keyword</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+</span><span id="L-184"><a href="#L-184"><span class="linenos">184</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;textからメモを抽出する</span>
+</span><span id="L-185"><a href="#L-185"><span class="linenos">185</span></a>
+</span><span id="L-186"><a href="#L-186"><span class="linenos">186</span></a><span class="sd">        Args:</span>
+</span><span id="L-187"><a href="#L-187"><span class="linenos">187</span></a><span class="sd">            keyword (str): メモ記録キーワード</span>
+</span><span id="L-188"><a href="#L-188"><span class="linenos">188</span></a>
+</span><span id="L-189"><a href="#L-189"><span class="linenos">189</span></a><span class="sd">        Returns:</span>
+</span><span id="L-190"><a href="#L-190"><span class="linenos">190</span></a><span class="sd">            list: 結果</span>
+</span><span id="L-191"><a href="#L-191"><span class="linenos">191</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-192"><a href="#L-192"><span class="linenos">192</span></a>
+</span><span id="L-193"><a href="#L-193"><span class="linenos">193</span></a>        <span class="n">ret</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="L-194"><a href="#L-194"><span class="linenos">194</span></a>        <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">rf</span><span class="s2">&quot;^</span><span class="si">{</span><span class="n">keyword</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">text</span><span class="p">):</span>  <span class="c1"># キーワードが先頭に存在するかチェック</span>
+</span><span id="L-195"><a href="#L-195"><span class="linenos">195</span></a>            <span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">keyword</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+</span><span id="L-196"><a href="#L-196"><span class="linenos">196</span></a>            <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">matter</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">text</span><span class="p">[</span><span class="mi">0</span><span class="p">::</span><span class="mi">2</span><span class="p">],</span> <span class="n">text</span><span class="p">[</span><span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">]):</span>
+</span><span id="L-197"><a href="#L-197"><span class="linenos">197</span></a>                <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">name</span><span class="p">,</span> <span class="n">matter</span><span class="p">])</span>
+</span><span id="L-198"><a href="#L-198"><span class="linenos">198</span></a>
+</span><span id="L-199"><a href="#L-199"><span class="linenos">199</span></a>        <span class="k">return</span> <span class="n">ret</span>
+</span><span id="L-200"><a href="#L-200"><span class="linenos">200</span></a>
+</span><span id="L-201"><a href="#L-201"><span class="linenos">201</span></a>
+</span><span id="L-202"><a href="#L-202"><span class="linenos">202</span></a><span class="k">class</span><span class="w"> </span><span class="nc">MessageParserInterface</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+</span><span id="L-203"><a href="#L-203"><span class="linenos">203</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メッセージ解析インターフェース&quot;&quot;&quot;</span>
+</span><span id="L-204"><a href="#L-204"><span class="linenos">204</span></a>
+</span><span id="L-205"><a href="#L-205"><span class="linenos">205</span></a>    <span class="n">data</span><span class="p">:</span> <span class="s2">&quot;MsgData&quot;</span>
+</span><span id="L-206"><a href="#L-206"><span class="linenos">206</span></a>    <span class="n">post</span><span class="p">:</span> <span class="s2">&quot;PostData&quot;</span>
+</span><span id="L-207"><a href="#L-207"><span class="linenos">207</span></a>    <span class="n">status</span><span class="p">:</span> <span class="s2">&quot;StatusData&quot;</span>
+</span><span id="L-208"><a href="#L-208"><span class="linenos">208</span></a>
+</span><span id="L-209"><a href="#L-209"><span class="linenos">209</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="L-210"><a href="#L-210"><span class="linenos">210</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">parser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">body</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+</span><span id="L-211"><a href="#L-211"><span class="linenos">211</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;メッセージ解析</span>
+</span><span id="L-212"><a href="#L-212"><span class="linenos">212</span></a>
+</span><span id="L-213"><a href="#L-213"><span class="linenos">213</span></a><span class="sd">        Args:</span>
+</span><span id="L-214"><a href="#L-214"><span class="linenos">214</span></a><span class="sd">            body (Any): 解析データ</span>
+</span><span id="L-215"><a href="#L-215"><span class="linenos">215</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-216"><a href="#L-216"><span class="linenos">216</span></a>
+</span><span id="L-217"><a href="#L-217"><span class="linenos">217</span></a>    <span class="nd">@property</span>
+</span><span id="L-218"><a href="#L-218"><span class="linenos">218</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="L-219"><a href="#L-219"><span class="linenos">219</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">in_thread</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="L-220"><a href="#L-220"><span class="linenos">220</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;元メッセージへのリプライとなっているか</span>
 </span><span id="L-221"><a href="#L-221"><span class="linenos">221</span></a>
-</span><span id="L-222"><a href="#L-222"><span class="linenos">222</span></a>    <span class="nd">@property</span>
-</span><span id="L-223"><a href="#L-223"><span class="linenos">223</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="L-224"><a href="#L-224"><span class="linenos">224</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">in_thread</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="L-225"><a href="#L-225"><span class="linenos">225</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;元メッセージへのリプライとなっているか</span>
-</span><span id="L-226"><a href="#L-226"><span class="linenos">226</span></a>
-</span><span id="L-227"><a href="#L-227"><span class="linenos">227</span></a><span class="sd">        Returns:</span>
-</span><span id="L-228"><a href="#L-228"><span class="linenos">228</span></a><span class="sd">            bool: 真偽値</span>
-</span><span id="L-229"><a href="#L-229"><span class="linenos">229</span></a><span class="sd">            - *True*: リプライの形（リプライ／スレッドなど）</span>
-</span><span id="L-230"><a href="#L-230"><span class="linenos">230</span></a><span class="sd">            - *False*: 通常メッセージ</span>
-</span><span id="L-231"><a href="#L-231"><span class="linenos">231</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-222"><a href="#L-222"><span class="linenos">222</span></a><span class="sd">        Returns:</span>
+</span><span id="L-223"><a href="#L-223"><span class="linenos">223</span></a><span class="sd">            bool: 真偽値</span>
+</span><span id="L-224"><a href="#L-224"><span class="linenos">224</span></a><span class="sd">            - *True*: リプライの形（リプライ／スレッドなど）</span>
+</span><span id="L-225"><a href="#L-225"><span class="linenos">225</span></a><span class="sd">            - *False*: 通常メッセージ</span>
+</span><span id="L-226"><a href="#L-226"><span class="linenos">226</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-227"><a href="#L-227"><span class="linenos">227</span></a>
+</span><span id="L-228"><a href="#L-228"><span class="linenos">228</span></a>    <span class="nd">@property</span>
+</span><span id="L-229"><a href="#L-229"><span class="linenos">229</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="L-230"><a href="#L-230"><span class="linenos">230</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_bot</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="L-231"><a href="#L-231"><span class="linenos">231</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;botのポストかチェック</span>
 </span><span id="L-232"><a href="#L-232"><span class="linenos">232</span></a>
-</span><span id="L-233"><a href="#L-233"><span class="linenos">233</span></a>    <span class="nd">@property</span>
-</span><span id="L-234"><a href="#L-234"><span class="linenos">234</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="L-235"><a href="#L-235"><span class="linenos">235</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_bot</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="L-236"><a href="#L-236"><span class="linenos">236</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;botのポストかチェック</span>
-</span><span id="L-237"><a href="#L-237"><span class="linenos">237</span></a>
-</span><span id="L-238"><a href="#L-238"><span class="linenos">238</span></a><span class="sd">        Returns:</span>
-</span><span id="L-239"><a href="#L-239"><span class="linenos">239</span></a><span class="sd">            bool: 真偽値</span>
-</span><span id="L-240"><a href="#L-240"><span class="linenos">240</span></a><span class="sd">            - *True*: botのポスト</span>
-</span><span id="L-241"><a href="#L-241"><span class="linenos">241</span></a><span class="sd">            - *False*: ユーザのポスト</span>
-</span><span id="L-242"><a href="#L-242"><span class="linenos">242</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-233"><a href="#L-233"><span class="linenos">233</span></a><span class="sd">        Returns:</span>
+</span><span id="L-234"><a href="#L-234"><span class="linenos">234</span></a><span class="sd">            bool: 真偽値</span>
+</span><span id="L-235"><a href="#L-235"><span class="linenos">235</span></a><span class="sd">            - *True*: botのポスト</span>
+</span><span id="L-236"><a href="#L-236"><span class="linenos">236</span></a><span class="sd">            - *False*: ユーザのポスト</span>
+</span><span id="L-237"><a href="#L-237"><span class="linenos">237</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-238"><a href="#L-238"><span class="linenos">238</span></a>
+</span><span id="L-239"><a href="#L-239"><span class="linenos">239</span></a>    <span class="nd">@property</span>
+</span><span id="L-240"><a href="#L-240"><span class="linenos">240</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="L-241"><a href="#L-241"><span class="linenos">241</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="L-242"><a href="#L-242"><span class="linenos">242</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;DB操作の許可チェック</span>
 </span><span id="L-243"><a href="#L-243"><span class="linenos">243</span></a>
-</span><span id="L-244"><a href="#L-244"><span class="linenos">244</span></a>    <span class="nd">@property</span>
-</span><span id="L-245"><a href="#L-245"><span class="linenos">245</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="L-246"><a href="#L-246"><span class="linenos">246</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="L-247"><a href="#L-247"><span class="linenos">247</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;DB操作の許可チェック</span>
-</span><span id="L-248"><a href="#L-248"><span class="linenos">248</span></a>
-</span><span id="L-249"><a href="#L-249"><span class="linenos">249</span></a><span class="sd">        Returns:</span>
-</span><span id="L-250"><a href="#L-250"><span class="linenos">250</span></a><span class="sd">            bool: 真偽値</span>
-</span><span id="L-251"><a href="#L-251"><span class="linenos">251</span></a><span class="sd">            - *True*: 許可</span>
-</span><span id="L-252"><a href="#L-252"><span class="linenos">252</span></a><span class="sd">            - *False*: 禁止</span>
-</span><span id="L-253"><a href="#L-253"><span class="linenos">253</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-244"><a href="#L-244"><span class="linenos">244</span></a><span class="sd">        Returns:</span>
+</span><span id="L-245"><a href="#L-245"><span class="linenos">245</span></a><span class="sd">            bool: 真偽値</span>
+</span><span id="L-246"><a href="#L-246"><span class="linenos">246</span></a><span class="sd">            - *True*: 許可</span>
+</span><span id="L-247"><a href="#L-247"><span class="linenos">247</span></a><span class="sd">            - *False*: 禁止</span>
+</span><span id="L-248"><a href="#L-248"><span class="linenos">248</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-249"><a href="#L-249"><span class="linenos">249</span></a>
+</span><span id="L-250"><a href="#L-250"><span class="linenos">250</span></a>    <span class="nd">@property</span>
+</span><span id="L-251"><a href="#L-251"><span class="linenos">251</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="L-252"><a href="#L-252"><span class="linenos">252</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">ignore_user</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="L-253"><a href="#L-253"><span class="linenos">253</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;ignore_useridに存在するユーザかチェック</span>
 </span><span id="L-254"><a href="#L-254"><span class="linenos">254</span></a>
-</span><span id="L-255"><a href="#L-255"><span class="linenos">255</span></a>    <span class="nd">@property</span>
-</span><span id="L-256"><a href="#L-256"><span class="linenos">256</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="L-257"><a href="#L-257"><span class="linenos">257</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">ignore_user</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="L-258"><a href="#L-258"><span class="linenos">258</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;ignore_useridに存在するユーザかチェック</span>
-</span><span id="L-259"><a href="#L-259"><span class="linenos">259</span></a>
-</span><span id="L-260"><a href="#L-260"><span class="linenos">260</span></a><span class="sd">        Returns:</span>
-</span><span id="L-261"><a href="#L-261"><span class="linenos">261</span></a><span class="sd">            bool: 真偽値</span>
-</span><span id="L-262"><a href="#L-262"><span class="linenos">262</span></a><span class="sd">            - *True*: 存在する(操作禁止ユーザ)</span>
-</span><span id="L-263"><a href="#L-263"><span class="linenos">263</span></a><span class="sd">            - *False*: 存在しない</span>
-</span><span id="L-264"><a href="#L-264"><span class="linenos">264</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-265"><a href="#L-265"><span class="linenos">265</span></a>
-</span><span id="L-266"><a href="#L-266"><span class="linenos">266</span></a>    <span class="nd">@property</span>
-</span><span id="L-267"><a href="#L-267"><span class="linenos">267</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_command</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="L-268"><a href="#L-268"><span class="linenos">268</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コマンドで実行されているかチェック</span>
-</span><span id="L-269"><a href="#L-269"><span class="linenos">269</span></a>
-</span><span id="L-270"><a href="#L-270"><span class="linenos">270</span></a><span class="sd">        Returns:</span>
-</span><span id="L-271"><a href="#L-271"><span class="linenos">271</span></a><span class="sd">            bool: 真偽値</span>
-</span><span id="L-272"><a href="#L-272"><span class="linenos">272</span></a><span class="sd">            - *True*: コマンド実行</span>
-</span><span id="L-273"><a href="#L-273"><span class="linenos">273</span></a><span class="sd">            - *False*: 非コマンド(キーワード呼び出し)</span>
-</span><span id="L-274"><a href="#L-274"><span class="linenos">274</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-275"><a href="#L-275"><span class="linenos">275</span></a>
-</span><span id="L-276"><a href="#L-276"><span class="linenos">276</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">command_flg</span>
-</span><span id="L-277"><a href="#L-277"><span class="linenos">277</span></a>
-</span><span id="L-278"><a href="#L-278"><span class="linenos">278</span></a>    <span class="nd">@property</span>
-</span><span id="L-279"><a href="#L-279"><span class="linenos">279</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">keyword</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="L-280"><a href="#L-280"><span class="linenos">280</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コマンドとして認識している文字列を返す</span>
-</span><span id="L-281"><a href="#L-281"><span class="linenos">281</span></a>
-</span><span id="L-282"><a href="#L-282"><span class="linenos">282</span></a><span class="sd">        Returns:</span>
-</span><span id="L-283"><a href="#L-283"><span class="linenos">283</span></a><span class="sd">            str: コマンド名</span>
-</span><span id="L-284"><a href="#L-284"><span class="linenos">284</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-285"><a href="#L-285"><span class="linenos">285</span></a>
-</span><span id="L-286"><a href="#L-286"><span class="linenos">286</span></a>        <span class="k">if</span> <span class="n">ret</span> <span class="o">:=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">():</span>
-</span><span id="L-287"><a href="#L-287"><span class="linenos">287</span></a>            <span class="k">return</span> <span class="n">ret</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-</span><span id="L-288"><a href="#L-288"><span class="linenos">288</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">text</span>
-</span><span id="L-289"><a href="#L-289"><span class="linenos">289</span></a>
-</span><span id="L-290"><a href="#L-290"><span class="linenos">290</span></a>    <span class="nd">@property</span>
-</span><span id="L-291"><a href="#L-291"><span class="linenos">291</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">argument</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
-</span><span id="L-292"><a href="#L-292"><span class="linenos">292</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コマンド引数として認識している文字列をリストで返す</span>
-</span><span id="L-293"><a href="#L-293"><span class="linenos">293</span></a>
-</span><span id="L-294"><a href="#L-294"><span class="linenos">294</span></a><span class="sd">        Returns:</span>
-</span><span id="L-295"><a href="#L-295"><span class="linenos">295</span></a><span class="sd">            list: 引数リスト</span>
-</span><span id="L-296"><a href="#L-296"><span class="linenos">296</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-297"><a href="#L-297"><span class="linenos">297</span></a>
-</span><span id="L-298"><a href="#L-298"><span class="linenos">298</span></a>        <span class="k">if</span> <span class="n">ret</span> <span class="o">:=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">():</span>
-</span><span id="L-299"><a href="#L-299"><span class="linenos">299</span></a>            <span class="k">return</span> <span class="n">ret</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
-</span><span id="L-300"><a href="#L-300"><span class="linenos">300</span></a>        <span class="k">return</span> <span class="n">ret</span>
-</span><span id="L-301"><a href="#L-301"><span class="linenos">301</span></a>
-</span><span id="L-302"><a href="#L-302"><span class="linenos">302</span></a>    <span class="nd">@property</span>
-</span><span id="L-303"><a href="#L-303"><span class="linenos">303</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">reply_ts</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="L-304"><a href="#L-304"><span class="linenos">304</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;リプライ先のタイムスタンプを取得する</span>
-</span><span id="L-305"><a href="#L-305"><span class="linenos">305</span></a>
-</span><span id="L-306"><a href="#L-306"><span class="linenos">306</span></a><span class="sd">        Returns:</span>
-</span><span id="L-307"><a href="#L-307"><span class="linenos">307</span></a><span class="sd">            str: タイムスタンプ</span>
-</span><span id="L-308"><a href="#L-308"><span class="linenos">308</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-309"><a href="#L-309"><span class="linenos">309</span></a>
-</span><span id="L-310"><a href="#L-310"><span class="linenos">310</span></a>        <span class="n">ret_ts</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;0&quot;</span>
-</span><span id="L-311"><a href="#L-311"><span class="linenos">311</span></a>
-</span><span id="L-312"><a href="#L-312"><span class="linenos">312</span></a>        <span class="c1"># tsが指定されていれば最優先</span>
-</span><span id="L-313"><a href="#L-313"><span class="linenos">313</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">ts</span> <span class="o">!=</span> <span class="s2">&quot;undetermined&quot;</span><span class="p">:</span>
-</span><span id="L-314"><a href="#L-314"><span class="linenos">314</span></a>            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">ts</span>
-</span><span id="L-315"><a href="#L-315"><span class="linenos">315</span></a>
-</span><span id="L-316"><a href="#L-316"><span class="linenos">316</span></a>        <span class="c1"># スレッドに返すか</span>
-</span><span id="L-317"><a href="#L-317"><span class="linenos">317</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">thread</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_thread</span><span class="p">:</span>  <span class="c1"># スレッド内</span>
-</span><span id="L-318"><a href="#L-318"><span class="linenos">318</span></a>            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">thread_ts</span> <span class="o">!=</span> <span class="s2">&quot;undetermined&quot;</span><span class="p">:</span>
-</span><span id="L-319"><a href="#L-319"><span class="linenos">319</span></a>                <span class="n">ret_ts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">thread_ts</span>
-</span><span id="L-320"><a href="#L-320"><span class="linenos">320</span></a>        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">thread</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_thread</span><span class="p">:</span>  <span class="c1"># スレッド外</span>
-</span><span id="L-321"><a href="#L-321"><span class="linenos">321</span></a>            <span class="n">ret_ts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">event_ts</span>
-</span><span id="L-322"><a href="#L-322"><span class="linenos">322</span></a>
-</span><span id="L-323"><a href="#L-323"><span class="linenos">323</span></a>        <span class="k">return</span> <span class="n">ret_ts</span>
+</span><span id="L-255"><a href="#L-255"><span class="linenos">255</span></a><span class="sd">        Returns:</span>
+</span><span id="L-256"><a href="#L-256"><span class="linenos">256</span></a><span class="sd">            bool: 真偽値</span>
+</span><span id="L-257"><a href="#L-257"><span class="linenos">257</span></a><span class="sd">            - *True*: 存在する(操作禁止ユーザ)</span>
+</span><span id="L-258"><a href="#L-258"><span class="linenos">258</span></a><span class="sd">            - *False*: 存在しない</span>
+</span><span id="L-259"><a href="#L-259"><span class="linenos">259</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-260"><a href="#L-260"><span class="linenos">260</span></a>
+</span><span id="L-261"><a href="#L-261"><span class="linenos">261</span></a>    <span class="nd">@property</span>
+</span><span id="L-262"><a href="#L-262"><span class="linenos">262</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_command</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="L-263"><a href="#L-263"><span class="linenos">263</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コマンドで実行されているかチェック</span>
+</span><span id="L-264"><a href="#L-264"><span class="linenos">264</span></a>
+</span><span id="L-265"><a href="#L-265"><span class="linenos">265</span></a><span class="sd">        Returns:</span>
+</span><span id="L-266"><a href="#L-266"><span class="linenos">266</span></a><span class="sd">            bool: 真偽値</span>
+</span><span id="L-267"><a href="#L-267"><span class="linenos">267</span></a><span class="sd">            - *True*: コマンド実行</span>
+</span><span id="L-268"><a href="#L-268"><span class="linenos">268</span></a><span class="sd">            - *False*: 非コマンド(キーワード呼び出し)</span>
+</span><span id="L-269"><a href="#L-269"><span class="linenos">269</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-270"><a href="#L-270"><span class="linenos">270</span></a>
+</span><span id="L-271"><a href="#L-271"><span class="linenos">271</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">command_flg</span>
+</span><span id="L-272"><a href="#L-272"><span class="linenos">272</span></a>
+</span><span id="L-273"><a href="#L-273"><span class="linenos">273</span></a>    <span class="nd">@property</span>
+</span><span id="L-274"><a href="#L-274"><span class="linenos">274</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">keyword</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="L-275"><a href="#L-275"><span class="linenos">275</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コマンドとして認識している文字列を返す</span>
+</span><span id="L-276"><a href="#L-276"><span class="linenos">276</span></a>
+</span><span id="L-277"><a href="#L-277"><span class="linenos">277</span></a><span class="sd">        Returns:</span>
+</span><span id="L-278"><a href="#L-278"><span class="linenos">278</span></a><span class="sd">            str: コマンド名</span>
+</span><span id="L-279"><a href="#L-279"><span class="linenos">279</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-280"><a href="#L-280"><span class="linenos">280</span></a>
+</span><span id="L-281"><a href="#L-281"><span class="linenos">281</span></a>        <span class="k">if</span> <span class="n">ret</span> <span class="o">:=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">():</span>
+</span><span id="L-282"><a href="#L-282"><span class="linenos">282</span></a>            <span class="k">return</span> <span class="n">ret</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span><span id="L-283"><a href="#L-283"><span class="linenos">283</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">text</span>
+</span><span id="L-284"><a href="#L-284"><span class="linenos">284</span></a>
+</span><span id="L-285"><a href="#L-285"><span class="linenos">285</span></a>    <span class="nd">@property</span>
+</span><span id="L-286"><a href="#L-286"><span class="linenos">286</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">argument</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+</span><span id="L-287"><a href="#L-287"><span class="linenos">287</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コマンド引数として認識している文字列をリストで返す</span>
+</span><span id="L-288"><a href="#L-288"><span class="linenos">288</span></a>
+</span><span id="L-289"><a href="#L-289"><span class="linenos">289</span></a><span class="sd">        Returns:</span>
+</span><span id="L-290"><a href="#L-290"><span class="linenos">290</span></a><span class="sd">            list: 引数リスト</span>
+</span><span id="L-291"><a href="#L-291"><span class="linenos">291</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-292"><a href="#L-292"><span class="linenos">292</span></a>
+</span><span id="L-293"><a href="#L-293"><span class="linenos">293</span></a>        <span class="k">if</span> <span class="n">ret</span> <span class="o">:=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">():</span>
+</span><span id="L-294"><a href="#L-294"><span class="linenos">294</span></a>            <span class="k">return</span> <span class="n">ret</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+</span><span id="L-295"><a href="#L-295"><span class="linenos">295</span></a>        <span class="k">return</span> <span class="n">ret</span>
+</span><span id="L-296"><a href="#L-296"><span class="linenos">296</span></a>
+</span><span id="L-297"><a href="#L-297"><span class="linenos">297</span></a>    <span class="nd">@property</span>
+</span><span id="L-298"><a href="#L-298"><span class="linenos">298</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">reply_ts</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="L-299"><a href="#L-299"><span class="linenos">299</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;リプライ先のタイムスタンプを取得する</span>
+</span><span id="L-300"><a href="#L-300"><span class="linenos">300</span></a>
+</span><span id="L-301"><a href="#L-301"><span class="linenos">301</span></a><span class="sd">        Returns:</span>
+</span><span id="L-302"><a href="#L-302"><span class="linenos">302</span></a><span class="sd">            str: タイムスタンプ</span>
+</span><span id="L-303"><a href="#L-303"><span class="linenos">303</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-304"><a href="#L-304"><span class="linenos">304</span></a>
+</span><span id="L-305"><a href="#L-305"><span class="linenos">305</span></a>        <span class="n">ret_ts</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;0&quot;</span>
+</span><span id="L-306"><a href="#L-306"><span class="linenos">306</span></a>
+</span><span id="L-307"><a href="#L-307"><span class="linenos">307</span></a>        <span class="c1"># tsが指定されていれば最優先</span>
+</span><span id="L-308"><a href="#L-308"><span class="linenos">308</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">ts</span> <span class="o">!=</span> <span class="s2">&quot;undetermined&quot;</span><span class="p">:</span>
+</span><span id="L-309"><a href="#L-309"><span class="linenos">309</span></a>            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">ts</span>
+</span><span id="L-310"><a href="#L-310"><span class="linenos">310</span></a>
+</span><span id="L-311"><a href="#L-311"><span class="linenos">311</span></a>        <span class="c1"># スレッドに返すか</span>
+</span><span id="L-312"><a href="#L-312"><span class="linenos">312</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">thread</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_thread</span><span class="p">:</span>  <span class="c1"># スレッド内</span>
+</span><span id="L-313"><a href="#L-313"><span class="linenos">313</span></a>            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">thread_ts</span> <span class="o">!=</span> <span class="s2">&quot;undetermined&quot;</span><span class="p">:</span>
+</span><span id="L-314"><a href="#L-314"><span class="linenos">314</span></a>                <span class="n">ret_ts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">thread_ts</span>
+</span><span id="L-315"><a href="#L-315"><span class="linenos">315</span></a>        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">thread</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_thread</span><span class="p">:</span>  <span class="c1"># スレッド外</span>
+</span><span id="L-316"><a href="#L-316"><span class="linenos">316</span></a>            <span class="n">ret_ts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">event_ts</span>
+</span><span id="L-317"><a href="#L-317"><span class="linenos">317</span></a>
+</span><span id="L-318"><a href="#L-318"><span class="linenos">318</span></a>        <span class="k">return</span> <span class="n">ret_ts</span>
 </span></pre></div>
 
 
@@ -1149,45 +1144,40 @@
 </span><span id="MessageParserDataMixin-164"><a href="#MessageParserDataMixin-164"><span class="linenos">164</span></a>
 </span><span id="MessageParserDataMixin-165"><a href="#MessageParserDataMixin-165"><span class="linenos">165</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">set_data</span><span class="p">(</span>
 </span><span id="MessageParserDataMixin-166"><a href="#MessageParserDataMixin-166"><span class="linenos">166</span></a>        <span class="bp">self</span><span class="p">,</span>
-</span><span id="MessageParserDataMixin-167"><a href="#MessageParserDataMixin-167"><span class="linenos">167</span></a>        <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-</span><span id="MessageParserDataMixin-168"><a href="#MessageParserDataMixin-168"><span class="linenos">168</span></a>        <span class="n">data</span><span class="p">:</span> <span class="s2">&quot;MessageType&quot;</span><span class="p">,</span>
-</span><span id="MessageParserDataMixin-169"><a href="#MessageParserDataMixin-169"><span class="linenos">169</span></a>        <span class="n">options</span><span class="p">:</span> <span class="n">StyleOptions</span><span class="p">,</span>
-</span><span id="MessageParserDataMixin-170"><a href="#MessageParserDataMixin-170"><span class="linenos">170</span></a>    <span class="p">):</span>
-</span><span id="MessageParserDataMixin-171"><a href="#MessageParserDataMixin-171"><span class="linenos">171</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;メッセージデータをセット</span>
-</span><span id="MessageParserDataMixin-172"><a href="#MessageParserDataMixin-172"><span class="linenos">172</span></a>
-</span><span id="MessageParserDataMixin-173"><a href="#MessageParserDataMixin-173"><span class="linenos">173</span></a><span class="sd">        Args:</span>
-</span><span id="MessageParserDataMixin-174"><a href="#MessageParserDataMixin-174"><span class="linenos">174</span></a><span class="sd">            title (str): データ識別子</span>
-</span><span id="MessageParserDataMixin-175"><a href="#MessageParserDataMixin-175"><span class="linenos">175</span></a><span class="sd">            data (MessageType): 内容</span>
-</span><span id="MessageParserDataMixin-176"><a href="#MessageParserDataMixin-176"><span class="linenos">176</span></a><span class="sd">            options (StyleOptions): 表示オプション</span>
-</span><span id="MessageParserDataMixin-177"><a href="#MessageParserDataMixin-177"><span class="linenos">177</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="MessageParserDataMixin-178"><a href="#MessageParserDataMixin-178"><span class="linenos">178</span></a>
-</span><span id="MessageParserDataMixin-179"><a href="#MessageParserDataMixin-179"><span class="linenos">179</span></a>        <span class="c1"># 空データは登録しない</span>
-</span><span id="MessageParserDataMixin-180"><a href="#MessageParserDataMixin-180"><span class="linenos">180</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">NoneType</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="ow">and</span> <span class="n">data</span><span class="o">.</span><span class="n">empty</span><span class="p">):</span>
-</span><span id="MessageParserDataMixin-181"><a href="#MessageParserDataMixin-181"><span class="linenos">181</span></a>            <span class="k">return</span>
-</span><span id="MessageParserDataMixin-182"><a href="#MessageParserDataMixin-182"><span class="linenos">182</span></a>
-</span><span id="MessageParserDataMixin-183"><a href="#MessageParserDataMixin-183"><span class="linenos">183</span></a>        <span class="n">msg</span> <span class="o">=</span> <span class="n">MessageTypeDict</span><span class="p">(</span>
-</span><span id="MessageParserDataMixin-184"><a href="#MessageParserDataMixin-184"><span class="linenos">184</span></a>            <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
-</span><span id="MessageParserDataMixin-185"><a href="#MessageParserDataMixin-185"><span class="linenos">185</span></a>            <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">,</span>
-</span><span id="MessageParserDataMixin-186"><a href="#MessageParserDataMixin-186"><span class="linenos">186</span></a>        <span class="p">)</span>
-</span><span id="MessageParserDataMixin-187"><a href="#MessageParserDataMixin-187"><span class="linenos">187</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="n">title</span><span class="p">:</span> <span class="n">msg</span><span class="p">})</span>
-</span><span id="MessageParserDataMixin-188"><a href="#MessageParserDataMixin-188"><span class="linenos">188</span></a>
-</span><span id="MessageParserDataMixin-189"><a href="#MessageParserDataMixin-189"><span class="linenos">189</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_remarks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keyword</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
-</span><span id="MessageParserDataMixin-190"><a href="#MessageParserDataMixin-190"><span class="linenos">190</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;textからメモを抽出する</span>
-</span><span id="MessageParserDataMixin-191"><a href="#MessageParserDataMixin-191"><span class="linenos">191</span></a>
-</span><span id="MessageParserDataMixin-192"><a href="#MessageParserDataMixin-192"><span class="linenos">192</span></a><span class="sd">        Args:</span>
-</span><span id="MessageParserDataMixin-193"><a href="#MessageParserDataMixin-193"><span class="linenos">193</span></a><span class="sd">            keyword (str): メモ記録キーワード</span>
-</span><span id="MessageParserDataMixin-194"><a href="#MessageParserDataMixin-194"><span class="linenos">194</span></a>
-</span><span id="MessageParserDataMixin-195"><a href="#MessageParserDataMixin-195"><span class="linenos">195</span></a><span class="sd">        Returns:</span>
-</span><span id="MessageParserDataMixin-196"><a href="#MessageParserDataMixin-196"><span class="linenos">196</span></a><span class="sd">            list: 結果</span>
-</span><span id="MessageParserDataMixin-197"><a href="#MessageParserDataMixin-197"><span class="linenos">197</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="MessageParserDataMixin-198"><a href="#MessageParserDataMixin-198"><span class="linenos">198</span></a>
-</span><span id="MessageParserDataMixin-199"><a href="#MessageParserDataMixin-199"><span class="linenos">199</span></a>        <span class="n">ret</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span id="MessageParserDataMixin-200"><a href="#MessageParserDataMixin-200"><span class="linenos">200</span></a>        <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">rf</span><span class="s2">&quot;^</span><span class="si">{</span><span class="n">keyword</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">text</span><span class="p">):</span>  <span class="c1"># キーワードが先頭に存在するかチェック</span>
-</span><span id="MessageParserDataMixin-201"><a href="#MessageParserDataMixin-201"><span class="linenos">201</span></a>            <span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">keyword</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
-</span><span id="MessageParserDataMixin-202"><a href="#MessageParserDataMixin-202"><span class="linenos">202</span></a>            <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">matter</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">text</span><span class="p">[</span><span class="mi">0</span><span class="p">::</span><span class="mi">2</span><span class="p">],</span> <span class="n">text</span><span class="p">[</span><span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">]):</span>
-</span><span id="MessageParserDataMixin-203"><a href="#MessageParserDataMixin-203"><span class="linenos">203</span></a>                <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">name</span><span class="p">,</span> <span class="n">matter</span><span class="p">])</span>
-</span><span id="MessageParserDataMixin-204"><a href="#MessageParserDataMixin-204"><span class="linenos">204</span></a>
-</span><span id="MessageParserDataMixin-205"><a href="#MessageParserDataMixin-205"><span class="linenos">205</span></a>        <span class="k">return</span> <span class="n">ret</span>
+</span><span id="MessageParserDataMixin-167"><a href="#MessageParserDataMixin-167"><span class="linenos">167</span></a>        <span class="n">data</span><span class="p">:</span> <span class="s2">&quot;MessageType&quot;</span><span class="p">,</span>
+</span><span id="MessageParserDataMixin-168"><a href="#MessageParserDataMixin-168"><span class="linenos">168</span></a>        <span class="n">options</span><span class="p">:</span> <span class="n">StyleOptions</span><span class="p">,</span>
+</span><span id="MessageParserDataMixin-169"><a href="#MessageParserDataMixin-169"><span class="linenos">169</span></a>    <span class="p">):</span>
+</span><span id="MessageParserDataMixin-170"><a href="#MessageParserDataMixin-170"><span class="linenos">170</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;メッセージデータをセット</span>
+</span><span id="MessageParserDataMixin-171"><a href="#MessageParserDataMixin-171"><span class="linenos">171</span></a>
+</span><span id="MessageParserDataMixin-172"><a href="#MessageParserDataMixin-172"><span class="linenos">172</span></a><span class="sd">        Args:</span>
+</span><span id="MessageParserDataMixin-173"><a href="#MessageParserDataMixin-173"><span class="linenos">173</span></a><span class="sd">            title (str): データ識別子</span>
+</span><span id="MessageParserDataMixin-174"><a href="#MessageParserDataMixin-174"><span class="linenos">174</span></a><span class="sd">            data (MessageType): 内容</span>
+</span><span id="MessageParserDataMixin-175"><a href="#MessageParserDataMixin-175"><span class="linenos">175</span></a><span class="sd">            options (StyleOptions): 表示オプション</span>
+</span><span id="MessageParserDataMixin-176"><a href="#MessageParserDataMixin-176"><span class="linenos">176</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="MessageParserDataMixin-177"><a href="#MessageParserDataMixin-177"><span class="linenos">177</span></a>
+</span><span id="MessageParserDataMixin-178"><a href="#MessageParserDataMixin-178"><span class="linenos">178</span></a>        <span class="c1"># 空データは登録しない</span>
+</span><span id="MessageParserDataMixin-179"><a href="#MessageParserDataMixin-179"><span class="linenos">179</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">NoneType</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="ow">and</span> <span class="n">data</span><span class="o">.</span><span class="n">empty</span><span class="p">):</span>
+</span><span id="MessageParserDataMixin-180"><a href="#MessageParserDataMixin-180"><span class="linenos">180</span></a>            <span class="k">return</span>
+</span><span id="MessageParserDataMixin-181"><a href="#MessageParserDataMixin-181"><span class="linenos">181</span></a>
+</span><span id="MessageParserDataMixin-182"><a href="#MessageParserDataMixin-182"><span class="linenos">182</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">data</span><span class="p">,</span> <span class="n">options</span><span class="p">))</span>
+</span><span id="MessageParserDataMixin-183"><a href="#MessageParserDataMixin-183"><span class="linenos">183</span></a>
+</span><span id="MessageParserDataMixin-184"><a href="#MessageParserDataMixin-184"><span class="linenos">184</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_remarks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keyword</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+</span><span id="MessageParserDataMixin-185"><a href="#MessageParserDataMixin-185"><span class="linenos">185</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;textからメモを抽出する</span>
+</span><span id="MessageParserDataMixin-186"><a href="#MessageParserDataMixin-186"><span class="linenos">186</span></a>
+</span><span id="MessageParserDataMixin-187"><a href="#MessageParserDataMixin-187"><span class="linenos">187</span></a><span class="sd">        Args:</span>
+</span><span id="MessageParserDataMixin-188"><a href="#MessageParserDataMixin-188"><span class="linenos">188</span></a><span class="sd">            keyword (str): メモ記録キーワード</span>
+</span><span id="MessageParserDataMixin-189"><a href="#MessageParserDataMixin-189"><span class="linenos">189</span></a>
+</span><span id="MessageParserDataMixin-190"><a href="#MessageParserDataMixin-190"><span class="linenos">190</span></a><span class="sd">        Returns:</span>
+</span><span id="MessageParserDataMixin-191"><a href="#MessageParserDataMixin-191"><span class="linenos">191</span></a><span class="sd">            list: 結果</span>
+</span><span id="MessageParserDataMixin-192"><a href="#MessageParserDataMixin-192"><span class="linenos">192</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="MessageParserDataMixin-193"><a href="#MessageParserDataMixin-193"><span class="linenos">193</span></a>
+</span><span id="MessageParserDataMixin-194"><a href="#MessageParserDataMixin-194"><span class="linenos">194</span></a>        <span class="n">ret</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="MessageParserDataMixin-195"><a href="#MessageParserDataMixin-195"><span class="linenos">195</span></a>        <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">rf</span><span class="s2">&quot;^</span><span class="si">{</span><span class="n">keyword</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">text</span><span class="p">):</span>  <span class="c1"># キーワードが先頭に存在するかチェック</span>
+</span><span id="MessageParserDataMixin-196"><a href="#MessageParserDataMixin-196"><span class="linenos">196</span></a>            <span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">keyword</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+</span><span id="MessageParserDataMixin-197"><a href="#MessageParserDataMixin-197"><span class="linenos">197</span></a>            <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">matter</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">text</span><span class="p">[</span><span class="mi">0</span><span class="p">::</span><span class="mi">2</span><span class="p">],</span> <span class="n">text</span><span class="p">[</span><span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">]):</span>
+</span><span id="MessageParserDataMixin-198"><a href="#MessageParserDataMixin-198"><span class="linenos">198</span></a>                <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">name</span><span class="p">,</span> <span class="n">matter</span><span class="p">])</span>
+</span><span id="MessageParserDataMixin-199"><a href="#MessageParserDataMixin-199"><span class="linenos">199</span></a>
+</span><span id="MessageParserDataMixin-200"><a href="#MessageParserDataMixin-200"><span class="linenos">200</span></a>        <span class="k">return</span> <span class="n">ret</span>
 </span></pre></div>
 
 
@@ -1258,7 +1248,7 @@
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">set_data</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">title</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">data</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span> <span class="o">|</span> <span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataFrame</span>,</span><span class="param">	<span class="n">options</span><span class="p">:</span> <span class="n"><a href="../../libs/types.html#StyleOptions">libs.types.StyleOptions</a></span></span><span class="return-annotation">):</span></span>
+        <span class="name">set_data</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">data</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span> <span class="o">|</span> <span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataFrame</span>,</span><span class="param">	<span class="n">options</span><span class="p">:</span> <span class="n"><a href="../../libs/types.html#StyleOptions">libs.types.StyleOptions</a></span></span><span class="return-annotation">):</span></span>
 
                 <label class="view-source-button" for="MessageParserDataMixin.set_data-view-source"><span>View Source</span></label>
 
@@ -1266,27 +1256,22 @@
     <a class="headerlink" href="#MessageParserDataMixin.set_data"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserDataMixin.set_data-165"><a href="#MessageParserDataMixin.set_data-165"><span class="linenos">165</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">set_data</span><span class="p">(</span>
 </span><span id="MessageParserDataMixin.set_data-166"><a href="#MessageParserDataMixin.set_data-166"><span class="linenos">166</span></a>        <span class="bp">self</span><span class="p">,</span>
-</span><span id="MessageParserDataMixin.set_data-167"><a href="#MessageParserDataMixin.set_data-167"><span class="linenos">167</span></a>        <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-</span><span id="MessageParserDataMixin.set_data-168"><a href="#MessageParserDataMixin.set_data-168"><span class="linenos">168</span></a>        <span class="n">data</span><span class="p">:</span> <span class="s2">&quot;MessageType&quot;</span><span class="p">,</span>
-</span><span id="MessageParserDataMixin.set_data-169"><a href="#MessageParserDataMixin.set_data-169"><span class="linenos">169</span></a>        <span class="n">options</span><span class="p">:</span> <span class="n">StyleOptions</span><span class="p">,</span>
-</span><span id="MessageParserDataMixin.set_data-170"><a href="#MessageParserDataMixin.set_data-170"><span class="linenos">170</span></a>    <span class="p">):</span>
-</span><span id="MessageParserDataMixin.set_data-171"><a href="#MessageParserDataMixin.set_data-171"><span class="linenos">171</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;メッセージデータをセット</span>
-</span><span id="MessageParserDataMixin.set_data-172"><a href="#MessageParserDataMixin.set_data-172"><span class="linenos">172</span></a>
-</span><span id="MessageParserDataMixin.set_data-173"><a href="#MessageParserDataMixin.set_data-173"><span class="linenos">173</span></a><span class="sd">        Args:</span>
-</span><span id="MessageParserDataMixin.set_data-174"><a href="#MessageParserDataMixin.set_data-174"><span class="linenos">174</span></a><span class="sd">            title (str): データ識別子</span>
-</span><span id="MessageParserDataMixin.set_data-175"><a href="#MessageParserDataMixin.set_data-175"><span class="linenos">175</span></a><span class="sd">            data (MessageType): 内容</span>
-</span><span id="MessageParserDataMixin.set_data-176"><a href="#MessageParserDataMixin.set_data-176"><span class="linenos">176</span></a><span class="sd">            options (StyleOptions): 表示オプション</span>
-</span><span id="MessageParserDataMixin.set_data-177"><a href="#MessageParserDataMixin.set_data-177"><span class="linenos">177</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="MessageParserDataMixin.set_data-178"><a href="#MessageParserDataMixin.set_data-178"><span class="linenos">178</span></a>
-</span><span id="MessageParserDataMixin.set_data-179"><a href="#MessageParserDataMixin.set_data-179"><span class="linenos">179</span></a>        <span class="c1"># 空データは登録しない</span>
-</span><span id="MessageParserDataMixin.set_data-180"><a href="#MessageParserDataMixin.set_data-180"><span class="linenos">180</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">NoneType</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="ow">and</span> <span class="n">data</span><span class="o">.</span><span class="n">empty</span><span class="p">):</span>
-</span><span id="MessageParserDataMixin.set_data-181"><a href="#MessageParserDataMixin.set_data-181"><span class="linenos">181</span></a>            <span class="k">return</span>
-</span><span id="MessageParserDataMixin.set_data-182"><a href="#MessageParserDataMixin.set_data-182"><span class="linenos">182</span></a>
-</span><span id="MessageParserDataMixin.set_data-183"><a href="#MessageParserDataMixin.set_data-183"><span class="linenos">183</span></a>        <span class="n">msg</span> <span class="o">=</span> <span class="n">MessageTypeDict</span><span class="p">(</span>
-</span><span id="MessageParserDataMixin.set_data-184"><a href="#MessageParserDataMixin.set_data-184"><span class="linenos">184</span></a>            <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
-</span><span id="MessageParserDataMixin.set_data-185"><a href="#MessageParserDataMixin.set_data-185"><span class="linenos">185</span></a>            <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">,</span>
-</span><span id="MessageParserDataMixin.set_data-186"><a href="#MessageParserDataMixin.set_data-186"><span class="linenos">186</span></a>        <span class="p">)</span>
-</span><span id="MessageParserDataMixin.set_data-187"><a href="#MessageParserDataMixin.set_data-187"><span class="linenos">187</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="n">title</span><span class="p">:</span> <span class="n">msg</span><span class="p">})</span>
+</span><span id="MessageParserDataMixin.set_data-167"><a href="#MessageParserDataMixin.set_data-167"><span class="linenos">167</span></a>        <span class="n">data</span><span class="p">:</span> <span class="s2">&quot;MessageType&quot;</span><span class="p">,</span>
+</span><span id="MessageParserDataMixin.set_data-168"><a href="#MessageParserDataMixin.set_data-168"><span class="linenos">168</span></a>        <span class="n">options</span><span class="p">:</span> <span class="n">StyleOptions</span><span class="p">,</span>
+</span><span id="MessageParserDataMixin.set_data-169"><a href="#MessageParserDataMixin.set_data-169"><span class="linenos">169</span></a>    <span class="p">):</span>
+</span><span id="MessageParserDataMixin.set_data-170"><a href="#MessageParserDataMixin.set_data-170"><span class="linenos">170</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;メッセージデータをセット</span>
+</span><span id="MessageParserDataMixin.set_data-171"><a href="#MessageParserDataMixin.set_data-171"><span class="linenos">171</span></a>
+</span><span id="MessageParserDataMixin.set_data-172"><a href="#MessageParserDataMixin.set_data-172"><span class="linenos">172</span></a><span class="sd">        Args:</span>
+</span><span id="MessageParserDataMixin.set_data-173"><a href="#MessageParserDataMixin.set_data-173"><span class="linenos">173</span></a><span class="sd">            title (str): データ識別子</span>
+</span><span id="MessageParserDataMixin.set_data-174"><a href="#MessageParserDataMixin.set_data-174"><span class="linenos">174</span></a><span class="sd">            data (MessageType): 内容</span>
+</span><span id="MessageParserDataMixin.set_data-175"><a href="#MessageParserDataMixin.set_data-175"><span class="linenos">175</span></a><span class="sd">            options (StyleOptions): 表示オプション</span>
+</span><span id="MessageParserDataMixin.set_data-176"><a href="#MessageParserDataMixin.set_data-176"><span class="linenos">176</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="MessageParserDataMixin.set_data-177"><a href="#MessageParserDataMixin.set_data-177"><span class="linenos">177</span></a>
+</span><span id="MessageParserDataMixin.set_data-178"><a href="#MessageParserDataMixin.set_data-178"><span class="linenos">178</span></a>        <span class="c1"># 空データは登録しない</span>
+</span><span id="MessageParserDataMixin.set_data-179"><a href="#MessageParserDataMixin.set_data-179"><span class="linenos">179</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">NoneType</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="ow">and</span> <span class="n">data</span><span class="o">.</span><span class="n">empty</span><span class="p">):</span>
+</span><span id="MessageParserDataMixin.set_data-180"><a href="#MessageParserDataMixin.set_data-180"><span class="linenos">180</span></a>            <span class="k">return</span>
+</span><span id="MessageParserDataMixin.set_data-181"><a href="#MessageParserDataMixin.set_data-181"><span class="linenos">181</span></a>
+</span><span id="MessageParserDataMixin.set_data-182"><a href="#MessageParserDataMixin.set_data-182"><span class="linenos">182</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">data</span><span class="p">,</span> <span class="n">options</span><span class="p">))</span>
 </span></pre></div>
 
 
@@ -1314,23 +1299,23 @@
 
     </div>
     <a class="headerlink" href="#MessageParserDataMixin.get_remarks"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserDataMixin.get_remarks-189"><a href="#MessageParserDataMixin.get_remarks-189"><span class="linenos">189</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_remarks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keyword</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
-</span><span id="MessageParserDataMixin.get_remarks-190"><a href="#MessageParserDataMixin.get_remarks-190"><span class="linenos">190</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;textからメモを抽出する</span>
-</span><span id="MessageParserDataMixin.get_remarks-191"><a href="#MessageParserDataMixin.get_remarks-191"><span class="linenos">191</span></a>
-</span><span id="MessageParserDataMixin.get_remarks-192"><a href="#MessageParserDataMixin.get_remarks-192"><span class="linenos">192</span></a><span class="sd">        Args:</span>
-</span><span id="MessageParserDataMixin.get_remarks-193"><a href="#MessageParserDataMixin.get_remarks-193"><span class="linenos">193</span></a><span class="sd">            keyword (str): メモ記録キーワード</span>
-</span><span id="MessageParserDataMixin.get_remarks-194"><a href="#MessageParserDataMixin.get_remarks-194"><span class="linenos">194</span></a>
-</span><span id="MessageParserDataMixin.get_remarks-195"><a href="#MessageParserDataMixin.get_remarks-195"><span class="linenos">195</span></a><span class="sd">        Returns:</span>
-</span><span id="MessageParserDataMixin.get_remarks-196"><a href="#MessageParserDataMixin.get_remarks-196"><span class="linenos">196</span></a><span class="sd">            list: 結果</span>
-</span><span id="MessageParserDataMixin.get_remarks-197"><a href="#MessageParserDataMixin.get_remarks-197"><span class="linenos">197</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="MessageParserDataMixin.get_remarks-198"><a href="#MessageParserDataMixin.get_remarks-198"><span class="linenos">198</span></a>
-</span><span id="MessageParserDataMixin.get_remarks-199"><a href="#MessageParserDataMixin.get_remarks-199"><span class="linenos">199</span></a>        <span class="n">ret</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span id="MessageParserDataMixin.get_remarks-200"><a href="#MessageParserDataMixin.get_remarks-200"><span class="linenos">200</span></a>        <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">rf</span><span class="s2">&quot;^</span><span class="si">{</span><span class="n">keyword</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">text</span><span class="p">):</span>  <span class="c1"># キーワードが先頭に存在するかチェック</span>
-</span><span id="MessageParserDataMixin.get_remarks-201"><a href="#MessageParserDataMixin.get_remarks-201"><span class="linenos">201</span></a>            <span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">keyword</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
-</span><span id="MessageParserDataMixin.get_remarks-202"><a href="#MessageParserDataMixin.get_remarks-202"><span class="linenos">202</span></a>            <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">matter</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">text</span><span class="p">[</span><span class="mi">0</span><span class="p">::</span><span class="mi">2</span><span class="p">],</span> <span class="n">text</span><span class="p">[</span><span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">]):</span>
-</span><span id="MessageParserDataMixin.get_remarks-203"><a href="#MessageParserDataMixin.get_remarks-203"><span class="linenos">203</span></a>                <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">name</span><span class="p">,</span> <span class="n">matter</span><span class="p">])</span>
-</span><span id="MessageParserDataMixin.get_remarks-204"><a href="#MessageParserDataMixin.get_remarks-204"><span class="linenos">204</span></a>
-</span><span id="MessageParserDataMixin.get_remarks-205"><a href="#MessageParserDataMixin.get_remarks-205"><span class="linenos">205</span></a>        <span class="k">return</span> <span class="n">ret</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserDataMixin.get_remarks-184"><a href="#MessageParserDataMixin.get_remarks-184"><span class="linenos">184</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_remarks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keyword</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+</span><span id="MessageParserDataMixin.get_remarks-185"><a href="#MessageParserDataMixin.get_remarks-185"><span class="linenos">185</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;textからメモを抽出する</span>
+</span><span id="MessageParserDataMixin.get_remarks-186"><a href="#MessageParserDataMixin.get_remarks-186"><span class="linenos">186</span></a>
+</span><span id="MessageParserDataMixin.get_remarks-187"><a href="#MessageParserDataMixin.get_remarks-187"><span class="linenos">187</span></a><span class="sd">        Args:</span>
+</span><span id="MessageParserDataMixin.get_remarks-188"><a href="#MessageParserDataMixin.get_remarks-188"><span class="linenos">188</span></a><span class="sd">            keyword (str): メモ記録キーワード</span>
+</span><span id="MessageParserDataMixin.get_remarks-189"><a href="#MessageParserDataMixin.get_remarks-189"><span class="linenos">189</span></a>
+</span><span id="MessageParserDataMixin.get_remarks-190"><a href="#MessageParserDataMixin.get_remarks-190"><span class="linenos">190</span></a><span class="sd">        Returns:</span>
+</span><span id="MessageParserDataMixin.get_remarks-191"><a href="#MessageParserDataMixin.get_remarks-191"><span class="linenos">191</span></a><span class="sd">            list: 結果</span>
+</span><span id="MessageParserDataMixin.get_remarks-192"><a href="#MessageParserDataMixin.get_remarks-192"><span class="linenos">192</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="MessageParserDataMixin.get_remarks-193"><a href="#MessageParserDataMixin.get_remarks-193"><span class="linenos">193</span></a>
+</span><span id="MessageParserDataMixin.get_remarks-194"><a href="#MessageParserDataMixin.get_remarks-194"><span class="linenos">194</span></a>        <span class="n">ret</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="MessageParserDataMixin.get_remarks-195"><a href="#MessageParserDataMixin.get_remarks-195"><span class="linenos">195</span></a>        <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">rf</span><span class="s2">&quot;^</span><span class="si">{</span><span class="n">keyword</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">text</span><span class="p">):</span>  <span class="c1"># キーワードが先頭に存在するかチェック</span>
+</span><span id="MessageParserDataMixin.get_remarks-196"><a href="#MessageParserDataMixin.get_remarks-196"><span class="linenos">196</span></a>            <span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">keyword</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+</span><span id="MessageParserDataMixin.get_remarks-197"><a href="#MessageParserDataMixin.get_remarks-197"><span class="linenos">197</span></a>            <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">matter</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">text</span><span class="p">[</span><span class="mi">0</span><span class="p">::</span><span class="mi">2</span><span class="p">],</span> <span class="n">text</span><span class="p">[</span><span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">]):</span>
+</span><span id="MessageParserDataMixin.get_remarks-198"><a href="#MessageParserDataMixin.get_remarks-198"><span class="linenos">198</span></a>                <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">name</span><span class="p">,</span> <span class="n">matter</span><span class="p">])</span>
+</span><span id="MessageParserDataMixin.get_remarks-199"><a href="#MessageParserDataMixin.get_remarks-199"><span class="linenos">199</span></a>
+</span><span id="MessageParserDataMixin.get_remarks-200"><a href="#MessageParserDataMixin.get_remarks-200"><span class="linenos">200</span></a>        <span class="k">return</span> <span class="n">ret</span>
 </span></pre></div>
 
 
@@ -1363,123 +1348,123 @@
 
     </div>
     <a class="headerlink" href="#MessageParserInterface"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserInterface-208"><a href="#MessageParserInterface-208"><span class="linenos">208</span></a><span class="k">class</span><span class="w"> </span><span class="nc">MessageParserInterface</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
-</span><span id="MessageParserInterface-209"><a href="#MessageParserInterface-209"><span class="linenos">209</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メッセージ解析インターフェース&quot;&quot;&quot;</span>
-</span><span id="MessageParserInterface-210"><a href="#MessageParserInterface-210"><span class="linenos">210</span></a>
-</span><span id="MessageParserInterface-211"><a href="#MessageParserInterface-211"><span class="linenos">211</span></a>    <span class="n">data</span><span class="p">:</span> <span class="s2">&quot;MsgData&quot;</span>
-</span><span id="MessageParserInterface-212"><a href="#MessageParserInterface-212"><span class="linenos">212</span></a>    <span class="n">post</span><span class="p">:</span> <span class="s2">&quot;PostData&quot;</span>
-</span><span id="MessageParserInterface-213"><a href="#MessageParserInterface-213"><span class="linenos">213</span></a>    <span class="n">status</span><span class="p">:</span> <span class="s2">&quot;StatusData&quot;</span>
-</span><span id="MessageParserInterface-214"><a href="#MessageParserInterface-214"><span class="linenos">214</span></a>
-</span><span id="MessageParserInterface-215"><a href="#MessageParserInterface-215"><span class="linenos">215</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="MessageParserInterface-216"><a href="#MessageParserInterface-216"><span class="linenos">216</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">parser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">body</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
-</span><span id="MessageParserInterface-217"><a href="#MessageParserInterface-217"><span class="linenos">217</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;メッセージ解析</span>
-</span><span id="MessageParserInterface-218"><a href="#MessageParserInterface-218"><span class="linenos">218</span></a>
-</span><span id="MessageParserInterface-219"><a href="#MessageParserInterface-219"><span class="linenos">219</span></a><span class="sd">        Args:</span>
-</span><span id="MessageParserInterface-220"><a href="#MessageParserInterface-220"><span class="linenos">220</span></a><span class="sd">            body (Any): 解析データ</span>
-</span><span id="MessageParserInterface-221"><a href="#MessageParserInterface-221"><span class="linenos">221</span></a><span class="sd">        &quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserInterface-203"><a href="#MessageParserInterface-203"><span class="linenos">203</span></a><span class="k">class</span><span class="w"> </span><span class="nc">MessageParserInterface</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+</span><span id="MessageParserInterface-204"><a href="#MessageParserInterface-204"><span class="linenos">204</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メッセージ解析インターフェース&quot;&quot;&quot;</span>
+</span><span id="MessageParserInterface-205"><a href="#MessageParserInterface-205"><span class="linenos">205</span></a>
+</span><span id="MessageParserInterface-206"><a href="#MessageParserInterface-206"><span class="linenos">206</span></a>    <span class="n">data</span><span class="p">:</span> <span class="s2">&quot;MsgData&quot;</span>
+</span><span id="MessageParserInterface-207"><a href="#MessageParserInterface-207"><span class="linenos">207</span></a>    <span class="n">post</span><span class="p">:</span> <span class="s2">&quot;PostData&quot;</span>
+</span><span id="MessageParserInterface-208"><a href="#MessageParserInterface-208"><span class="linenos">208</span></a>    <span class="n">status</span><span class="p">:</span> <span class="s2">&quot;StatusData&quot;</span>
+</span><span id="MessageParserInterface-209"><a href="#MessageParserInterface-209"><span class="linenos">209</span></a>
+</span><span id="MessageParserInterface-210"><a href="#MessageParserInterface-210"><span class="linenos">210</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="MessageParserInterface-211"><a href="#MessageParserInterface-211"><span class="linenos">211</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">parser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">body</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+</span><span id="MessageParserInterface-212"><a href="#MessageParserInterface-212"><span class="linenos">212</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;メッセージ解析</span>
+</span><span id="MessageParserInterface-213"><a href="#MessageParserInterface-213"><span class="linenos">213</span></a>
+</span><span id="MessageParserInterface-214"><a href="#MessageParserInterface-214"><span class="linenos">214</span></a><span class="sd">        Args:</span>
+</span><span id="MessageParserInterface-215"><a href="#MessageParserInterface-215"><span class="linenos">215</span></a><span class="sd">            body (Any): 解析データ</span>
+</span><span id="MessageParserInterface-216"><a href="#MessageParserInterface-216"><span class="linenos">216</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="MessageParserInterface-217"><a href="#MessageParserInterface-217"><span class="linenos">217</span></a>
+</span><span id="MessageParserInterface-218"><a href="#MessageParserInterface-218"><span class="linenos">218</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParserInterface-219"><a href="#MessageParserInterface-219"><span class="linenos">219</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="MessageParserInterface-220"><a href="#MessageParserInterface-220"><span class="linenos">220</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">in_thread</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParserInterface-221"><a href="#MessageParserInterface-221"><span class="linenos">221</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;元メッセージへのリプライとなっているか</span>
 </span><span id="MessageParserInterface-222"><a href="#MessageParserInterface-222"><span class="linenos">222</span></a>
-</span><span id="MessageParserInterface-223"><a href="#MessageParserInterface-223"><span class="linenos">223</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParserInterface-224"><a href="#MessageParserInterface-224"><span class="linenos">224</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="MessageParserInterface-225"><a href="#MessageParserInterface-225"><span class="linenos">225</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">in_thread</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="MessageParserInterface-226"><a href="#MessageParserInterface-226"><span class="linenos">226</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;元メッセージへのリプライとなっているか</span>
-</span><span id="MessageParserInterface-227"><a href="#MessageParserInterface-227"><span class="linenos">227</span></a>
-</span><span id="MessageParserInterface-228"><a href="#MessageParserInterface-228"><span class="linenos">228</span></a><span class="sd">        Returns:</span>
-</span><span id="MessageParserInterface-229"><a href="#MessageParserInterface-229"><span class="linenos">229</span></a><span class="sd">            bool: 真偽値</span>
-</span><span id="MessageParserInterface-230"><a href="#MessageParserInterface-230"><span class="linenos">230</span></a><span class="sd">            - *True*: リプライの形（リプライ／スレッドなど）</span>
-</span><span id="MessageParserInterface-231"><a href="#MessageParserInterface-231"><span class="linenos">231</span></a><span class="sd">            - *False*: 通常メッセージ</span>
-</span><span id="MessageParserInterface-232"><a href="#MessageParserInterface-232"><span class="linenos">232</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="MessageParserInterface-223"><a href="#MessageParserInterface-223"><span class="linenos">223</span></a><span class="sd">        Returns:</span>
+</span><span id="MessageParserInterface-224"><a href="#MessageParserInterface-224"><span class="linenos">224</span></a><span class="sd">            bool: 真偽値</span>
+</span><span id="MessageParserInterface-225"><a href="#MessageParserInterface-225"><span class="linenos">225</span></a><span class="sd">            - *True*: リプライの形（リプライ／スレッドなど）</span>
+</span><span id="MessageParserInterface-226"><a href="#MessageParserInterface-226"><span class="linenos">226</span></a><span class="sd">            - *False*: 通常メッセージ</span>
+</span><span id="MessageParserInterface-227"><a href="#MessageParserInterface-227"><span class="linenos">227</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="MessageParserInterface-228"><a href="#MessageParserInterface-228"><span class="linenos">228</span></a>
+</span><span id="MessageParserInterface-229"><a href="#MessageParserInterface-229"><span class="linenos">229</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParserInterface-230"><a href="#MessageParserInterface-230"><span class="linenos">230</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="MessageParserInterface-231"><a href="#MessageParserInterface-231"><span class="linenos">231</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_bot</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParserInterface-232"><a href="#MessageParserInterface-232"><span class="linenos">232</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;botのポストかチェック</span>
 </span><span id="MessageParserInterface-233"><a href="#MessageParserInterface-233"><span class="linenos">233</span></a>
-</span><span id="MessageParserInterface-234"><a href="#MessageParserInterface-234"><span class="linenos">234</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParserInterface-235"><a href="#MessageParserInterface-235"><span class="linenos">235</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="MessageParserInterface-236"><a href="#MessageParserInterface-236"><span class="linenos">236</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_bot</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="MessageParserInterface-237"><a href="#MessageParserInterface-237"><span class="linenos">237</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;botのポストかチェック</span>
-</span><span id="MessageParserInterface-238"><a href="#MessageParserInterface-238"><span class="linenos">238</span></a>
-</span><span id="MessageParserInterface-239"><a href="#MessageParserInterface-239"><span class="linenos">239</span></a><span class="sd">        Returns:</span>
-</span><span id="MessageParserInterface-240"><a href="#MessageParserInterface-240"><span class="linenos">240</span></a><span class="sd">            bool: 真偽値</span>
-</span><span id="MessageParserInterface-241"><a href="#MessageParserInterface-241"><span class="linenos">241</span></a><span class="sd">            - *True*: botのポスト</span>
-</span><span id="MessageParserInterface-242"><a href="#MessageParserInterface-242"><span class="linenos">242</span></a><span class="sd">            - *False*: ユーザのポスト</span>
-</span><span id="MessageParserInterface-243"><a href="#MessageParserInterface-243"><span class="linenos">243</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="MessageParserInterface-234"><a href="#MessageParserInterface-234"><span class="linenos">234</span></a><span class="sd">        Returns:</span>
+</span><span id="MessageParserInterface-235"><a href="#MessageParserInterface-235"><span class="linenos">235</span></a><span class="sd">            bool: 真偽値</span>
+</span><span id="MessageParserInterface-236"><a href="#MessageParserInterface-236"><span class="linenos">236</span></a><span class="sd">            - *True*: botのポスト</span>
+</span><span id="MessageParserInterface-237"><a href="#MessageParserInterface-237"><span class="linenos">237</span></a><span class="sd">            - *False*: ユーザのポスト</span>
+</span><span id="MessageParserInterface-238"><a href="#MessageParserInterface-238"><span class="linenos">238</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="MessageParserInterface-239"><a href="#MessageParserInterface-239"><span class="linenos">239</span></a>
+</span><span id="MessageParserInterface-240"><a href="#MessageParserInterface-240"><span class="linenos">240</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParserInterface-241"><a href="#MessageParserInterface-241"><span class="linenos">241</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="MessageParserInterface-242"><a href="#MessageParserInterface-242"><span class="linenos">242</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParserInterface-243"><a href="#MessageParserInterface-243"><span class="linenos">243</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;DB操作の許可チェック</span>
 </span><span id="MessageParserInterface-244"><a href="#MessageParserInterface-244"><span class="linenos">244</span></a>
-</span><span id="MessageParserInterface-245"><a href="#MessageParserInterface-245"><span class="linenos">245</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParserInterface-246"><a href="#MessageParserInterface-246"><span class="linenos">246</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="MessageParserInterface-247"><a href="#MessageParserInterface-247"><span class="linenos">247</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="MessageParserInterface-248"><a href="#MessageParserInterface-248"><span class="linenos">248</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;DB操作の許可チェック</span>
-</span><span id="MessageParserInterface-249"><a href="#MessageParserInterface-249"><span class="linenos">249</span></a>
-</span><span id="MessageParserInterface-250"><a href="#MessageParserInterface-250"><span class="linenos">250</span></a><span class="sd">        Returns:</span>
-</span><span id="MessageParserInterface-251"><a href="#MessageParserInterface-251"><span class="linenos">251</span></a><span class="sd">            bool: 真偽値</span>
-</span><span id="MessageParserInterface-252"><a href="#MessageParserInterface-252"><span class="linenos">252</span></a><span class="sd">            - *True*: 許可</span>
-</span><span id="MessageParserInterface-253"><a href="#MessageParserInterface-253"><span class="linenos">253</span></a><span class="sd">            - *False*: 禁止</span>
-</span><span id="MessageParserInterface-254"><a href="#MessageParserInterface-254"><span class="linenos">254</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="MessageParserInterface-245"><a href="#MessageParserInterface-245"><span class="linenos">245</span></a><span class="sd">        Returns:</span>
+</span><span id="MessageParserInterface-246"><a href="#MessageParserInterface-246"><span class="linenos">246</span></a><span class="sd">            bool: 真偽値</span>
+</span><span id="MessageParserInterface-247"><a href="#MessageParserInterface-247"><span class="linenos">247</span></a><span class="sd">            - *True*: 許可</span>
+</span><span id="MessageParserInterface-248"><a href="#MessageParserInterface-248"><span class="linenos">248</span></a><span class="sd">            - *False*: 禁止</span>
+</span><span id="MessageParserInterface-249"><a href="#MessageParserInterface-249"><span class="linenos">249</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="MessageParserInterface-250"><a href="#MessageParserInterface-250"><span class="linenos">250</span></a>
+</span><span id="MessageParserInterface-251"><a href="#MessageParserInterface-251"><span class="linenos">251</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParserInterface-252"><a href="#MessageParserInterface-252"><span class="linenos">252</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="MessageParserInterface-253"><a href="#MessageParserInterface-253"><span class="linenos">253</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">ignore_user</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParserInterface-254"><a href="#MessageParserInterface-254"><span class="linenos">254</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;ignore_useridに存在するユーザかチェック</span>
 </span><span id="MessageParserInterface-255"><a href="#MessageParserInterface-255"><span class="linenos">255</span></a>
-</span><span id="MessageParserInterface-256"><a href="#MessageParserInterface-256"><span class="linenos">256</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParserInterface-257"><a href="#MessageParserInterface-257"><span class="linenos">257</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="MessageParserInterface-258"><a href="#MessageParserInterface-258"><span class="linenos">258</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">ignore_user</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="MessageParserInterface-259"><a href="#MessageParserInterface-259"><span class="linenos">259</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;ignore_useridに存在するユーザかチェック</span>
-</span><span id="MessageParserInterface-260"><a href="#MessageParserInterface-260"><span class="linenos">260</span></a>
-</span><span id="MessageParserInterface-261"><a href="#MessageParserInterface-261"><span class="linenos">261</span></a><span class="sd">        Returns:</span>
-</span><span id="MessageParserInterface-262"><a href="#MessageParserInterface-262"><span class="linenos">262</span></a><span class="sd">            bool: 真偽値</span>
-</span><span id="MessageParserInterface-263"><a href="#MessageParserInterface-263"><span class="linenos">263</span></a><span class="sd">            - *True*: 存在する(操作禁止ユーザ)</span>
-</span><span id="MessageParserInterface-264"><a href="#MessageParserInterface-264"><span class="linenos">264</span></a><span class="sd">            - *False*: 存在しない</span>
-</span><span id="MessageParserInterface-265"><a href="#MessageParserInterface-265"><span class="linenos">265</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="MessageParserInterface-266"><a href="#MessageParserInterface-266"><span class="linenos">266</span></a>
-</span><span id="MessageParserInterface-267"><a href="#MessageParserInterface-267"><span class="linenos">267</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParserInterface-268"><a href="#MessageParserInterface-268"><span class="linenos">268</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_command</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="MessageParserInterface-269"><a href="#MessageParserInterface-269"><span class="linenos">269</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コマンドで実行されているかチェック</span>
-</span><span id="MessageParserInterface-270"><a href="#MessageParserInterface-270"><span class="linenos">270</span></a>
-</span><span id="MessageParserInterface-271"><a href="#MessageParserInterface-271"><span class="linenos">271</span></a><span class="sd">        Returns:</span>
-</span><span id="MessageParserInterface-272"><a href="#MessageParserInterface-272"><span class="linenos">272</span></a><span class="sd">            bool: 真偽値</span>
-</span><span id="MessageParserInterface-273"><a href="#MessageParserInterface-273"><span class="linenos">273</span></a><span class="sd">            - *True*: コマンド実行</span>
-</span><span id="MessageParserInterface-274"><a href="#MessageParserInterface-274"><span class="linenos">274</span></a><span class="sd">            - *False*: 非コマンド(キーワード呼び出し)</span>
-</span><span id="MessageParserInterface-275"><a href="#MessageParserInterface-275"><span class="linenos">275</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="MessageParserInterface-276"><a href="#MessageParserInterface-276"><span class="linenos">276</span></a>
-</span><span id="MessageParserInterface-277"><a href="#MessageParserInterface-277"><span class="linenos">277</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">command_flg</span>
-</span><span id="MessageParserInterface-278"><a href="#MessageParserInterface-278"><span class="linenos">278</span></a>
-</span><span id="MessageParserInterface-279"><a href="#MessageParserInterface-279"><span class="linenos">279</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParserInterface-280"><a href="#MessageParserInterface-280"><span class="linenos">280</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">keyword</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="MessageParserInterface-281"><a href="#MessageParserInterface-281"><span class="linenos">281</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コマンドとして認識している文字列を返す</span>
-</span><span id="MessageParserInterface-282"><a href="#MessageParserInterface-282"><span class="linenos">282</span></a>
-</span><span id="MessageParserInterface-283"><a href="#MessageParserInterface-283"><span class="linenos">283</span></a><span class="sd">        Returns:</span>
-</span><span id="MessageParserInterface-284"><a href="#MessageParserInterface-284"><span class="linenos">284</span></a><span class="sd">            str: コマンド名</span>
-</span><span id="MessageParserInterface-285"><a href="#MessageParserInterface-285"><span class="linenos">285</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="MessageParserInterface-286"><a href="#MessageParserInterface-286"><span class="linenos">286</span></a>
-</span><span id="MessageParserInterface-287"><a href="#MessageParserInterface-287"><span class="linenos">287</span></a>        <span class="k">if</span> <span class="n">ret</span> <span class="o">:=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">():</span>
-</span><span id="MessageParserInterface-288"><a href="#MessageParserInterface-288"><span class="linenos">288</span></a>            <span class="k">return</span> <span class="n">ret</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-</span><span id="MessageParserInterface-289"><a href="#MessageParserInterface-289"><span class="linenos">289</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">text</span>
-</span><span id="MessageParserInterface-290"><a href="#MessageParserInterface-290"><span class="linenos">290</span></a>
-</span><span id="MessageParserInterface-291"><a href="#MessageParserInterface-291"><span class="linenos">291</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParserInterface-292"><a href="#MessageParserInterface-292"><span class="linenos">292</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">argument</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
-</span><span id="MessageParserInterface-293"><a href="#MessageParserInterface-293"><span class="linenos">293</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コマンド引数として認識している文字列をリストで返す</span>
-</span><span id="MessageParserInterface-294"><a href="#MessageParserInterface-294"><span class="linenos">294</span></a>
-</span><span id="MessageParserInterface-295"><a href="#MessageParserInterface-295"><span class="linenos">295</span></a><span class="sd">        Returns:</span>
-</span><span id="MessageParserInterface-296"><a href="#MessageParserInterface-296"><span class="linenos">296</span></a><span class="sd">            list: 引数リスト</span>
-</span><span id="MessageParserInterface-297"><a href="#MessageParserInterface-297"><span class="linenos">297</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="MessageParserInterface-298"><a href="#MessageParserInterface-298"><span class="linenos">298</span></a>
-</span><span id="MessageParserInterface-299"><a href="#MessageParserInterface-299"><span class="linenos">299</span></a>        <span class="k">if</span> <span class="n">ret</span> <span class="o">:=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">():</span>
-</span><span id="MessageParserInterface-300"><a href="#MessageParserInterface-300"><span class="linenos">300</span></a>            <span class="k">return</span> <span class="n">ret</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
-</span><span id="MessageParserInterface-301"><a href="#MessageParserInterface-301"><span class="linenos">301</span></a>        <span class="k">return</span> <span class="n">ret</span>
-</span><span id="MessageParserInterface-302"><a href="#MessageParserInterface-302"><span class="linenos">302</span></a>
-</span><span id="MessageParserInterface-303"><a href="#MessageParserInterface-303"><span class="linenos">303</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParserInterface-304"><a href="#MessageParserInterface-304"><span class="linenos">304</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">reply_ts</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="MessageParserInterface-305"><a href="#MessageParserInterface-305"><span class="linenos">305</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;リプライ先のタイムスタンプを取得する</span>
-</span><span id="MessageParserInterface-306"><a href="#MessageParserInterface-306"><span class="linenos">306</span></a>
-</span><span id="MessageParserInterface-307"><a href="#MessageParserInterface-307"><span class="linenos">307</span></a><span class="sd">        Returns:</span>
-</span><span id="MessageParserInterface-308"><a href="#MessageParserInterface-308"><span class="linenos">308</span></a><span class="sd">            str: タイムスタンプ</span>
-</span><span id="MessageParserInterface-309"><a href="#MessageParserInterface-309"><span class="linenos">309</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="MessageParserInterface-310"><a href="#MessageParserInterface-310"><span class="linenos">310</span></a>
-</span><span id="MessageParserInterface-311"><a href="#MessageParserInterface-311"><span class="linenos">311</span></a>        <span class="n">ret_ts</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;0&quot;</span>
-</span><span id="MessageParserInterface-312"><a href="#MessageParserInterface-312"><span class="linenos">312</span></a>
-</span><span id="MessageParserInterface-313"><a href="#MessageParserInterface-313"><span class="linenos">313</span></a>        <span class="c1"># tsが指定されていれば最優先</span>
-</span><span id="MessageParserInterface-314"><a href="#MessageParserInterface-314"><span class="linenos">314</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">ts</span> <span class="o">!=</span> <span class="s2">&quot;undetermined&quot;</span><span class="p">:</span>
-</span><span id="MessageParserInterface-315"><a href="#MessageParserInterface-315"><span class="linenos">315</span></a>            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">ts</span>
-</span><span id="MessageParserInterface-316"><a href="#MessageParserInterface-316"><span class="linenos">316</span></a>
-</span><span id="MessageParserInterface-317"><a href="#MessageParserInterface-317"><span class="linenos">317</span></a>        <span class="c1"># スレッドに返すか</span>
-</span><span id="MessageParserInterface-318"><a href="#MessageParserInterface-318"><span class="linenos">318</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">thread</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_thread</span><span class="p">:</span>  <span class="c1"># スレッド内</span>
-</span><span id="MessageParserInterface-319"><a href="#MessageParserInterface-319"><span class="linenos">319</span></a>            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">thread_ts</span> <span class="o">!=</span> <span class="s2">&quot;undetermined&quot;</span><span class="p">:</span>
-</span><span id="MessageParserInterface-320"><a href="#MessageParserInterface-320"><span class="linenos">320</span></a>                <span class="n">ret_ts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">thread_ts</span>
-</span><span id="MessageParserInterface-321"><a href="#MessageParserInterface-321"><span class="linenos">321</span></a>        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">thread</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_thread</span><span class="p">:</span>  <span class="c1"># スレッド外</span>
-</span><span id="MessageParserInterface-322"><a href="#MessageParserInterface-322"><span class="linenos">322</span></a>            <span class="n">ret_ts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">event_ts</span>
-</span><span id="MessageParserInterface-323"><a href="#MessageParserInterface-323"><span class="linenos">323</span></a>
-</span><span id="MessageParserInterface-324"><a href="#MessageParserInterface-324"><span class="linenos">324</span></a>        <span class="k">return</span> <span class="n">ret_ts</span>
+</span><span id="MessageParserInterface-256"><a href="#MessageParserInterface-256"><span class="linenos">256</span></a><span class="sd">        Returns:</span>
+</span><span id="MessageParserInterface-257"><a href="#MessageParserInterface-257"><span class="linenos">257</span></a><span class="sd">            bool: 真偽値</span>
+</span><span id="MessageParserInterface-258"><a href="#MessageParserInterface-258"><span class="linenos">258</span></a><span class="sd">            - *True*: 存在する(操作禁止ユーザ)</span>
+</span><span id="MessageParserInterface-259"><a href="#MessageParserInterface-259"><span class="linenos">259</span></a><span class="sd">            - *False*: 存在しない</span>
+</span><span id="MessageParserInterface-260"><a href="#MessageParserInterface-260"><span class="linenos">260</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="MessageParserInterface-261"><a href="#MessageParserInterface-261"><span class="linenos">261</span></a>
+</span><span id="MessageParserInterface-262"><a href="#MessageParserInterface-262"><span class="linenos">262</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParserInterface-263"><a href="#MessageParserInterface-263"><span class="linenos">263</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_command</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParserInterface-264"><a href="#MessageParserInterface-264"><span class="linenos">264</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コマンドで実行されているかチェック</span>
+</span><span id="MessageParserInterface-265"><a href="#MessageParserInterface-265"><span class="linenos">265</span></a>
+</span><span id="MessageParserInterface-266"><a href="#MessageParserInterface-266"><span class="linenos">266</span></a><span class="sd">        Returns:</span>
+</span><span id="MessageParserInterface-267"><a href="#MessageParserInterface-267"><span class="linenos">267</span></a><span class="sd">            bool: 真偽値</span>
+</span><span id="MessageParserInterface-268"><a href="#MessageParserInterface-268"><span class="linenos">268</span></a><span class="sd">            - *True*: コマンド実行</span>
+</span><span id="MessageParserInterface-269"><a href="#MessageParserInterface-269"><span class="linenos">269</span></a><span class="sd">            - *False*: 非コマンド(キーワード呼び出し)</span>
+</span><span id="MessageParserInterface-270"><a href="#MessageParserInterface-270"><span class="linenos">270</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="MessageParserInterface-271"><a href="#MessageParserInterface-271"><span class="linenos">271</span></a>
+</span><span id="MessageParserInterface-272"><a href="#MessageParserInterface-272"><span class="linenos">272</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">command_flg</span>
+</span><span id="MessageParserInterface-273"><a href="#MessageParserInterface-273"><span class="linenos">273</span></a>
+</span><span id="MessageParserInterface-274"><a href="#MessageParserInterface-274"><span class="linenos">274</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParserInterface-275"><a href="#MessageParserInterface-275"><span class="linenos">275</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">keyword</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="MessageParserInterface-276"><a href="#MessageParserInterface-276"><span class="linenos">276</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コマンドとして認識している文字列を返す</span>
+</span><span id="MessageParserInterface-277"><a href="#MessageParserInterface-277"><span class="linenos">277</span></a>
+</span><span id="MessageParserInterface-278"><a href="#MessageParserInterface-278"><span class="linenos">278</span></a><span class="sd">        Returns:</span>
+</span><span id="MessageParserInterface-279"><a href="#MessageParserInterface-279"><span class="linenos">279</span></a><span class="sd">            str: コマンド名</span>
+</span><span id="MessageParserInterface-280"><a href="#MessageParserInterface-280"><span class="linenos">280</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="MessageParserInterface-281"><a href="#MessageParserInterface-281"><span class="linenos">281</span></a>
+</span><span id="MessageParserInterface-282"><a href="#MessageParserInterface-282"><span class="linenos">282</span></a>        <span class="k">if</span> <span class="n">ret</span> <span class="o">:=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">():</span>
+</span><span id="MessageParserInterface-283"><a href="#MessageParserInterface-283"><span class="linenos">283</span></a>            <span class="k">return</span> <span class="n">ret</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span><span id="MessageParserInterface-284"><a href="#MessageParserInterface-284"><span class="linenos">284</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">text</span>
+</span><span id="MessageParserInterface-285"><a href="#MessageParserInterface-285"><span class="linenos">285</span></a>
+</span><span id="MessageParserInterface-286"><a href="#MessageParserInterface-286"><span class="linenos">286</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParserInterface-287"><a href="#MessageParserInterface-287"><span class="linenos">287</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">argument</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+</span><span id="MessageParserInterface-288"><a href="#MessageParserInterface-288"><span class="linenos">288</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コマンド引数として認識している文字列をリストで返す</span>
+</span><span id="MessageParserInterface-289"><a href="#MessageParserInterface-289"><span class="linenos">289</span></a>
+</span><span id="MessageParserInterface-290"><a href="#MessageParserInterface-290"><span class="linenos">290</span></a><span class="sd">        Returns:</span>
+</span><span id="MessageParserInterface-291"><a href="#MessageParserInterface-291"><span class="linenos">291</span></a><span class="sd">            list: 引数リスト</span>
+</span><span id="MessageParserInterface-292"><a href="#MessageParserInterface-292"><span class="linenos">292</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="MessageParserInterface-293"><a href="#MessageParserInterface-293"><span class="linenos">293</span></a>
+</span><span id="MessageParserInterface-294"><a href="#MessageParserInterface-294"><span class="linenos">294</span></a>        <span class="k">if</span> <span class="n">ret</span> <span class="o">:=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">():</span>
+</span><span id="MessageParserInterface-295"><a href="#MessageParserInterface-295"><span class="linenos">295</span></a>            <span class="k">return</span> <span class="n">ret</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+</span><span id="MessageParserInterface-296"><a href="#MessageParserInterface-296"><span class="linenos">296</span></a>        <span class="k">return</span> <span class="n">ret</span>
+</span><span id="MessageParserInterface-297"><a href="#MessageParserInterface-297"><span class="linenos">297</span></a>
+</span><span id="MessageParserInterface-298"><a href="#MessageParserInterface-298"><span class="linenos">298</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParserInterface-299"><a href="#MessageParserInterface-299"><span class="linenos">299</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">reply_ts</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="MessageParserInterface-300"><a href="#MessageParserInterface-300"><span class="linenos">300</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;リプライ先のタイムスタンプを取得する</span>
+</span><span id="MessageParserInterface-301"><a href="#MessageParserInterface-301"><span class="linenos">301</span></a>
+</span><span id="MessageParserInterface-302"><a href="#MessageParserInterface-302"><span class="linenos">302</span></a><span class="sd">        Returns:</span>
+</span><span id="MessageParserInterface-303"><a href="#MessageParserInterface-303"><span class="linenos">303</span></a><span class="sd">            str: タイムスタンプ</span>
+</span><span id="MessageParserInterface-304"><a href="#MessageParserInterface-304"><span class="linenos">304</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="MessageParserInterface-305"><a href="#MessageParserInterface-305"><span class="linenos">305</span></a>
+</span><span id="MessageParserInterface-306"><a href="#MessageParserInterface-306"><span class="linenos">306</span></a>        <span class="n">ret_ts</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;0&quot;</span>
+</span><span id="MessageParserInterface-307"><a href="#MessageParserInterface-307"><span class="linenos">307</span></a>
+</span><span id="MessageParserInterface-308"><a href="#MessageParserInterface-308"><span class="linenos">308</span></a>        <span class="c1"># tsが指定されていれば最優先</span>
+</span><span id="MessageParserInterface-309"><a href="#MessageParserInterface-309"><span class="linenos">309</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">ts</span> <span class="o">!=</span> <span class="s2">&quot;undetermined&quot;</span><span class="p">:</span>
+</span><span id="MessageParserInterface-310"><a href="#MessageParserInterface-310"><span class="linenos">310</span></a>            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">ts</span>
+</span><span id="MessageParserInterface-311"><a href="#MessageParserInterface-311"><span class="linenos">311</span></a>
+</span><span id="MessageParserInterface-312"><a href="#MessageParserInterface-312"><span class="linenos">312</span></a>        <span class="c1"># スレッドに返すか</span>
+</span><span id="MessageParserInterface-313"><a href="#MessageParserInterface-313"><span class="linenos">313</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">thread</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_thread</span><span class="p">:</span>  <span class="c1"># スレッド内</span>
+</span><span id="MessageParserInterface-314"><a href="#MessageParserInterface-314"><span class="linenos">314</span></a>            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">thread_ts</span> <span class="o">!=</span> <span class="s2">&quot;undetermined&quot;</span><span class="p">:</span>
+</span><span id="MessageParserInterface-315"><a href="#MessageParserInterface-315"><span class="linenos">315</span></a>                <span class="n">ret_ts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">thread_ts</span>
+</span><span id="MessageParserInterface-316"><a href="#MessageParserInterface-316"><span class="linenos">316</span></a>        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">thread</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_thread</span><span class="p">:</span>  <span class="c1"># スレッド外</span>
+</span><span id="MessageParserInterface-317"><a href="#MessageParserInterface-317"><span class="linenos">317</span></a>            <span class="n">ret_ts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">event_ts</span>
+</span><span id="MessageParserInterface-318"><a href="#MessageParserInterface-318"><span class="linenos">318</span></a>
+</span><span id="MessageParserInterface-319"><a href="#MessageParserInterface-319"><span class="linenos">319</span></a>        <span class="k">return</span> <span class="n">ret_ts</span>
 </span></pre></div>
 
 
@@ -1532,13 +1517,13 @@
 
     </div>
     <a class="headerlink" href="#MessageParserInterface.parser"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserInterface.parser-215"><a href="#MessageParserInterface.parser-215"><span class="linenos">215</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="MessageParserInterface.parser-216"><a href="#MessageParserInterface.parser-216"><span class="linenos">216</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">parser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">body</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
-</span><span id="MessageParserInterface.parser-217"><a href="#MessageParserInterface.parser-217"><span class="linenos">217</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;メッセージ解析</span>
-</span><span id="MessageParserInterface.parser-218"><a href="#MessageParserInterface.parser-218"><span class="linenos">218</span></a>
-</span><span id="MessageParserInterface.parser-219"><a href="#MessageParserInterface.parser-219"><span class="linenos">219</span></a><span class="sd">        Args:</span>
-</span><span id="MessageParserInterface.parser-220"><a href="#MessageParserInterface.parser-220"><span class="linenos">220</span></a><span class="sd">            body (Any): 解析データ</span>
-</span><span id="MessageParserInterface.parser-221"><a href="#MessageParserInterface.parser-221"><span class="linenos">221</span></a><span class="sd">        &quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserInterface.parser-210"><a href="#MessageParserInterface.parser-210"><span class="linenos">210</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="MessageParserInterface.parser-211"><a href="#MessageParserInterface.parser-211"><span class="linenos">211</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">parser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">body</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+</span><span id="MessageParserInterface.parser-212"><a href="#MessageParserInterface.parser-212"><span class="linenos">212</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;メッセージ解析</span>
+</span><span id="MessageParserInterface.parser-213"><a href="#MessageParserInterface.parser-213"><span class="linenos">213</span></a>
+</span><span id="MessageParserInterface.parser-214"><a href="#MessageParserInterface.parser-214"><span class="linenos">214</span></a><span class="sd">        Args:</span>
+</span><span id="MessageParserInterface.parser-215"><a href="#MessageParserInterface.parser-215"><span class="linenos">215</span></a><span class="sd">            body (Any): 解析データ</span>
+</span><span id="MessageParserInterface.parser-216"><a href="#MessageParserInterface.parser-216"><span class="linenos">216</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -1562,16 +1547,16 @@
 
     </div>
     <a class="headerlink" href="#MessageParserInterface.in_thread"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserInterface.in_thread-223"><a href="#MessageParserInterface.in_thread-223"><span class="linenos">223</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParserInterface.in_thread-224"><a href="#MessageParserInterface.in_thread-224"><span class="linenos">224</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="MessageParserInterface.in_thread-225"><a href="#MessageParserInterface.in_thread-225"><span class="linenos">225</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">in_thread</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="MessageParserInterface.in_thread-226"><a href="#MessageParserInterface.in_thread-226"><span class="linenos">226</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;元メッセージへのリプライとなっているか</span>
-</span><span id="MessageParserInterface.in_thread-227"><a href="#MessageParserInterface.in_thread-227"><span class="linenos">227</span></a>
-</span><span id="MessageParserInterface.in_thread-228"><a href="#MessageParserInterface.in_thread-228"><span class="linenos">228</span></a><span class="sd">        Returns:</span>
-</span><span id="MessageParserInterface.in_thread-229"><a href="#MessageParserInterface.in_thread-229"><span class="linenos">229</span></a><span class="sd">            bool: 真偽値</span>
-</span><span id="MessageParserInterface.in_thread-230"><a href="#MessageParserInterface.in_thread-230"><span class="linenos">230</span></a><span class="sd">            - *True*: リプライの形（リプライ／スレッドなど）</span>
-</span><span id="MessageParserInterface.in_thread-231"><a href="#MessageParserInterface.in_thread-231"><span class="linenos">231</span></a><span class="sd">            - *False*: 通常メッセージ</span>
-</span><span id="MessageParserInterface.in_thread-232"><a href="#MessageParserInterface.in_thread-232"><span class="linenos">232</span></a><span class="sd">        &quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserInterface.in_thread-218"><a href="#MessageParserInterface.in_thread-218"><span class="linenos">218</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParserInterface.in_thread-219"><a href="#MessageParserInterface.in_thread-219"><span class="linenos">219</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="MessageParserInterface.in_thread-220"><a href="#MessageParserInterface.in_thread-220"><span class="linenos">220</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">in_thread</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParserInterface.in_thread-221"><a href="#MessageParserInterface.in_thread-221"><span class="linenos">221</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;元メッセージへのリプライとなっているか</span>
+</span><span id="MessageParserInterface.in_thread-222"><a href="#MessageParserInterface.in_thread-222"><span class="linenos">222</span></a>
+</span><span id="MessageParserInterface.in_thread-223"><a href="#MessageParserInterface.in_thread-223"><span class="linenos">223</span></a><span class="sd">        Returns:</span>
+</span><span id="MessageParserInterface.in_thread-224"><a href="#MessageParserInterface.in_thread-224"><span class="linenos">224</span></a><span class="sd">            bool: 真偽値</span>
+</span><span id="MessageParserInterface.in_thread-225"><a href="#MessageParserInterface.in_thread-225"><span class="linenos">225</span></a><span class="sd">            - *True*: リプライの形（リプライ／スレッドなど）</span>
+</span><span id="MessageParserInterface.in_thread-226"><a href="#MessageParserInterface.in_thread-226"><span class="linenos">226</span></a><span class="sd">            - *False*: 通常メッセージ</span>
+</span><span id="MessageParserInterface.in_thread-227"><a href="#MessageParserInterface.in_thread-227"><span class="linenos">227</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -1600,16 +1585,16 @@
 
     </div>
     <a class="headerlink" href="#MessageParserInterface.is_bot"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserInterface.is_bot-234"><a href="#MessageParserInterface.is_bot-234"><span class="linenos">234</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParserInterface.is_bot-235"><a href="#MessageParserInterface.is_bot-235"><span class="linenos">235</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="MessageParserInterface.is_bot-236"><a href="#MessageParserInterface.is_bot-236"><span class="linenos">236</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_bot</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="MessageParserInterface.is_bot-237"><a href="#MessageParserInterface.is_bot-237"><span class="linenos">237</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;botのポストかチェック</span>
-</span><span id="MessageParserInterface.is_bot-238"><a href="#MessageParserInterface.is_bot-238"><span class="linenos">238</span></a>
-</span><span id="MessageParserInterface.is_bot-239"><a href="#MessageParserInterface.is_bot-239"><span class="linenos">239</span></a><span class="sd">        Returns:</span>
-</span><span id="MessageParserInterface.is_bot-240"><a href="#MessageParserInterface.is_bot-240"><span class="linenos">240</span></a><span class="sd">            bool: 真偽値</span>
-</span><span id="MessageParserInterface.is_bot-241"><a href="#MessageParserInterface.is_bot-241"><span class="linenos">241</span></a><span class="sd">            - *True*: botのポスト</span>
-</span><span id="MessageParserInterface.is_bot-242"><a href="#MessageParserInterface.is_bot-242"><span class="linenos">242</span></a><span class="sd">            - *False*: ユーザのポスト</span>
-</span><span id="MessageParserInterface.is_bot-243"><a href="#MessageParserInterface.is_bot-243"><span class="linenos">243</span></a><span class="sd">        &quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserInterface.is_bot-229"><a href="#MessageParserInterface.is_bot-229"><span class="linenos">229</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParserInterface.is_bot-230"><a href="#MessageParserInterface.is_bot-230"><span class="linenos">230</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="MessageParserInterface.is_bot-231"><a href="#MessageParserInterface.is_bot-231"><span class="linenos">231</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_bot</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParserInterface.is_bot-232"><a href="#MessageParserInterface.is_bot-232"><span class="linenos">232</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;botのポストかチェック</span>
+</span><span id="MessageParserInterface.is_bot-233"><a href="#MessageParserInterface.is_bot-233"><span class="linenos">233</span></a>
+</span><span id="MessageParserInterface.is_bot-234"><a href="#MessageParserInterface.is_bot-234"><span class="linenos">234</span></a><span class="sd">        Returns:</span>
+</span><span id="MessageParserInterface.is_bot-235"><a href="#MessageParserInterface.is_bot-235"><span class="linenos">235</span></a><span class="sd">            bool: 真偽値</span>
+</span><span id="MessageParserInterface.is_bot-236"><a href="#MessageParserInterface.is_bot-236"><span class="linenos">236</span></a><span class="sd">            - *True*: botのポスト</span>
+</span><span id="MessageParserInterface.is_bot-237"><a href="#MessageParserInterface.is_bot-237"><span class="linenos">237</span></a><span class="sd">            - *False*: ユーザのポスト</span>
+</span><span id="MessageParserInterface.is_bot-238"><a href="#MessageParserInterface.is_bot-238"><span class="linenos">238</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -1638,16 +1623,16 @@
 
     </div>
     <a class="headerlink" href="#MessageParserInterface.check_updatable"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserInterface.check_updatable-245"><a href="#MessageParserInterface.check_updatable-245"><span class="linenos">245</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParserInterface.check_updatable-246"><a href="#MessageParserInterface.check_updatable-246"><span class="linenos">246</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="MessageParserInterface.check_updatable-247"><a href="#MessageParserInterface.check_updatable-247"><span class="linenos">247</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="MessageParserInterface.check_updatable-248"><a href="#MessageParserInterface.check_updatable-248"><span class="linenos">248</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;DB操作の許可チェック</span>
-</span><span id="MessageParserInterface.check_updatable-249"><a href="#MessageParserInterface.check_updatable-249"><span class="linenos">249</span></a>
-</span><span id="MessageParserInterface.check_updatable-250"><a href="#MessageParserInterface.check_updatable-250"><span class="linenos">250</span></a><span class="sd">        Returns:</span>
-</span><span id="MessageParserInterface.check_updatable-251"><a href="#MessageParserInterface.check_updatable-251"><span class="linenos">251</span></a><span class="sd">            bool: 真偽値</span>
-</span><span id="MessageParserInterface.check_updatable-252"><a href="#MessageParserInterface.check_updatable-252"><span class="linenos">252</span></a><span class="sd">            - *True*: 許可</span>
-</span><span id="MessageParserInterface.check_updatable-253"><a href="#MessageParserInterface.check_updatable-253"><span class="linenos">253</span></a><span class="sd">            - *False*: 禁止</span>
-</span><span id="MessageParserInterface.check_updatable-254"><a href="#MessageParserInterface.check_updatable-254"><span class="linenos">254</span></a><span class="sd">        &quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserInterface.check_updatable-240"><a href="#MessageParserInterface.check_updatable-240"><span class="linenos">240</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParserInterface.check_updatable-241"><a href="#MessageParserInterface.check_updatable-241"><span class="linenos">241</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="MessageParserInterface.check_updatable-242"><a href="#MessageParserInterface.check_updatable-242"><span class="linenos">242</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParserInterface.check_updatable-243"><a href="#MessageParserInterface.check_updatable-243"><span class="linenos">243</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;DB操作の許可チェック</span>
+</span><span id="MessageParserInterface.check_updatable-244"><a href="#MessageParserInterface.check_updatable-244"><span class="linenos">244</span></a>
+</span><span id="MessageParserInterface.check_updatable-245"><a href="#MessageParserInterface.check_updatable-245"><span class="linenos">245</span></a><span class="sd">        Returns:</span>
+</span><span id="MessageParserInterface.check_updatable-246"><a href="#MessageParserInterface.check_updatable-246"><span class="linenos">246</span></a><span class="sd">            bool: 真偽値</span>
+</span><span id="MessageParserInterface.check_updatable-247"><a href="#MessageParserInterface.check_updatable-247"><span class="linenos">247</span></a><span class="sd">            - *True*: 許可</span>
+</span><span id="MessageParserInterface.check_updatable-248"><a href="#MessageParserInterface.check_updatable-248"><span class="linenos">248</span></a><span class="sd">            - *False*: 禁止</span>
+</span><span id="MessageParserInterface.check_updatable-249"><a href="#MessageParserInterface.check_updatable-249"><span class="linenos">249</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -1676,16 +1661,16 @@
 
     </div>
     <a class="headerlink" href="#MessageParserInterface.ignore_user"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserInterface.ignore_user-256"><a href="#MessageParserInterface.ignore_user-256"><span class="linenos">256</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParserInterface.ignore_user-257"><a href="#MessageParserInterface.ignore_user-257"><span class="linenos">257</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="MessageParserInterface.ignore_user-258"><a href="#MessageParserInterface.ignore_user-258"><span class="linenos">258</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">ignore_user</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="MessageParserInterface.ignore_user-259"><a href="#MessageParserInterface.ignore_user-259"><span class="linenos">259</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;ignore_useridに存在するユーザかチェック</span>
-</span><span id="MessageParserInterface.ignore_user-260"><a href="#MessageParserInterface.ignore_user-260"><span class="linenos">260</span></a>
-</span><span id="MessageParserInterface.ignore_user-261"><a href="#MessageParserInterface.ignore_user-261"><span class="linenos">261</span></a><span class="sd">        Returns:</span>
-</span><span id="MessageParserInterface.ignore_user-262"><a href="#MessageParserInterface.ignore_user-262"><span class="linenos">262</span></a><span class="sd">            bool: 真偽値</span>
-</span><span id="MessageParserInterface.ignore_user-263"><a href="#MessageParserInterface.ignore_user-263"><span class="linenos">263</span></a><span class="sd">            - *True*: 存在する(操作禁止ユーザ)</span>
-</span><span id="MessageParserInterface.ignore_user-264"><a href="#MessageParserInterface.ignore_user-264"><span class="linenos">264</span></a><span class="sd">            - *False*: 存在しない</span>
-</span><span id="MessageParserInterface.ignore_user-265"><a href="#MessageParserInterface.ignore_user-265"><span class="linenos">265</span></a><span class="sd">        &quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserInterface.ignore_user-251"><a href="#MessageParserInterface.ignore_user-251"><span class="linenos">251</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParserInterface.ignore_user-252"><a href="#MessageParserInterface.ignore_user-252"><span class="linenos">252</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="MessageParserInterface.ignore_user-253"><a href="#MessageParserInterface.ignore_user-253"><span class="linenos">253</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">ignore_user</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParserInterface.ignore_user-254"><a href="#MessageParserInterface.ignore_user-254"><span class="linenos">254</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;ignore_useridに存在するユーザかチェック</span>
+</span><span id="MessageParserInterface.ignore_user-255"><a href="#MessageParserInterface.ignore_user-255"><span class="linenos">255</span></a>
+</span><span id="MessageParserInterface.ignore_user-256"><a href="#MessageParserInterface.ignore_user-256"><span class="linenos">256</span></a><span class="sd">        Returns:</span>
+</span><span id="MessageParserInterface.ignore_user-257"><a href="#MessageParserInterface.ignore_user-257"><span class="linenos">257</span></a><span class="sd">            bool: 真偽値</span>
+</span><span id="MessageParserInterface.ignore_user-258"><a href="#MessageParserInterface.ignore_user-258"><span class="linenos">258</span></a><span class="sd">            - *True*: 存在する(操作禁止ユーザ)</span>
+</span><span id="MessageParserInterface.ignore_user-259"><a href="#MessageParserInterface.ignore_user-259"><span class="linenos">259</span></a><span class="sd">            - *False*: 存在しない</span>
+</span><span id="MessageParserInterface.ignore_user-260"><a href="#MessageParserInterface.ignore_user-260"><span class="linenos">260</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -1714,17 +1699,17 @@
 
     </div>
     <a class="headerlink" href="#MessageParserInterface.is_command"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserInterface.is_command-267"><a href="#MessageParserInterface.is_command-267"><span class="linenos">267</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParserInterface.is_command-268"><a href="#MessageParserInterface.is_command-268"><span class="linenos">268</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_command</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="MessageParserInterface.is_command-269"><a href="#MessageParserInterface.is_command-269"><span class="linenos">269</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コマンドで実行されているかチェック</span>
-</span><span id="MessageParserInterface.is_command-270"><a href="#MessageParserInterface.is_command-270"><span class="linenos">270</span></a>
-</span><span id="MessageParserInterface.is_command-271"><a href="#MessageParserInterface.is_command-271"><span class="linenos">271</span></a><span class="sd">        Returns:</span>
-</span><span id="MessageParserInterface.is_command-272"><a href="#MessageParserInterface.is_command-272"><span class="linenos">272</span></a><span class="sd">            bool: 真偽値</span>
-</span><span id="MessageParserInterface.is_command-273"><a href="#MessageParserInterface.is_command-273"><span class="linenos">273</span></a><span class="sd">            - *True*: コマンド実行</span>
-</span><span id="MessageParserInterface.is_command-274"><a href="#MessageParserInterface.is_command-274"><span class="linenos">274</span></a><span class="sd">            - *False*: 非コマンド(キーワード呼び出し)</span>
-</span><span id="MessageParserInterface.is_command-275"><a href="#MessageParserInterface.is_command-275"><span class="linenos">275</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="MessageParserInterface.is_command-276"><a href="#MessageParserInterface.is_command-276"><span class="linenos">276</span></a>
-</span><span id="MessageParserInterface.is_command-277"><a href="#MessageParserInterface.is_command-277"><span class="linenos">277</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">command_flg</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserInterface.is_command-262"><a href="#MessageParserInterface.is_command-262"><span class="linenos">262</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParserInterface.is_command-263"><a href="#MessageParserInterface.is_command-263"><span class="linenos">263</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_command</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParserInterface.is_command-264"><a href="#MessageParserInterface.is_command-264"><span class="linenos">264</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コマンドで実行されているかチェック</span>
+</span><span id="MessageParserInterface.is_command-265"><a href="#MessageParserInterface.is_command-265"><span class="linenos">265</span></a>
+</span><span id="MessageParserInterface.is_command-266"><a href="#MessageParserInterface.is_command-266"><span class="linenos">266</span></a><span class="sd">        Returns:</span>
+</span><span id="MessageParserInterface.is_command-267"><a href="#MessageParserInterface.is_command-267"><span class="linenos">267</span></a><span class="sd">            bool: 真偽値</span>
+</span><span id="MessageParserInterface.is_command-268"><a href="#MessageParserInterface.is_command-268"><span class="linenos">268</span></a><span class="sd">            - *True*: コマンド実行</span>
+</span><span id="MessageParserInterface.is_command-269"><a href="#MessageParserInterface.is_command-269"><span class="linenos">269</span></a><span class="sd">            - *False*: 非コマンド(キーワード呼び出し)</span>
+</span><span id="MessageParserInterface.is_command-270"><a href="#MessageParserInterface.is_command-270"><span class="linenos">270</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="MessageParserInterface.is_command-271"><a href="#MessageParserInterface.is_command-271"><span class="linenos">271</span></a>
+</span><span id="MessageParserInterface.is_command-272"><a href="#MessageParserInterface.is_command-272"><span class="linenos">272</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">command_flg</span>
 </span></pre></div>
 
 
@@ -1753,17 +1738,17 @@
 
     </div>
     <a class="headerlink" href="#MessageParserInterface.keyword"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserInterface.keyword-279"><a href="#MessageParserInterface.keyword-279"><span class="linenos">279</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParserInterface.keyword-280"><a href="#MessageParserInterface.keyword-280"><span class="linenos">280</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">keyword</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="MessageParserInterface.keyword-281"><a href="#MessageParserInterface.keyword-281"><span class="linenos">281</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コマンドとして認識している文字列を返す</span>
-</span><span id="MessageParserInterface.keyword-282"><a href="#MessageParserInterface.keyword-282"><span class="linenos">282</span></a>
-</span><span id="MessageParserInterface.keyword-283"><a href="#MessageParserInterface.keyword-283"><span class="linenos">283</span></a><span class="sd">        Returns:</span>
-</span><span id="MessageParserInterface.keyword-284"><a href="#MessageParserInterface.keyword-284"><span class="linenos">284</span></a><span class="sd">            str: コマンド名</span>
-</span><span id="MessageParserInterface.keyword-285"><a href="#MessageParserInterface.keyword-285"><span class="linenos">285</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="MessageParserInterface.keyword-286"><a href="#MessageParserInterface.keyword-286"><span class="linenos">286</span></a>
-</span><span id="MessageParserInterface.keyword-287"><a href="#MessageParserInterface.keyword-287"><span class="linenos">287</span></a>        <span class="k">if</span> <span class="n">ret</span> <span class="o">:=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">():</span>
-</span><span id="MessageParserInterface.keyword-288"><a href="#MessageParserInterface.keyword-288"><span class="linenos">288</span></a>            <span class="k">return</span> <span class="n">ret</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-</span><span id="MessageParserInterface.keyword-289"><a href="#MessageParserInterface.keyword-289"><span class="linenos">289</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">text</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserInterface.keyword-274"><a href="#MessageParserInterface.keyword-274"><span class="linenos">274</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParserInterface.keyword-275"><a href="#MessageParserInterface.keyword-275"><span class="linenos">275</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">keyword</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="MessageParserInterface.keyword-276"><a href="#MessageParserInterface.keyword-276"><span class="linenos">276</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コマンドとして認識している文字列を返す</span>
+</span><span id="MessageParserInterface.keyword-277"><a href="#MessageParserInterface.keyword-277"><span class="linenos">277</span></a>
+</span><span id="MessageParserInterface.keyword-278"><a href="#MessageParserInterface.keyword-278"><span class="linenos">278</span></a><span class="sd">        Returns:</span>
+</span><span id="MessageParserInterface.keyword-279"><a href="#MessageParserInterface.keyword-279"><span class="linenos">279</span></a><span class="sd">            str: コマンド名</span>
+</span><span id="MessageParserInterface.keyword-280"><a href="#MessageParserInterface.keyword-280"><span class="linenos">280</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="MessageParserInterface.keyword-281"><a href="#MessageParserInterface.keyword-281"><span class="linenos">281</span></a>
+</span><span id="MessageParserInterface.keyword-282"><a href="#MessageParserInterface.keyword-282"><span class="linenos">282</span></a>        <span class="k">if</span> <span class="n">ret</span> <span class="o">:=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">():</span>
+</span><span id="MessageParserInterface.keyword-283"><a href="#MessageParserInterface.keyword-283"><span class="linenos">283</span></a>            <span class="k">return</span> <span class="n">ret</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span><span id="MessageParserInterface.keyword-284"><a href="#MessageParserInterface.keyword-284"><span class="linenos">284</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">text</span>
 </span></pre></div>
 
 
@@ -1787,17 +1772,17 @@
 
     </div>
     <a class="headerlink" href="#MessageParserInterface.argument"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserInterface.argument-291"><a href="#MessageParserInterface.argument-291"><span class="linenos">291</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParserInterface.argument-292"><a href="#MessageParserInterface.argument-292"><span class="linenos">292</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">argument</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
-</span><span id="MessageParserInterface.argument-293"><a href="#MessageParserInterface.argument-293"><span class="linenos">293</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コマンド引数として認識している文字列をリストで返す</span>
-</span><span id="MessageParserInterface.argument-294"><a href="#MessageParserInterface.argument-294"><span class="linenos">294</span></a>
-</span><span id="MessageParserInterface.argument-295"><a href="#MessageParserInterface.argument-295"><span class="linenos">295</span></a><span class="sd">        Returns:</span>
-</span><span id="MessageParserInterface.argument-296"><a href="#MessageParserInterface.argument-296"><span class="linenos">296</span></a><span class="sd">            list: 引数リスト</span>
-</span><span id="MessageParserInterface.argument-297"><a href="#MessageParserInterface.argument-297"><span class="linenos">297</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="MessageParserInterface.argument-298"><a href="#MessageParserInterface.argument-298"><span class="linenos">298</span></a>
-</span><span id="MessageParserInterface.argument-299"><a href="#MessageParserInterface.argument-299"><span class="linenos">299</span></a>        <span class="k">if</span> <span class="n">ret</span> <span class="o">:=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">():</span>
-</span><span id="MessageParserInterface.argument-300"><a href="#MessageParserInterface.argument-300"><span class="linenos">300</span></a>            <span class="k">return</span> <span class="n">ret</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
-</span><span id="MessageParserInterface.argument-301"><a href="#MessageParserInterface.argument-301"><span class="linenos">301</span></a>        <span class="k">return</span> <span class="n">ret</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserInterface.argument-286"><a href="#MessageParserInterface.argument-286"><span class="linenos">286</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParserInterface.argument-287"><a href="#MessageParserInterface.argument-287"><span class="linenos">287</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">argument</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+</span><span id="MessageParserInterface.argument-288"><a href="#MessageParserInterface.argument-288"><span class="linenos">288</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コマンド引数として認識している文字列をリストで返す</span>
+</span><span id="MessageParserInterface.argument-289"><a href="#MessageParserInterface.argument-289"><span class="linenos">289</span></a>
+</span><span id="MessageParserInterface.argument-290"><a href="#MessageParserInterface.argument-290"><span class="linenos">290</span></a><span class="sd">        Returns:</span>
+</span><span id="MessageParserInterface.argument-291"><a href="#MessageParserInterface.argument-291"><span class="linenos">291</span></a><span class="sd">            list: 引数リスト</span>
+</span><span id="MessageParserInterface.argument-292"><a href="#MessageParserInterface.argument-292"><span class="linenos">292</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="MessageParserInterface.argument-293"><a href="#MessageParserInterface.argument-293"><span class="linenos">293</span></a>
+</span><span id="MessageParserInterface.argument-294"><a href="#MessageParserInterface.argument-294"><span class="linenos">294</span></a>        <span class="k">if</span> <span class="n">ret</span> <span class="o">:=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">():</span>
+</span><span id="MessageParserInterface.argument-295"><a href="#MessageParserInterface.argument-295"><span class="linenos">295</span></a>            <span class="k">return</span> <span class="n">ret</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+</span><span id="MessageParserInterface.argument-296"><a href="#MessageParserInterface.argument-296"><span class="linenos">296</span></a>        <span class="k">return</span> <span class="n">ret</span>
 </span></pre></div>
 
 
@@ -1821,28 +1806,28 @@
 
     </div>
     <a class="headerlink" href="#MessageParserInterface.reply_ts"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserInterface.reply_ts-303"><a href="#MessageParserInterface.reply_ts-303"><span class="linenos">303</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParserInterface.reply_ts-304"><a href="#MessageParserInterface.reply_ts-304"><span class="linenos">304</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">reply_ts</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="MessageParserInterface.reply_ts-305"><a href="#MessageParserInterface.reply_ts-305"><span class="linenos">305</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;リプライ先のタイムスタンプを取得する</span>
-</span><span id="MessageParserInterface.reply_ts-306"><a href="#MessageParserInterface.reply_ts-306"><span class="linenos">306</span></a>
-</span><span id="MessageParserInterface.reply_ts-307"><a href="#MessageParserInterface.reply_ts-307"><span class="linenos">307</span></a><span class="sd">        Returns:</span>
-</span><span id="MessageParserInterface.reply_ts-308"><a href="#MessageParserInterface.reply_ts-308"><span class="linenos">308</span></a><span class="sd">            str: タイムスタンプ</span>
-</span><span id="MessageParserInterface.reply_ts-309"><a href="#MessageParserInterface.reply_ts-309"><span class="linenos">309</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="MessageParserInterface.reply_ts-310"><a href="#MessageParserInterface.reply_ts-310"><span class="linenos">310</span></a>
-</span><span id="MessageParserInterface.reply_ts-311"><a href="#MessageParserInterface.reply_ts-311"><span class="linenos">311</span></a>        <span class="n">ret_ts</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;0&quot;</span>
-</span><span id="MessageParserInterface.reply_ts-312"><a href="#MessageParserInterface.reply_ts-312"><span class="linenos">312</span></a>
-</span><span id="MessageParserInterface.reply_ts-313"><a href="#MessageParserInterface.reply_ts-313"><span class="linenos">313</span></a>        <span class="c1"># tsが指定されていれば最優先</span>
-</span><span id="MessageParserInterface.reply_ts-314"><a href="#MessageParserInterface.reply_ts-314"><span class="linenos">314</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">ts</span> <span class="o">!=</span> <span class="s2">&quot;undetermined&quot;</span><span class="p">:</span>
-</span><span id="MessageParserInterface.reply_ts-315"><a href="#MessageParserInterface.reply_ts-315"><span class="linenos">315</span></a>            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">ts</span>
-</span><span id="MessageParserInterface.reply_ts-316"><a href="#MessageParserInterface.reply_ts-316"><span class="linenos">316</span></a>
-</span><span id="MessageParserInterface.reply_ts-317"><a href="#MessageParserInterface.reply_ts-317"><span class="linenos">317</span></a>        <span class="c1"># スレッドに返すか</span>
-</span><span id="MessageParserInterface.reply_ts-318"><a href="#MessageParserInterface.reply_ts-318"><span class="linenos">318</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">thread</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_thread</span><span class="p">:</span>  <span class="c1"># スレッド内</span>
-</span><span id="MessageParserInterface.reply_ts-319"><a href="#MessageParserInterface.reply_ts-319"><span class="linenos">319</span></a>            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">thread_ts</span> <span class="o">!=</span> <span class="s2">&quot;undetermined&quot;</span><span class="p">:</span>
-</span><span id="MessageParserInterface.reply_ts-320"><a href="#MessageParserInterface.reply_ts-320"><span class="linenos">320</span></a>                <span class="n">ret_ts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">thread_ts</span>
-</span><span id="MessageParserInterface.reply_ts-321"><a href="#MessageParserInterface.reply_ts-321"><span class="linenos">321</span></a>        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">thread</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_thread</span><span class="p">:</span>  <span class="c1"># スレッド外</span>
-</span><span id="MessageParserInterface.reply_ts-322"><a href="#MessageParserInterface.reply_ts-322"><span class="linenos">322</span></a>            <span class="n">ret_ts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">event_ts</span>
-</span><span id="MessageParserInterface.reply_ts-323"><a href="#MessageParserInterface.reply_ts-323"><span class="linenos">323</span></a>
-</span><span id="MessageParserInterface.reply_ts-324"><a href="#MessageParserInterface.reply_ts-324"><span class="linenos">324</span></a>        <span class="k">return</span> <span class="n">ret_ts</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserInterface.reply_ts-298"><a href="#MessageParserInterface.reply_ts-298"><span class="linenos">298</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParserInterface.reply_ts-299"><a href="#MessageParserInterface.reply_ts-299"><span class="linenos">299</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">reply_ts</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="MessageParserInterface.reply_ts-300"><a href="#MessageParserInterface.reply_ts-300"><span class="linenos">300</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;リプライ先のタイムスタンプを取得する</span>
+</span><span id="MessageParserInterface.reply_ts-301"><a href="#MessageParserInterface.reply_ts-301"><span class="linenos">301</span></a>
+</span><span id="MessageParserInterface.reply_ts-302"><a href="#MessageParserInterface.reply_ts-302"><span class="linenos">302</span></a><span class="sd">        Returns:</span>
+</span><span id="MessageParserInterface.reply_ts-303"><a href="#MessageParserInterface.reply_ts-303"><span class="linenos">303</span></a><span class="sd">            str: タイムスタンプ</span>
+</span><span id="MessageParserInterface.reply_ts-304"><a href="#MessageParserInterface.reply_ts-304"><span class="linenos">304</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="MessageParserInterface.reply_ts-305"><a href="#MessageParserInterface.reply_ts-305"><span class="linenos">305</span></a>
+</span><span id="MessageParserInterface.reply_ts-306"><a href="#MessageParserInterface.reply_ts-306"><span class="linenos">306</span></a>        <span class="n">ret_ts</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;0&quot;</span>
+</span><span id="MessageParserInterface.reply_ts-307"><a href="#MessageParserInterface.reply_ts-307"><span class="linenos">307</span></a>
+</span><span id="MessageParserInterface.reply_ts-308"><a href="#MessageParserInterface.reply_ts-308"><span class="linenos">308</span></a>        <span class="c1"># tsが指定されていれば最優先</span>
+</span><span id="MessageParserInterface.reply_ts-309"><a href="#MessageParserInterface.reply_ts-309"><span class="linenos">309</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">ts</span> <span class="o">!=</span> <span class="s2">&quot;undetermined&quot;</span><span class="p">:</span>
+</span><span id="MessageParserInterface.reply_ts-310"><a href="#MessageParserInterface.reply_ts-310"><span class="linenos">310</span></a>            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">ts</span>
+</span><span id="MessageParserInterface.reply_ts-311"><a href="#MessageParserInterface.reply_ts-311"><span class="linenos">311</span></a>
+</span><span id="MessageParserInterface.reply_ts-312"><a href="#MessageParserInterface.reply_ts-312"><span class="linenos">312</span></a>        <span class="c1"># スレッドに返すか</span>
+</span><span id="MessageParserInterface.reply_ts-313"><a href="#MessageParserInterface.reply_ts-313"><span class="linenos">313</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">thread</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_thread</span><span class="p">:</span>  <span class="c1"># スレッド内</span>
+</span><span id="MessageParserInterface.reply_ts-314"><a href="#MessageParserInterface.reply_ts-314"><span class="linenos">314</span></a>            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">thread_ts</span> <span class="o">!=</span> <span class="s2">&quot;undetermined&quot;</span><span class="p">:</span>
+</span><span id="MessageParserInterface.reply_ts-315"><a href="#MessageParserInterface.reply_ts-315"><span class="linenos">315</span></a>                <span class="n">ret_ts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">thread_ts</span>
+</span><span id="MessageParserInterface.reply_ts-316"><a href="#MessageParserInterface.reply_ts-316"><span class="linenos">316</span></a>        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">thread</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_thread</span><span class="p">:</span>  <span class="c1"># スレッド外</span>
+</span><span id="MessageParserInterface.reply_ts-317"><a href="#MessageParserInterface.reply_ts-317"><span class="linenos">317</span></a>            <span class="n">ret_ts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">event_ts</span>
+</span><span id="MessageParserInterface.reply_ts-318"><a href="#MessageParserInterface.reply_ts-318"><span class="linenos">318</span></a>
+</span><span id="MessageParserInterface.reply_ts-319"><a href="#MessageParserInterface.reply_ts-319"><span class="linenos">319</span></a>        <span class="k">return</span> <span class="n">ret_ts</span>
 </span></pre></div>
 
 
