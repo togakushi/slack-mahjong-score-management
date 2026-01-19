@@ -298,7 +298,7 @@ class StatsInfo:
     record_df: pd.DataFrame = field(default_factory=pd.DataFrame)
 
     def read(self, params: dict):
-        """_summary_
+        """データ読み込み
 
         Args:
             params (dict): プレースホルダ
