@@ -294,8 +294,8 @@ class StatsInfo:
     search_word: str = field(default="")
 
     # 取り込みデータ
-    result_df: pd.DataFrame = field(default=pd.DataFrame)
-    record_df: pd.DataFrame = field(default=pd.DataFrame)
+    result_df: pd.DataFrame = field(default_factory=pd.DataFrame)
+    record_df: pd.DataFrame = field(default_factory=pd.DataFrame)
 
     def read(self, params: dict):
         """_summary_
@@ -323,7 +323,7 @@ class StatsInfo:
 
         for idx, data in df.to_dict(orient="index").items():
             seat_map = {0: self.seat0, 1: self.seat1, 2: self.seat2, 3: self.seat3, 4: self.seat4}
-            if idx in seat_map:
+            if isinstance(idx, int) and idx in seat_map:
                 seat_map[idx].update_from_dict(data)
 
     def set_parameter(self, **kwargs):
