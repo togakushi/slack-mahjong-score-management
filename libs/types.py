@@ -2,7 +2,8 @@
 cls/types.py
 """
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from enum import Enum, auto
 from typing import TYPE_CHECKING, Any, Literal, Optional, TypeAlias, TypedDict, Union
 
 if TYPE_CHECKING:
@@ -86,6 +87,46 @@ MessageType: TypeAlias = Union[None, str, "Path", "pd.DataFrame"]
 class StyleOptions:
     """表示オプション"""
 
+    class RenameType(Enum):
+        """リネームタイプ"""
+
+        NONE = auto()
+        """変換しない"""
+        NORMAL = auto()
+        """通常変換"""
+        SHORT = auto()
+        """短縮変換"""
+
+    class DataKind(Enum):
+        """保存されているデータの種類"""
+
+        GENERAL = auto()
+        """通常データ"""
+        POINTS_TOTAL = auto()
+        """成績サマリ(通算ポイント)"""
+        POINTS_DIFF = auto()
+        """成績サマリ(ポイント差分)"""
+        DETAILED_COMPARISON = auto()
+        """成績詳細比較"""
+        SEAT_DATA = auto()
+        """座席データ"""
+        RECORD_DATA = auto()
+        """戦績データ"""
+        RANKING = auto()
+        """ランキングデータ"""
+        RATING = auto()
+        """レーティングデータ"""
+
+        # メモ
+        REMARKS_REGULATION = auto()
+        """メモ(卓外清算)"""
+        REMARKS_YAKUMAN = auto()
+        """メモ(役満和了)"""
+        REMARKS_OTHER = auto()
+        """メモ(その他)"""
+
+    title: str = ""
+    """出力タイトル"""
     format_type: Literal["default", "csv", "txt"] = "default"
     """出力フォーマット"""
 
@@ -129,6 +170,10 @@ class StyleOptions:
     - *True*: 削除しない
     - *False*: 削除する
     """
+    rename_type: RenameType = field(default=RenameType.NORMAL)
+    """カラム名変換パラメータ"""
+    data_kind: DataKind = field(default=DataKind.GENERAL)
+    """データ種別"""
 
     @property
     def filename(self) -> str:

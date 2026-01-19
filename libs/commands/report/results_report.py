@@ -434,11 +434,7 @@ def gen_pdf(m: "MessageParserProtocol"):
     doc.build(elements)
     logging.debug("report generation: %s", g.params["player_name"])
 
-    m.set_data(
-        f"成績レポート({g.params['player_name']})",
-        pdf_path,
-        StyleOptions(use_comment=True, header_hidden=True),
-    )
+    m.set_data(pdf_path, StyleOptions(title=f"成績レポート({g.params['player_name']})", use_comment=True, header_hidden=True))
 
 
 def cover_page(style: dict, target_info: dict) -> list:

@@ -167,11 +167,20 @@ def aggregation(m: "MessageParserProtocol"):
     if g.cfg.dropitems.ranking & g.cfg.dropitems.yakuman:
         data.pop("役満和了率")
 
-    for k, v in data.items():
-        if k in g.cfg.dropitems.ranking:  # 非表示項目
+    for msg, df_data in data.items():
+        if msg in g.cfg.dropitems.ranking:  # 非表示項目
             continue
-        if v.empty:  # 対象者なし
+        if df_data.empty:  # 対象者なし
             continue
-        m.set_data(k, v, StyleOptions(codeblock=True, show_index=False))
+        m.set_data(
+            df_data,
+            StyleOptions(
+                title=msg,
+                data_kind=StyleOptions.DataKind.RANKING,
+                rename_type=StyleOptions.RenameType.SHORT,
+                codeblock=True,
+                show_index=False,
+            ),
+        )
 
     m.post.headline = {title: message.header(game_info, m, "", 1)}

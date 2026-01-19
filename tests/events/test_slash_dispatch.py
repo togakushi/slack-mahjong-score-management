@@ -12,6 +12,7 @@ import libs.dispatcher
 import libs.global_value as g
 from integrations import factory
 from libs import configuration
+from libs.types import StyleOptions
 from tests.events import param_data
 
 
@@ -163,8 +164,12 @@ def test_download(config, keyword, monkeypatch):
 
         mock_set_data.assert_called_once()
         # 引数の検証
-        assert mock_set_data.call_args[0][0] == "成績記録DB"
-        assert mock_set_data.call_args[0][1] == g.cfg.setting.database_file
+        contents = mock_set_data.call_args[0][0]
+        options = mock_set_data.call_args[0][1]
+
+        assert contents == g.cfg.setting.database_file
+        assert isinstance(options, StyleOptions)
+        assert options.title == "成績記録DB"
 
 
 @pytest.mark.parametrize(

@@ -14,6 +14,7 @@ import libs.global_value as g
 from cls.score import GameResult
 from cls.timekit import ExtendedDatetime as ExtDt
 from cls.timekit import Format
+from libs.data import loader
 from libs.utils import dbutil
 
 if TYPE_CHECKING:
@@ -65,18 +66,19 @@ def get_config_value(
     return value
 
 
-def member_info(params: "PlaceholderDict") -> dict:
+def member_info(params: "PlaceholderDict") -> dict[str, Any]:
     """指定メンバーの記録情報を返す
 
     Args:
         params (PlaceholderDict): 対象メンバー
 
     Returns:
-        dict: 記録情報
+        dict[str, Any]: 記録情報
     """
 
-    ret: dict = {}
-    sql = dbutil.query_modification(
+    params.update({"starttime": cast(ExtDt, params["starttime"]).format(Format.SQL)})
+    params.update({"endtime": cast(ExtDt, params["endtime"]).format(Format.SQL)})
+    ret = loader.execute(
         """
         select
             count() as game_count,
@@ -93,16 +95,12 @@ def member_info(params: "PlaceholderDict") -> dict:
             --[separate] and source = :source
             --[individual] and name = :player_name
             --[team] and team = :player_name
-        """
+        ;
+        """,
+        cast(dict, params),
     )
 
-    with closing(dbutil.connection(g.cfg.setting.database_file)) as conn:
-        params["starttime"] = cast(ExtDt, params["starttime"]).format(Format.SQL)
-        params["endtime"] = cast(ExtDt, params["endtime"]).format(Format.SQL)
-        rows = conn.execute(sql, params)
-        ret = dict(rows.fetchone())
-
-    return ret
+    return ret[0]
 
 
 def get_guest() -> str:

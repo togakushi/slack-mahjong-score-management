@@ -40,6 +40,7 @@ def initialization_resultdb(database_file: Union[str, Path]) -> None:
         "result": "CREATE_TABLE_RESULT",  # データ取り込みテーブル
         "remarks": "CREATE_TABLE_REMARKS",  # メモ格納テーブル
         "words": "CREATE_TABLE_WORDS",  # レギュレーションワード登録テーブル
+        "rule": "CREATE_TABLE_RULE",  # ルールセット登録テーブル
     }
     for table_name, keyword in table_list.items():
         # テーブル作成

@@ -10,17 +10,16 @@ from table2ascii import Alignment, PresetStyle, table2ascii
 from tabulate import tabulate
 
 import libs.global_value as g
+from libs.types import StyleOptions
 from libs.utils import formatter, textutil
 
 if TYPE_CHECKING:
     from pathlib import Path
 
-    from libs.types import StyleOptions
-
 
 def save_output(
     df: pd.DataFrame,
-    options: "StyleOptions",
+    options: StyleOptions,
     headline: Optional[Union[str, dict[str, str]]] = None,
     suffix: Optional[str] = None,
 ) -> Union["Path", None]:
@@ -36,6 +35,10 @@ def save_output(
         Path: 保存したファイルパス
         None: ファイル出力なし
     """
+
+    # カラムリネーム
+    options.rename_type = StyleOptions.RenameType.NORMAL
+    df = formatter.df_rename2(df, options)
 
     match options.format_type:
         case "default":
@@ -141,7 +144,7 @@ def df_to_text_table(df: pd.DataFrame, step: int = 40, index: bool = False) -> d
     return table_data
 
 
-def df_to_text_table2(df: pd.DataFrame, style: "StyleOptions", limit: int = 2000) -> dict:
+def df_to_text_table2(df: pd.DataFrame, style: StyleOptions, limit: int = 2000) -> dict:
     """DataFrameからテキストテーブルの生成(縦横変換)
 
     Args:

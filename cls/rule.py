@@ -157,8 +157,12 @@ class RuleSet:
             if self.data_set(section_name, mode=int(rule.get("mode", 4))):  # type: ignore
                 self.data[section_name].update(rule)
 
-    def status_update(self):
-        """ステータス更新"""
+    def status_update(self, params: dict):
+        """ステータス更新
+
+        Args:
+            params (dict): プレースホルダ
+        """
 
         # ステータスリセット
         for rule_version in self.rule_list:
@@ -179,7 +183,8 @@ class RuleSet:
             group by
                 rule_version
             ;
-            """
+            """,
+            params,
         )
 
         # ステータス更新
@@ -366,6 +371,25 @@ class RuleSet:
         except RuntimeError as err:
             logging.critical("%s", err)
             sys.exit(1)
+
+    def register_to_database(self):
+        """ルールセット情報をDBに登録する"""
+
+        loader.execute("delete from rule;")
+        for rule in self.rule_list:
+            params = self.to_dict(rule)
+            params.update(rank_point=" ".join(map(str, params["rank_point"])))
+            loader.execute(
+                """
+                insert into
+                rule (
+                    rule_version, mode, origin_point, return_point, rank_point, ignore_flying, draw_split
+                ) values (
+                    :rule_version, :mode, :origin_point, :return_point, :rank_point, :ignore_flying, :draw_split
+                );
+                """,
+                params,
+            )
 
     @property
     def rule_list(self) -> list[str]:

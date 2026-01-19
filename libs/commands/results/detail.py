@@ -10,6 +10,7 @@ import pandas as pd
 from table2ascii import Alignment, PresetStyle, table2ascii
 
 import libs.global_value as g
+from cls.stats import StatsInfo
 from libs.data import aggregate, loader
 from libs.datamodels import GameInfo
 from libs.functions import compose, message
@@ -72,43 +73,36 @@ def aggregation(m: "MessageParserProtocol"):
         m.status.result = False
         return
 
-    result_df = aggregate.game_results()
-    record_df = aggregate.ranking_record()
+    stats = StatsInfo()
+    stats.read(cast(dict, g.params))
 
-    if result_df.empty or record_df.empty:
+    if stats.result_df.empty or stats.record_df.empty:
         m.post.headline = {title: message.random_reply(m, "no_target")}
         m.status.result = False
         return
 
-    result_df = pd.merge(result_df, record_df, on=["name", "name"], suffixes=["", "_x"])
-
     player_name = formatter.name_replace(g.params["player_name"], add_mark=True)
     if g.params.get("anonymous"):
-        mapping_dict = formatter.anonymous_mapping(result_df["name"].unique().tolist())
-        result_df["name"] = result_df["name"].replace(mapping_dict)
+        mapping_dict = formatter.anonymous_mapping(stats.result_df["name"].unique().tolist())
+        stats.result_df["name"] = stats.result_df["name"].replace(mapping_dict)
         player_name = mapping_dict[player_name]
 
-    result_df = formatter.df_rename(result_df)
-    data = result_df.to_dict(orient="records")[0]
-
     # --- 表示内容
-    msg_data.update(get_headline(data, game_info, player_name))
-    msg_data.update(get_totalization(data))
+    msg_data.update(get_headline(stats, game_info, player_name))
+    msg_data.update(get_totalization(stats))
     mode = g.params.get("mode", 4)
 
     # 統計
     seat_data = pd.DataFrame(
         {  # 座席データ
-            "席": ["東家", "南家", "西家", "北家"],
-            "順位分布": [v for k, v in data.items() if str(k).endswith("-順位分布")],
-            "平均順位": [v for k, v in data.items() if str(k).endswith("-平均順位")],
-            "トビ": [v for k, v in data.items() if str(k).endswith("-トビ")],
-            "役満和了": [v for k, v in data.items() if str(k).endswith("-役満和了")],
+            "席": ["東家", "南家", "西家", "北家"][:mode],
+            "順位分布": stats.rank_distr_list2,
+            "平均順位": stats.rank_avg_list,
+            "トビ": stats.flying_list,
+            "役満和了": stats.yakuman_list,
         }
     )
 
-    if mode == 3:
-        seat_data.drop(index=[3], inplace=True)
     if g.cfg.mahjong.ignore_flying or g.cfg.dropitems.results & g.cfg.dropitems.flying:
         seat_data.drop(columns=["トビ"], inplace=True)
     if g.cfg.dropitems.results & g.cfg.dropitems.yakuman:
@@ -117,31 +111,30 @@ def aggregation(m: "MessageParserProtocol"):
     if mode == 3:
         balance_data = textwrap.dedent(
             f"""\
-            全体：{cast(float, result_df.at[0, "平均収支"]):+.1f}点
-            1着終了時：{cast(float, result_df.at[0, "1位収支"]):+.1f}点
-            2着終了時：{cast(float, result_df.at[0, "2位収支"]):+.1f}点
-            3着終了時：{cast(float, result_df.at[0, "3位収支"]):+.1f}点
+            全体：{stats.seat0.avg_balance("all"):+.1f}点
+            1着終了時：{stats.seat0.avg_balance("rank1"):+.1f}点
+            2着終了時：{stats.seat0.avg_balance("rank2"):+.1f}点
+            3着終了時：{stats.seat0.avg_balance("rank3"):+.1f}点
             """
         ).replace("-", "▲")
-
     else:
         balance_data = textwrap.dedent(
             f"""\
-            全体：{cast(float, result_df.at[0, "平均収支"]):+.1f}点
-            連対時：{cast(float, result_df.at[0, "連対収支"]):+.1f}点
-            逆連対時：{cast(float, result_df.at[0, "逆連対収支"]):+.1f}点
-            1着終了時：{cast(float, result_df.at[0, "1位収支"]):+.1f}点
-            2着終了時：{cast(float, result_df.at[0, "2位収支"]):+.1f}点
-            3着終了時：{cast(float, result_df.at[0, "3位収支"]):+.1f}点
-            4着終了時：{cast(float, result_df.at[0, "4位収支"]):+.1f}点
+            全体：{stats.seat0.avg_balance("all"):+.1f}点
+            連対時：{stats.seat0.avg_balance("top2"):+.1f}点
+            逆連対時：{stats.seat0.avg_balance("lose2"):+.1f}点
+            1着終了時：{stats.seat0.avg_balance("rank1"):+.1f}点
+            2着終了時：{stats.seat0.avg_balance("rank2"):+.1f}点
+            3着終了時：{stats.seat0.avg_balance("rank3"):+.1f}点
+            4着終了時：{stats.seat0.avg_balance("rank4"):+.1f}点
             """
         ).replace("-", "▲")
 
     if g.params.get("statistics"):
-        m.set_data("座席データ", seat_data, StyleOptions())
-        for k, v in get_record(data).items():  # ベスト/ワーストレコード
-            m.set_data(k, v, StyleOptions())
-        m.set_data("平均収支", textwrap.indent(balance_data.strip(), "\t"), StyleOptions())
+        m.set_data(seat_data, StyleOptions(title="座席データ"))
+        m.set_data(stats.seat0.best_record(), StyleOptions(title="ベストレコード"))
+        m.set_data(stats.seat0.worst_record(), StyleOptions(title="ワーストレコード"))
+        m.set_data(textwrap.indent(balance_data.strip(), "\t"), StyleOptions(title="平均収支"))
 
     # レギュレーション
     remarks_df = loader.read_data("REMARKS_INFO")
@@ -150,31 +143,31 @@ def aggregation(m: "MessageParserProtocol"):
 
     if not g.cfg.dropitems.results & g.cfg.dropitems.yakuman:
         work_df = count_df.query("type == 0").filter(items=["matter", "matter_count"])
-        m.set_data("役満和了", formatter.df_rename(work_df, kind=0), StyleOptions())
+        m.set_data(formatter.df_rename(work_df, kind=0), StyleOptions(title="役満和了"))
 
     if not g.cfg.dropitems.results & g.cfg.dropitems.regulation:
         if g.params.get("individual"):
             work_df = count_df.query("type == 2").filter(items=["matter", "matter_count", "ex_total"])
         else:
             work_df = count_df.query("type == 2 or type == 3").filter(items=["matter", "matter_count", "ex_total"])
-        m.set_data("卓外清算", formatter.df_rename(work_df, kind=1), StyleOptions())
+        m.set_data(formatter.df_rename(work_df, kind=1), StyleOptions(title="卓外清算"))
 
     if not g.cfg.dropitems.results & g.cfg.dropitems.other:
         work_df = count_df.query("type == 1").filter(items=["matter", "matter_count"])
-        m.set_data("その他", formatter.df_rename(work_df, kind=2), StyleOptions())
+        m.set_data(formatter.df_rename(work_df, kind=2), StyleOptions(title="その他"))
 
     # 戦績
     if g.params.get("game_results"):
         if g.params.get("verbose"):
-            m.set_data("戦績", get_results_details(mapping_dict), StyleOptions())
+            m.set_data(get_results_details(mapping_dict), StyleOptions(title="戦績"))
         else:
-            m.set_data("戦績", get_results_simple(mapping_dict), StyleOptions())
+            m.set_data(get_results_simple(mapping_dict), StyleOptions(title="戦績"))
 
     if g.params.get("versus_matrix"):
-        m.set_data("対戦結果", get_versus_matrix(mapping_dict), StyleOptions())
+        m.set_data(get_versus_matrix(mapping_dict), StyleOptions(title="対戦結果"))
 
     # 非表示項目を除外
-    m.post.message = [d for d in m.post.message if next(iter(d.keys())) not in g.cfg.dropitems.results]
+    m.post.message = [(data, options) for data, options in m.post.message if options.title not in g.cfg.dropitems.results]
 
     m.post.headline = {title: message_build(msg_data)}
 
@@ -290,6 +283,7 @@ def comparison(m: "MessageParserProtocol"):
 
     # 出力
     options: StyleOptions = StyleOptions(
+        title=title,
         base_name=title,
         show_index=True,
         codeblock=True,
@@ -306,11 +300,11 @@ def comparison(m: "MessageParserProtocol"):
             options.key_title = False
             data = df.T
 
-    m.set_data(title, data, options)
+    m.set_data(data, options)
     m.post.thread = True
 
 
-def get_headline(data: dict, game_info: GameInfo, player_name: str) -> dict:
+def get_headline(data: StatsInfo, game_info: GameInfo, player_name: str) -> dict:
     """ヘッダメッセージ生成
 
     Args:
@@ -325,119 +319,49 @@ def get_headline(data: dict, game_info: GameInfo, player_name: str) -> dict:
     ret: dict = {}
 
     if g.params.get("individual"):
-        ret["プレイヤー名"] = f"{player_name} {compose.badge.degree(data['ゲーム数'])}"
+        ret["プレイヤー名"] = f"{player_name} {compose.badge.degree(data.seat0.count)}"
         if team_name := g.cfg.team.which(g.params["player_name"]):
             ret["所属チーム"] = team_name
     else:
-        ret["チーム名"] = f"{g.params['player_name']} {compose.badge.degree(data['ゲーム数'])}"
+        ret["チーム名"] = f"{g.params['player_name']} {compose.badge.degree(data.seat0.count)}"
         ret["登録メンバー"] = "、".join(g.cfg.team.member(g.params["player_name"]))
 
-    badge_status = compose.badge.status(data["ゲーム数"], data["勝"])
+    badge_status = compose.badge.status(data.seat0.count, data.seat0.win)
     ret["検索範囲"] = compose.text_item.search_range(time_pattern="time")
     ret["集計範囲"] = str(compose.text_item.aggregation_range(game_info))
     ret["特記事項"] = "、".join(compose.text_item.remarks())
     ret["検索ワード"] = compose.text_item.search_word()
-    ret["対戦数"] = f"{data['ゲーム数']} 戦 ({data['勝']} 勝 {data['負']} 敗 {data['分']} 分) {badge_status}"
+    ret["対戦数"] = f"{data.seat0.war_record()} {badge_status}"
     ret["_blank1"] = True
 
     return ret
 
 
-def get_totalization(data: dict) -> dict:
+def get_totalization(data: StatsInfo) -> dict:
     """集計トータルメッセージ生成
 
     Args:
-        data (dict): 生成内容が格納された辞書
+        data (StatsInfo): 成績情報
 
     Returns:
         dict: 生成メッセージ
     """
 
     ret: dict = {}
-    # df = pd.DataFrame.from_dict(data, orient="index")
 
-    ret["通算ポイント"] = f"{data['通算ポイント']:+.1f}pt".replace("-", "▲")
-    ret["平均ポイント"] = f"{data['平均ポイント']:+.1f}pt".replace("-", "▲")
-    ret["平均順位"] = f"{data['平均順位']:1.2f}"
+    ret["通算ポイント"] = f"{data.seat0.total_point:+.1f}pt".replace("-", "▲")
+    ret["平均ポイント"] = f"{data.seat0.avg_point:+.1f}pt".replace("-", "▲")
+    ret["平均順位"] = f"{data.seat0.rank_avg:1.2f}"
     if g.params.get("individual") and g.adapter.conf.badge_grade:
         ret["段位"] = compose.badge.grade(g.params["player_name"])
     ret["_blank2"] = True
-    ret["1位"] = f"{data['1位']:2} 回 ({data['1位率']:6.2f}%)"
-    ret["2位"] = f"{data['2位']:2} 回 ({data['2位率']:6.2f}%)"
-    ret["3位"] = f"{data['3位']:2} 回 ({data['3位率']:6.2f}%)"
+    ret["1位"] = f"{data.seat0.rank1:2} 回 ({data.seat0.rank1_rate:7.2%})"
+    ret["2位"] = f"{data.seat0.rank2:2} 回 ({data.seat0.rank2_rate:7.2%})"
+    ret["3位"] = f"{data.seat0.rank3:2} 回 ({data.seat0.rank3_rate:7.2%})"
     if g.params.get("mode", 4) == 4:
-        ret["4位"] = f"{data['4位']:2} 回 ({data['4位率']:6.2f}%)"
-    ret["トビ"] = f"{data['トビ']:2} 回 ({data['トビ率']:6.2f}%)"
-    ret["役満"] = f"{data['役満和了']:2} 回 ({data['役満和了率']:6.2f}%)"
-
-    return ret
-
-
-def get_record(data: dict) -> dict[str, str]:
-    """レコード情報メッセージ生成
-
-    Args:
-        data (dict): 生成内容が格納された辞書
-
-    Returns:
-        dict: 集計データ
-    """
-
-    def current_data(count: int) -> str:
-        if count == 0:
-            ret = "0 回"
-        elif count == 1:
-            ret = "1 回目"
-        else:
-            ret = f"{count} 連続中"
-        return ret
-
-    def max_data(count: int, current: int) -> str:
-        if count == 0:
-            ret = "*****"
-        elif count == 1:
-            ret = "最大 1 回"
-        else:
-            ret = f"最大 {count} 連続"
-
-        if count == current:
-            if count:
-                ret = "記録更新中"
-            else:
-                ret = "記録なし"
-
-        return ret
-
-    ret: dict = {}
-    work_text = (
-        textwrap.dedent(
-            f"""\
-            連続トップ：{current_data(data["c_top"])} ({max_data(data["連続トップ"], data["c_top"])})
-            連続連対：{current_data(data["c_top2"])} ({max_data(data["連続連対"], data["c_top2"])})
-            連続ラス回避：{current_data(data["c_top3"])} ({max_data(data["連続ラス回避"], data["c_top3"])})
-            最大素点：{data["最大素点"] * 100}点
-            最大獲得ポイント：{data["最大獲得ポイント"]}pt
-            """
-        )
-        .replace("-", "▲")
-        .replace("*****", "-----")
-    )
-    ret["ベストレコード"] = textwrap.indent(work_text, "\t")
-
-    work_text = (
-        textwrap.dedent(
-            f"""\
-            連続ラス：{current_data(data["c_low4"])} ({max_data(data["連続ラス"], data["c_low4"])})
-            連続逆連対：{current_data(data["c_low2"])} ({max_data(data["連続逆連対"], data["c_low2"])})
-            連続トップなし：{current_data(data["c_low"])} ({max_data(data["連続トップなし"], data["c_low"])})
-            最小素点：{data["最小素点"] * 100}点
-            最小獲得ポイント：{data["最小獲得ポイント"]}pt
-            """
-        )
-        .replace("-", "▲")
-        .replace("*****", "-----")
-    )
-    ret["ワーストレコード"] = textwrap.indent(work_text, "\t")
+        ret["4位"] = f"{data.seat0.rank4:2} 回 ({data.seat0.rank4_rate:7.2%})"
+    ret["トビ"] = f"{data.seat0.flying:2} 回 ({data.seat0.flying_rate:7.2%})"
+    ret["役満"] = f"{data.seat0.yakuman:2} 回 ({data.seat0.yakuman_rate:7.2%})"
 
     return ret
 

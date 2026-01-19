@@ -54,6 +54,7 @@ def query(keyword: str) -> str:
         "CREATE_TABLE_RESULT": "table/result.sql",
         "CREATE_TABLE_REMARKS": "table/remarks.sql",
         "CREATE_TABLE_WORDS": "table/words.sql",
+        "CREATE_TABLE_RULE": "table/rule.sql",
         # VIEW作成
         "CREATE_VIEW_INDIVIDUAL_RESULTS": "view/individual_results.sql",
         "CREATE_VIEW_GAME_RESULTS": "view/game_results.sql",
@@ -61,9 +62,12 @@ def query(keyword: str) -> str:
         "CREATE_VIEW_REGULATIONS": "view/regulations.sql",
         # 情報取得
         "GAME_INFO": "game.info.sql",
+        "RESULTS_INFO": "results.info.sql",
         "MEMBER_INFO": "member.info.sql",
         "TEAM_INFO": "team.info.sql",
         "REMARKS_INFO": "remarks.info.sql",
+        "RECORD_INFO": "record.info.sql",
+        # 集計
         "SUMMARY_GAMEDATA": "summary/gamedata.sql",
         "SUMMARY_DETAILS": "summary/details.sql",
         "SUMMARY_DETAILS2": "summary/details2.sql",
