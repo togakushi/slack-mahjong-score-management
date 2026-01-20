@@ -170,6 +170,8 @@ class StyleOptions:
     - *True*: 削除しない
     - *False*: 削除する
     """
+    transpose: bool = False
+    """The transpose of the DataFrame"""
     rename_type: RenameType = field(default=RenameType.NORMAL)
     """カラム名変換パラメータ"""
     data_kind: DataKind = field(default=DataKind.GENERAL)
