@@ -45,23 +45,6 @@ def game_summary(
     return df
 
 
-def game_results() -> pd.DataFrame:
-    """成績を集計する
-
-    Returns:
-        pd.DataFrame: 集計結果
-    """
-
-    # データ収集
-    df = loader.read_data("SUMMARY_RESULTS")
-
-    # インデックスの振り直し
-    df = df.reset_index(drop=True)
-    df.index = df.index + 1
-
-    return df
-
-
 # ランキング
 def ranking_record() -> pd.DataFrame:
     """ランキング集計
