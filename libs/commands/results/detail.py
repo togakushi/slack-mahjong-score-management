@@ -11,7 +11,7 @@ from table2ascii import Alignment, PresetStyle, table2ascii
 
 import libs.global_value as g
 from cls.stats import StatsInfo
-from libs.data import aggregate, loader
+from libs.data import loader
 from libs.datamodels import GameInfo
 from libs.functions import compose, message
 from libs.types import StyleOptions
@@ -200,86 +200,33 @@ def comparison(m: "MessageParserProtocol"):
         m.status.result = False
         return
 
-    result_df = aggregate.game_results()
-    record_df = aggregate.ranking_record()
+    stats_df = pd.DataFrame()
+    x_result_df = loader.read_data("RESULTS_INFO")
+    x_record_df = loader.read_data("RECORD_INFO")
+    for name in x_result_df.query("id==0").sort_values("total_point", ascending=False)["name"]:
+        work_stats = StatsInfo()
+        work_params = g.params.copy()
+        work_params["player_name"] = name
+        work_stats.set_parameter(**work_params)
+        work_stats.set_data(x_result_df.query("name == @name"))
+        work_stats.set_data(x_record_df.query("name == @name"))
+        stats_df = pd.concat([stats_df, work_stats.summary])
 
     if g.params.get("anonymous"):
-        mapping_dict = formatter.anonymous_mapping(result_df["name"].unique().tolist())
-        result_df["name"] = result_df["name"].replace(mapping_dict)
-        record_df["name"] = record_df["name"].replace(mapping_dict)
-        record_df.index = record_df["name"]
+        mapping_dict = formatter.anonymous_mapping(stats_df["name"].unique().tolist())
+        stats_df["name"] = stats_df["name"].replace(mapping_dict)
 
-    result_df.index = result_df["name"]
-    merged = pd.concat([result_df.drop("name", axis=1), record_df.drop("name", axis=1)], axis=1)
-    df = merged.filter(
-        items=[
-            "count",
-            "war_record",
-            "平均順位",
-            "通算ポイント",
-            "平均ポイント",
-            "top2_rate-count",
-            "top3_rate-count",
-            "rank1_rate-count",
-            "rank2_rate-count",
-            "rank3_rate-count",
-            "rank4_rate-count",
-            "flying_rate-count",
-            "yakuman_rate-count",
-            "平均収支",
-            "連対収支",
-            "逆連対収支",
-            "rank1_balance",
-            "rank2_balance",
-            "rank3_balance",
-            "rank4_balance",
-            "max_top",
-            "max_top2",
-            "max_top3",
-            "max_low",
-            "max_low2",
-            "max_low4",
-            "rpoint_max",
-            "point_max",
-            "rpoint_min",
-            "point_min",
-        ]
-    )
-
-    if df.empty:
+    if stats_df.empty:
         m.post.headline = {"0": message.random_reply(m, "no_target")}
         m.status.result = False
         return
 
-    # 有効桁数調整/単位追加
-    df["平均順位"] = [f"{cast(float, x):.2f}" for x in df["平均順位"]]
-    df["通算ポイント"] = [f"{cast(float, x):+.1f}pt".replace("-", "▲") for x in df["通算ポイント"]]
-    df["平均ポイント"] = [f"{cast(float, x):+.1f}pt".replace("-", "▲") for x in df["平均ポイント"]]
-    df["平均収支"] = [f"{cast(float, x):+.1f}点".replace("-", "▲") for x in df["平均収支"]]
-    df["連対収支"] = [f"{cast(float, x):+.1f}点".replace("-", "▲") for x in df["連対収支"]]
-    df["逆連対収支"] = [f"{cast(float, x):.1f}点".replace("-", "▲") for x in df["逆連対収支"]]
-    df["rank1_balance"] = [f"{cast(float, x):+.1f}点".replace("-", "▲") for x in df["rank1_balance"]]
-    df["rank2_balance"] = [f"{cast(float, x):+.1f}点".replace("-", "▲") for x in df["rank2_balance"]]
-    df["rank3_balance"] = [f"{cast(float, x):+.1f}点".replace("-", "▲") for x in df["rank3_balance"]]
-    df["rank4_balance"] = [f"{cast(float, x):+.1f}点".replace("-", "▲") for x in df["rank4_balance"]]
-    df["max_top"] = [f"{cast(float, x):.0f}連続" for x in df["max_top"]]
-    df["max_top2"] = [f"{cast(float, x):.0f}連続" for x in df["max_top2"]]
-    df["max_top3"] = [f"{cast(float, x):.0f}連続" for x in df["max_top3"]]
-    df["max_low"] = [f"{cast(float, x):.0f}連続" for x in df["max_low"]]
-    df["max_low2"] = [f"{cast(float, x):.0f}連続" for x in df["max_low2"]]
-    df["max_low4"] = [f"{cast(float, x):.0f}連続" for x in df["max_low4"]]
-    df["rpoint_max"] = [f"{cast(float, x * 100):.0f}点".replace("-", "▲") for x in df["rpoint_max"]]
-    df["rpoint_min"] = [f"{cast(float, x * 100):.0f}点".replace("-", "▲") for x in df["rpoint_min"]]
-    df["point_max"] = [f"{cast(float, x):+.1f}pt".replace("-", "▲") for x in df["point_max"]]
-    df["point_min"] = [f"{cast(float, x):+.1f}pt".replace("-", "▲") for x in df["point_min"]]
-    df = formatter.df_rename(df, False)
-
     # 非表示項目
-    df = df.drop(columns=[x for x in g.cfg.dropitems.results if x in df.columns.to_list()])
+    stats_df = stats_df.drop(columns=[x for x in g.cfg.dropitems.results if x in stats_df.columns.to_list()])
     if g.cfg.mahjong.ignore_flying or g.cfg.dropitems.results & g.cfg.dropitems.flying:
-        df = df.drop(columns=["トビ率(回)"])
+        stats_df = stats_df.drop(columns=["flying_rate-count"])
     if g.cfg.dropitems.results & g.cfg.dropitems.yakuman:
-        df = df.drop(columns=["役満和了率(回)"])
+        stats_df = stats_df.drop(columns=["yakuman_rate-count"])
 
     # 出力
     options: StyleOptions = StyleOptions(
@@ -287,18 +234,19 @@ def comparison(m: "MessageParserProtocol"):
         base_name=title,
         show_index=True,
         codeblock=True,
+        transpose=True,
     )
 
     match cast(str, g.params.get("format", "default")).lower():
         case "csv":
             options.format_type = "csv"
-            data = converter.save_output(df.T, options, m.post.headline)
+            data = converter.save_output(stats_df, options, m.post.headline)
         case "text" | "txt":
             options.format_type = "txt"
-            data = converter.save_output(df.T, options, m.post.headline)
+            data = converter.save_output(stats_df, options, m.post.headline)
         case _:
             options.key_title = False
-            data = df.T
+            data = formatter.df_rename2(stats_df, options).T
 
     m.set_data(data, options)
     m.post.thread = True
