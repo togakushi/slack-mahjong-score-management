@@ -98,14 +98,15 @@ class StatsDetailed:
                 ret = round(self.score_rank2 * 100 / self.rank2, 1)
             case "rank3" if self.rank3:
                 ret = round(self.score_rank3 * 100 / self.rank3, 1)
-            case "rank4" if self.rank2:
+            case "rank4" if self.rank4:
                 ret = round(self.score_rank4 * 100 / self.rank4, 1)
             case "top2" if self.rank1 + self.rank2:
                 ret = round((self.score_rank1 + self.score_rank2) * 100 / (self.rank1 + self.rank2), 1)
             case "lose2" if self.rank3 + self.rank4:
                 ret = round((self.score_rank3 + self.score_rank4) * 100 / (self.rank3 + self.rank4), 1)
             case _:
-                ret = round(self.score * 100 / self.count, 1)
+                if self.count:
+                    ret = round(self.score * 100 / self.count, 1)
 
         return ret
 
@@ -146,37 +147,37 @@ class StatsDetailed:
     @property
     def rank1_rate(self) -> float:
         if self.count:
-            return round(self.rank1 / self.count, 2)
+            return round(self.rank1 / self.count, 4)
         return 0.0
 
     @property
     def rank2_rate(self) -> float:
         if self.count:
-            return round(self.rank2 / self.count, 2)
+            return round(self.rank2 / self.count, 4)
         return 0.0
 
     @property
     def rank3_rate(self) -> float:
         if self.count:
-            return round(self.rank3 / self.count, 2)
+            return round(self.rank3 / self.count, 4)
         return 0.0
 
     @property
     def rank4_rate(self) -> float:
         if self.count:
-            return round(self.rank4 / self.count, 2)
+            return round(self.rank4 / self.count, 4)
         return 0.0
 
     @property
     def flying_rate(self) -> float:
         if self.count:
-            return round(self.flying / self.count, 2)
+            return round(self.flying / self.count, 4)
         return 0.0
 
     @property
     def yakuman_rate(self) -> float:
         if self.count:
-            return round(self.yakuman / self.count, 2)
+            return round(self.yakuman / self.count, 4)
         return 0.0
 
     def update_from_dict(self, data: dict) -> None:
@@ -408,3 +409,46 @@ class StatsInfo:
             self.seat3.yakuman,
             self.seat4.yakuman,
         ][: self.mode]
+
+    @property
+    def summary(self) -> pd.DataFrame:
+        ret_df = pd.DataFrame(
+            {
+                "count": [self.seat0.count],
+                "war_record": [f"{self.seat0.win}-{self.seat0.lose}-{self.seat0.draw}"],
+                "rank_avg": [self.seat0.rank_avg],
+                "total_point": [f"{self.seat0.total_point:+.1f}pt".replace("-", "▲")],
+                "avg_point": [f"{self.seat0.avg_point:+.1f}pt".replace("-", "▲")],
+                "top2_rate-count": [f"{(self.seat0.rank1 + self.seat0.rank2) / self.seat0.count:.2%}({self.seat0.rank1 + self.seat0.rank2})"],
+                "top3_rate-count": [
+                    f"{(self.seat0.rank1 + self.seat0.rank2 + self.seat0.rank3) / self.seat0.count:.2%}"
+                    + f"({self.seat0.rank1 + self.seat0.rank2 + self.seat0.rank3})",
+                ],
+                "rank1_rate-count": [f"{self.seat0.rank1_rate:.2%}({self.seat0.rank1})"],
+                "rank2_rate-count": [f"{self.seat0.rank2_rate:.2%}({self.seat0.rank2})"],
+                "rank3_rate-count": [f"{self.seat0.rank3_rate:.2%}({self.seat0.rank3})"],
+                "rank4_rate-count": [f"{self.seat0.rank4_rate:.2%}({self.seat0.rank4})"],
+                "flying_rate-count": [f"{self.seat0.flying_rate:.2%}({self.seat0.flying})"],
+                "yakuman_rate-count": [f"{self.seat0.yakuman_rate:.2%}({self.seat0.yakuman})"],
+                "avg_balance": [f"{self.seat0.avg_balance('all'):+.1f}点".replace("-", "▲")],
+                "top2_balance": [f"{self.seat0.avg_balance('top2'):+.1f}点".replace("-", "▲")],
+                "lose2_balance": [f"{self.seat0.avg_balance('lose2'):+.1f}点".replace("-", "▲")],
+                "rank1_balance": [f"{self.seat0.avg_balance('rank1'):+.1f}点".replace("-", "▲")],
+                "rank2_balance": [f"{self.seat0.avg_balance('rank2'):+.1f}点".replace("-", "▲")],
+                "rank3_balance": [f"{self.seat0.avg_balance('rank3'):+.1f}点".replace("-", "▲")],
+                "rank4_balance": [f"{self.seat0.avg_balance('rank4'):+.1f}点".replace("-", "▲")],
+                "top1_max": [f"{self.seat0.top1_max}連続"],
+                "top2_max": [f"{self.seat0.top2_max}連続"],
+                "top3_max": [f"{self.seat0.top3_max}連続"],
+                "lose2_max": [f"{self.seat0.lose2_max}連続"],
+                "lose3_max": [f"{self.seat0.lose3_max}連続"],
+                "lose4_max": [f"{self.seat0.lose4_max}連続"],
+                "rpoint_max": [f"{self.seat0.rpoint_max * 100}点".replace("-", "▲")],
+                "point_max": [f"{self.seat0.point_max:+.1f}pt".replace("-", "▲")],
+                "rpoint_min": [f"{self.seat0.rpoint_min * 100}点".replace("-", "▲")],
+                "point_min": [f"{self.seat0.point_min:+.1f}pt".replace("-", "▲")],
+            },
+            index=[self.name],
+        )
+
+        return ret_df
