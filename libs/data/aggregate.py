@@ -45,65 +45,6 @@ def game_summary(
     return df
 
 
-# ランキング
-def ranking_record() -> pd.DataFrame:
-    """ランキング集計
-
-    Returns:
-        pd.DataFrame: 集計結果
-    """
-
-    # データ収集
-    gamedata = loader.read_data("RANKING_RECORD_COUNT")
-    player_list = gamedata["name"].unique().tolist()
-
-    # 連続順位カウント
-    rank_mask = {
-        "c_top": {1: 1, 2: 0, 3: 0, 4: 0},  # 連続トップ
-        "c_top2": {1: 1, 2: 1, 3: 0, 4: 0},  # 連続連対
-        "c_top3": {1: 1, 2: 1, 3: 1, 4: 0},  # 連続ラス回避
-        "c_low": {1: 0, 2: 1, 3: 1, 4: 1},  # 連続トップなし
-        "c_low2": {1: 0, 2: 0, 3: 1, 4: 1},  # 連続逆連対
-        "c_low4": {1: 0, 2: 0, 3: 0, 4: 1},  # 連続ラス
-    }
-
-    record_df = pd.DataFrame(
-        {
-            "name": player_list,
-            "c_top": [0 for _ in player_list],
-            "c_top2": [0 for _ in player_list],
-            "c_top3": [0 for _ in player_list],
-            "c_low": [0 for _ in player_list],
-            "c_low2": [0 for _ in player_list],
-            "c_low4": [0 for _ in player_list],
-        },
-        index=player_list,
-    )
-
-    for key, val in rank_mask.items():
-        for pname in player_list:
-            tmp_df = pd.DataFrame()
-            tmp_df["flg"] = gamedata.query("name == @pname")["順位"].replace(val)
-
-            tmp_df[key] = tmp_df["flg"].groupby((tmp_df["flg"] != tmp_df["flg"].shift()).cumsum()).cumcount() + 1
-            tmp_df.loc[tmp_df["flg"] == 0, key] = 0
-            max_key = key.replace("c_", "max_")
-            record_df.at[pname, max_key] = int(tmp_df[[key]].max().values[0])
-
-            # 最終値
-            record_df.at[pname, key] = tmp_df[key].iloc[-1]
-            record_df[max_key] = record_df[max_key].fillna(0).copy().astype("int")
-
-    # 最大値/最小値追加
-    if not gamedata.empty:
-        record_df = record_df.join(gamedata.filter(items=["name", "point_max"]).groupby("name").max())
-        record_df = record_df.join(gamedata.filter(items=["name", "point_min"]).groupby("name").min())
-        record_df = record_df.join(gamedata.filter(items=["name", "rpoint_max"]).groupby("name").max())
-        record_df = record_df.join(gamedata.filter(items=["name", "rpoint_min"]).groupby("name").min())
-
-    return record_df
-
-
 def calculation_rating() -> pd.DataFrame:
     """レーティング集計
 
