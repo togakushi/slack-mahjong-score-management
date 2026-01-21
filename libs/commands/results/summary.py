@@ -45,10 +45,8 @@ def aggregation(m: "MessageParserProtocol"):
     # 情報ヘッダ
     if g.params.get("individual"):  # 個人集計
         headline_title = "成績サマリ"
-        column_name = "name"
     else:  # チーム集計
         headline_title = "チーム成績サマリ"
-        column_name = "team"
 
     add_text = "" if g.cfg.mahjong.ignore_flying else f" / トバされた人（延べ）：{df_summary['flying'].sum()} 人"
     header_text = message.header(game_info, m, add_text, 1)
@@ -68,9 +66,9 @@ def aggregation(m: "MessageParserProtocol"):
         data_kind=StyleOptions.DataKind.POINTS_TOTAL,
     )
 
-    header_list = [column_name, "total_point", "avg_point", "rank_distr3", "rank_distr4", "flying"]
+    header_list = ["name", "total_point", "avg_point", "rank_distr3", "rank_distr4", "flying"]
     filter_list = [
-        column_name,
+        "name",
         "count",
         "total_point",
         "avg_point",
@@ -170,10 +168,8 @@ def difference(m: "MessageParserProtocol"):
     # 情報ヘッダ
     if g.params.get("individual"):  # 個人集計
         headline_title = "成績サマリ"
-        column_name = "name"
     else:  # チーム集計
         headline_title = "チーム成績サマリ"
-        column_name = "team"
 
     add_text = "" if g.cfg.mahjong.ignore_flying else f" / トバされた人（延べ）：{df_summary['flying'].sum()} 人"
     header_text = message.header(game_info, m, add_text, 1)
@@ -194,8 +190,8 @@ def difference(m: "MessageParserProtocol"):
     )
 
     # 集計結果
-    header_list = ["#", column_name, "total_point", "diff_from_above", "diff_from_top"]
-    filter_list = [column_name, "count", "total_point", "diff_from_above", "diff_from_top"]
+    header_list = ["#", "name", "total_point", "diff_from_above", "diff_from_top"]
+    filter_list = ["name", "count", "total_point", "diff_from_above", "diff_from_top"]
     match g.params.get("format", "default").lower():
         case "csv":
             options.format_type = "csv"

@@ -60,6 +60,8 @@ def query(keyword: str) -> str:
         "CREATE_VIEW_GAME_RESULTS": "view/game_results.sql",
         "CREATE_VIEW_GAME_INFO": "view/game_info.sql",
         "CREATE_VIEW_REGULATIONS": "view/regulations.sql",
+        # INDEX作成
+        "CREATE_INDEX": "table/index.sql",
         # 情報取得
         "GAME_INFO": "game.info.sql",
         "RESULTS_INFO": "results.info.sql",
