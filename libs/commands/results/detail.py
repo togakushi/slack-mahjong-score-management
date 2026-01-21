@@ -143,18 +143,18 @@ def aggregation(m: "MessageParserProtocol"):
 
     if not g.cfg.dropitems.results & g.cfg.dropitems.yakuman:
         work_df = count_df.query("type == 0").filter(items=["matter", "matter_count"])
-        m.set_data(formatter.df_rename(work_df, StyleOptions(rename_type=StyleOptions.DataKind.REMARKS_YAKUMAN)), StyleOptions(title="役満和了"))
+        m.set_data(formatter.df_rename(work_df, StyleOptions(data_kind=StyleOptions.DataKind.REMARKS_YAKUMAN)), StyleOptions(title="役満和了"))
 
     if not g.cfg.dropitems.results & g.cfg.dropitems.regulation:
         if g.params.get("individual"):
             work_df = count_df.query("type == 2").filter(items=["matter", "matter_count", "ex_total"])
         else:
             work_df = count_df.query("type == 2 or type == 3").filter(items=["matter", "matter_count", "ex_total"])
-        m.set_data(formatter.df_rename(work_df, StyleOptions(rename_type=StyleOptions.DataKind.REMARKS_REGULATION)), StyleOptions(title="卓外清算"))
+        m.set_data(formatter.df_rename(work_df, StyleOptions(data_kind=StyleOptions.DataKind.REMARKS_REGULATION)), StyleOptions(title="卓外清算"))
 
     if not g.cfg.dropitems.results & g.cfg.dropitems.other:
         work_df = count_df.query("type == 1").filter(items=["matter", "matter_count"])
-        m.set_data(formatter.df_rename(work_df, StyleOptions(rename_type=StyleOptions.DataKind.REMARKS_OTHER)), StyleOptions(title="その他"))
+        m.set_data(formatter.df_rename(work_df, StyleOptions(data_kind=StyleOptions.DataKind.REMARKS_OTHER)), StyleOptions(title="その他"))
 
     # 戦績
     if g.params.get("game_results"):
