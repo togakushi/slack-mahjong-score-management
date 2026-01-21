@@ -289,10 +289,10 @@ def df_to_ranking(df: pd.DataFrame, title: str, step: int = 40) -> dict:
             for x in df.itertuples():
                 body.append(
                     [
-                        f"{x.順位}:",
-                        x.プレイヤー名,
-                        f"{x.ゲーム参加率:>7.2%}",
-                        f"({x.ゲーム数:4d}G / {x.集計ゲーム数:4d}G)",
+                        f"{x.rank}:",
+                        x.name,
+                        x.participation_rate,
+                        f"({x.count}/{x.total_count}G)",
                     ]
                 )
         case "通算ポイント":
@@ -300,10 +300,10 @@ def df_to_ranking(df: pd.DataFrame, title: str, step: int = 40) -> dict:
             for x in df.itertuples():
                 body.append(
                     [
-                        f"{x.順位}:",
-                        x.プレイヤー名,
-                        f"{x.通算ポイント:>+8.1f}pt".replace("-", "▲"),
-                        f"({x.ゲーム数:4d}G)",
+                        f"{x.rank}:",
+                        x.name,
+                        x.total_point,
+                        f"({x.count}G)",
                     ]
                 )
         case "平均ポイント":
@@ -311,10 +311,10 @@ def df_to_ranking(df: pd.DataFrame, title: str, step: int = 40) -> dict:
             for x in df.itertuples():
                 body.append(
                     [
-                        f"{x.順位}:",
-                        x.プレイヤー名,
-                        f"{x.平均ポイント:>+8.1f}pt".replace("-", "▲"),
-                        f"({x.通算ポイント:>+8.1f}pt / {x.ゲーム数:4d}G)".replace("-", "▲"),
+                        f"{x.rank}:",
+                        x.name,
+                        x.avg_point,
+                        f"({x.total_point}/{x.count}G)",
                     ]
                 )
         case "平均収支":
@@ -322,22 +322,21 @@ def df_to_ranking(df: pd.DataFrame, title: str, step: int = 40) -> dict:
             for x in df.itertuples():
                 body.append(
                     [
-                        f"{x.順位}:",
-                        x.プレイヤー名,
-                        f"{x.平均収支:>6.0f}点".replace("-", "▲"),
-                        f"({x.平均素点:>6.0f}点 / {x.ゲーム数:4d}G)".replace("-", "▲"),
+                        f"{x.rank}:",
+                        x.name,
+                        x.avg_balance,
+                        f"({x.rpoint_avg}/{x.count}G)",
                     ]
                 )
         case "トップ率":
-            df = df.rename(columns={"1位率": "トップ率", "1位数": "トップ数"})
             alignments = [Alignment.RIGHT, Alignment.LEFT, Alignment.RIGHT, Alignment.LEFT]
             for x in df.itertuples():
                 body.append(
                     [
-                        f"{x.順位}:",
-                        x.プレイヤー名,
-                        f"{x.トップ率:>7.2%}",
-                        f"({x.トップ数:3d} / {x.ゲーム数:4d}G)",
+                        f"{x.rank}:",
+                        x.name,
+                        x.rank1_rate,
+                        f"({x.rank1}/{x.count}G)",
                     ]
                 )
         case "連対率":
@@ -345,10 +344,10 @@ def df_to_ranking(df: pd.DataFrame, title: str, step: int = 40) -> dict:
             for x in df.itertuples():
                 body.append(
                     [
-                        f"{x.順位}:",
-                        x.プレイヤー名,
-                        f"{x.連対率:>7.2%}",
-                        f"({x.連対数:3d} / {x.ゲーム数:4d}G)",
+                        f"{x.rank}:",
+                        x.name,
+                        x.top2_rate,
+                        f"({x.top2}/{x.count}G)",
                     ]
                 )
         case "ラス回避率":
@@ -356,10 +355,10 @@ def df_to_ranking(df: pd.DataFrame, title: str, step: int = 40) -> dict:
             for x in df.itertuples():
                 body.append(
                     [
-                        f"{x.順位}:",
-                        x.プレイヤー名,
-                        f"{x.ラス回避率:>7.2%}",
-                        f"({x.ラス回避数:3d} / {x.ゲーム数:4d}G)",
+                        f"{x.rank}:",
+                        x.name,
+                        x.top3_rate,
+                        f"({x.top3}/{x.count}G)",
                     ]
                 )
         case "トビ率":
@@ -367,10 +366,10 @@ def df_to_ranking(df: pd.DataFrame, title: str, step: int = 40) -> dict:
             for x in df.itertuples():
                 body.append(
                     [
-                        f"{x.順位}:",
-                        x.プレイヤー名,
-                        f"{x.トビ率:>7.2%}",
-                        f"({x.トビ:3d} / {x.ゲーム数:4d}G)",
+                        f"{x.rank}:",
+                        x.name,
+                        x.flying_rate,
+                        f"({x.flying}/{x.count}G)",
                     ]
                 )
         case "平均順位":
@@ -378,10 +377,10 @@ def df_to_ranking(df: pd.DataFrame, title: str, step: int = 40) -> dict:
             for x in df.itertuples():
                 body.append(
                     [
-                        f"{x.順位}:",
-                        x.プレイヤー名,
-                        f"{x.平均順位:>4.2f}",
-                        f"({x.順位分布})",
+                        f"{x.rank}:",
+                        x.name,
+                        f"{x.rank_avg}",
+                        f"({x.rank_distr}={x.count})".replace("-", "+"),
                     ]
                 )
         case "役満和了率":
@@ -389,10 +388,10 @@ def df_to_ranking(df: pd.DataFrame, title: str, step: int = 40) -> dict:
             for x in df.itertuples():
                 body.append(
                     [
-                        f"{x.順位}:",
-                        x.プレイヤー名,
-                        f"{x.役満和了率:>7.2%}",
-                        f"({x.役満和了数:3d} / {x.ゲーム数:4d}G)",
+                        f"{x.rank}:",
+                        x.name,
+                        x.yakuman_rate,
+                        f"({x.yakuman}/{x.count}G)",
                     ]
                 )
         case "最大素点":
@@ -400,43 +399,40 @@ def df_to_ranking(df: pd.DataFrame, title: str, step: int = 40) -> dict:
             for x in df.itertuples():
                 body.append(
                     [
-                        f"{x.順位}:",
-                        x.プレイヤー名,
-                        f"{x.最大素点:>6.0f}点".replace("-", "▲"),
-                        f"({x.最大獲得ポイント:>+8.1f}pt)".replace("-", "▲"),
+                        f"{x.rank}:",
+                        x.name,
+                        x.rpoint_max,
+                        f"({x.point_max})",
                     ]
                 )
         case "連続トップ":
-            alignments = [Alignment.RIGHT, Alignment.LEFT, Alignment.RIGHT, Alignment.LEFT]
+            alignments = [Alignment.RIGHT, Alignment.LEFT, Alignment.LEFT]
             for x in df.itertuples():
                 body.append(
                     [
-                        f"{x.順位}:",
-                        x.プレイヤー名,
-                        f"{x.連続トップ:>2d}連続",
-                        f"({x.ゲーム数:4d}G)",
+                        f"{x.rank}:",
+                        x.name,
+                        f"{x.top1_max:>2d}連続 / {x.count}G",
                     ]
                 )
         case "連続連対":
-            alignments = [Alignment.RIGHT, Alignment.LEFT, Alignment.RIGHT, Alignment.LEFT]
+            alignments = [Alignment.RIGHT, Alignment.LEFT, Alignment.LEFT]
             for x in df.itertuples():
                 body.append(
                     [
-                        f"{x.順位}:",
-                        x.プレイヤー名,
-                        f"{x.連続連対:>2d}連続",
-                        f"({x.ゲーム数:4d}G)",
+                        f"{x.rank}:",
+                        x.name,
+                        f"{x.top2_max:>2d}連続 / {x.count}G",
                     ]
                 )
         case "連続ラス回避":
-            alignments = [Alignment.RIGHT, Alignment.LEFT, Alignment.RIGHT, Alignment.LEFT]
+            alignments = [Alignment.RIGHT, Alignment.LEFT, Alignment.LEFT]
             for x in df.itertuples():
                 body.append(
                     [
-                        f"{x.順位}:",
-                        x.プレイヤー名,
-                        f"{x.連続ラス回避:>2d}連続",
-                        f"({x.ゲーム数:4d}G)",
+                        f"{x.rank}:",
+                        x.name,
+                        f"{x.top3_max:>2d}連続 / {x.count}G",
                     ]
                 )
         case _:
