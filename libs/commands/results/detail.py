@@ -143,18 +143,18 @@ def aggregation(m: "MessageParserProtocol"):
 
     if not g.cfg.dropitems.results & g.cfg.dropitems.yakuman:
         work_df = count_df.query("type == 0").filter(items=["matter", "matter_count"])
-        m.set_data(formatter.df_rename(work_df, kind=0), StyleOptions(title="役満和了"))
+        m.set_data(formatter.df_rename2(work_df, StyleOptions(rename_type=StyleOptions.DataKind.REMARKS_YAKUMAN)), StyleOptions(title="役満和了"))
 
     if not g.cfg.dropitems.results & g.cfg.dropitems.regulation:
         if g.params.get("individual"):
             work_df = count_df.query("type == 2").filter(items=["matter", "matter_count", "ex_total"])
         else:
             work_df = count_df.query("type == 2 or type == 3").filter(items=["matter", "matter_count", "ex_total"])
-        m.set_data(formatter.df_rename(work_df, kind=1), StyleOptions(title="卓外清算"))
+        m.set_data(formatter.df_rename2(work_df, StyleOptions(rename_type=StyleOptions.DataKind.REMARKS_REGULATION)), StyleOptions(title="卓外清算"))
 
     if not g.cfg.dropitems.results & g.cfg.dropitems.other:
         work_df = count_df.query("type == 1").filter(items=["matter", "matter_count"])
-        m.set_data(formatter.df_rename(work_df, kind=2), StyleOptions(title="その他"))
+        m.set_data(formatter.df_rename2(work_df, StyleOptions(rename_type=StyleOptions.DataKind.REMARKS_OTHER)), StyleOptions(title="その他"))
 
     # 戦績
     if g.params.get("game_results"):
@@ -340,7 +340,7 @@ def get_results_simple(mapping_dict: dict) -> pd.DataFrame:
         df_data.loc[:, "備考"] = np.where(df_data["guest_count"] >= 2, "2ゲスト戦", "")
     else:
         df_data.loc[:, "備考"] = np.where(df_data["same_team"] == 1, "チーム同卓", "")
-    df_data = formatter.df_rename(df_data.filter(items=["playtime", "seat", "rank", "rpoint", "point", "remarks", "備考"]), short=False)
+    df_data = formatter.df_rename2(df_data.filter(items=["playtime", "seat", "rank", "rpoint", "point", "remarks", "備考"]), StyleOptions())
 
     return df_data
 
@@ -389,7 +389,7 @@ def get_results_details(mapping_dict: dict) -> pd.DataFrame:
         df_data.loc[:, "備考"] = np.where(df_data["guest_count"] >= 2, "2ゲスト戦", "")
     else:
         df_data.loc[:, "備考"] = np.where(df_data["same_team"] == 1, "チーム同卓", "")
-    df_data = formatter.df_rename(df_data.drop(columns=["guest_count", "same_team"]))
+    df_data = formatter.df_rename2(df_data.drop(columns=["guest_count", "same_team"]), StyleOptions())
 
     return df_data
 
