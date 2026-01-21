@@ -417,6 +417,25 @@ def df_rename(df: pd.DataFrame, options: StyleOptions) -> pd.DataFrame:
     return df.rename(columns=rename_dict)
 
 
+def df_drop(df: pd.DataFrame, drop_items: list) -> pd.DataFrame:
+    """非表示項目をドロップ
+
+    Args:
+        df (pd.DataFrame): ターゲット
+        drop_items (list): 非表示項目
+
+    Returns:
+        pd.DataFrame: 加工後
+    """
+
+    original = df.columns.to_list()
+    columns = df_rename(df, StyleOptions(rename_type=StyleOptions.RenameType.NORMAL)).columns.to_list()  # カラム名変換
+    position = [columns.index(item) for item in drop_items if item in columns]
+    df.drop(columns=[original[x] for x in position], inplace=True)
+
+    return df
+
+
 def group_strings(lines: list[str], limit: int = 3000) -> list[str]:
     """指定文字数まで改行で連結
 

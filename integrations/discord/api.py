@@ -119,6 +119,7 @@ class AdapterAPI(APIInterface):
                 post_msg.append(f"{header}```\n{message_text}\n```\n" if options.codeblock else f"{header}{message_text}\n")
 
             if isinstance(data, pd.DataFrame):
+                data = formatter.df_rename(data, options)
                 if options.key_title and (options.title != header_title):
                     header = _header_text(options.title)
                 match m.status.command_type:
