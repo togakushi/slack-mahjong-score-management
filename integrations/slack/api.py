@@ -108,6 +108,7 @@ class AdapterAPI(APIInterface):
                 post_msg.append(f"{header}```\n{data.rstrip()}\n```\n" if options.codeblock else f"{header}{data.rstrip()}\n")
 
             if isinstance(data, pd.DataFrame):
+                data = formatter.df_rename(data, options)
                 if options.key_title and (options.title != header_title):
                     header = _header_text(options.title)
 
