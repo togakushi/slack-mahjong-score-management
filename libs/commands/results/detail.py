@@ -97,7 +97,7 @@ def aggregation(m: "MessageParserProtocol"):
         {  # 座席データ
             "席": ["東家", "南家", "西家", "北家"][:mode],
             "順位分布": stats.rank_distr_list2,
-            "平均順位": stats.rank_avg_list,
+            "平均順位": [f"{x:.2f}".replace("0.00", "-.--") for x in stats.rank_avg_list],
             "トビ": stats.flying_list,
             "役満和了": stats.yakuman_list,
         }
@@ -115,7 +115,7 @@ def aggregation(m: "MessageParserProtocol"):
             1着終了時：{stats.seat0.avg_balance("rank1"):+.1f}点
             2着終了時：{stats.seat0.avg_balance("rank2"):+.1f}点
             3着終了時：{stats.seat0.avg_balance("rank3"):+.1f}点
-            """
+            """.replace("+0.0点", "記録なし")
         ).replace("-", "▲")
     else:
         balance_data = textwrap.dedent(
@@ -127,7 +127,7 @@ def aggregation(m: "MessageParserProtocol"):
             2着終了時：{stats.seat0.avg_balance("rank2"):+.1f}点
             3着終了時：{stats.seat0.avg_balance("rank3"):+.1f}点
             4着終了時：{stats.seat0.avg_balance("rank4"):+.1f}点
-            """
+            """.replace("+0.0点", "記録なし")
         ).replace("-", "▲")
 
     if g.params.get("statistics"):
@@ -143,18 +143,18 @@ def aggregation(m: "MessageParserProtocol"):
 
     if not g.cfg.dropitems.results & g.cfg.dropitems.yakuman:
         work_df = count_df.query("type == 0").filter(items=["matter", "matter_count"])
-        m.set_data(formatter.df_rename(work_df, kind=0), StyleOptions(title="役満和了"))
+        m.set_data(formatter.df_rename(work_df, StyleOptions(rename_type=StyleOptions.DataKind.REMARKS_YAKUMAN)), StyleOptions(title="役満和了"))
 
     if not g.cfg.dropitems.results & g.cfg.dropitems.regulation:
         if g.params.get("individual"):
             work_df = count_df.query("type == 2").filter(items=["matter", "matter_count", "ex_total"])
         else:
             work_df = count_df.query("type == 2 or type == 3").filter(items=["matter", "matter_count", "ex_total"])
-        m.set_data(formatter.df_rename(work_df, kind=1), StyleOptions(title="卓外清算"))
+        m.set_data(formatter.df_rename(work_df, StyleOptions(rename_type=StyleOptions.DataKind.REMARKS_REGULATION)), StyleOptions(title="卓外清算"))
 
     if not g.cfg.dropitems.results & g.cfg.dropitems.other:
         work_df = count_df.query("type == 1").filter(items=["matter", "matter_count"])
-        m.set_data(formatter.df_rename(work_df, kind=2), StyleOptions(title="その他"))
+        m.set_data(formatter.df_rename(work_df, StyleOptions(rename_type=StyleOptions.DataKind.REMARKS_OTHER)), StyleOptions(title="その他"))
 
     # 戦績
     if g.params.get("game_results"):
@@ -246,7 +246,7 @@ def comparison(m: "MessageParserProtocol"):
             data = converter.save_output(stats_df, options, m.post.headline)
         case _:
             options.key_title = False
-            data = formatter.df_rename2(stats_df, options).T
+            data = formatter.df_rename(stats_df, options).T
 
     m.set_data(data, options)
     m.post.thread = True
@@ -340,7 +340,7 @@ def get_results_simple(mapping_dict: dict) -> pd.DataFrame:
         df_data.loc[:, "備考"] = np.where(df_data["guest_count"] >= 2, "2ゲスト戦", "")
     else:
         df_data.loc[:, "備考"] = np.where(df_data["same_team"] == 1, "チーム同卓", "")
-    df_data = formatter.df_rename(df_data.filter(items=["playtime", "seat", "rank", "rpoint", "point", "remarks", "備考"]), short=False)
+    df_data = formatter.df_rename(df_data.filter(items=["playtime", "seat", "rank", "rpoint", "point", "remarks", "備考"]), StyleOptions())
 
     return df_data
 
@@ -389,7 +389,7 @@ def get_results_details(mapping_dict: dict) -> pd.DataFrame:
         df_data.loc[:, "備考"] = np.where(df_data["guest_count"] >= 2, "2ゲスト戦", "")
     else:
         df_data.loc[:, "備考"] = np.where(df_data["same_team"] == 1, "チーム同卓", "")
-    df_data = formatter.df_rename(df_data.drop(columns=["guest_count", "same_team"]))
+    df_data = formatter.df_rename(df_data.drop(columns=["guest_count", "same_team"]), StyleOptions())
 
     return df_data
 

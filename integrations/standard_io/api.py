@@ -66,7 +66,7 @@ class AdapterAPI(APIInterface):
                 case x if isinstance(x, pd.DataFrame):
                     options.rename_type = StyleOptions.RenameType.NORMAL
                     disp = (
-                        formatter.df_rename2(x, options)
+                        formatter.df_rename(x, options)
                         .to_markdown(
                             index=options.show_index,
                             tablefmt="simple_outline",

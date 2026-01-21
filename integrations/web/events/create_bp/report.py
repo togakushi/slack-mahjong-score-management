@@ -47,14 +47,15 @@ def report_bp(adapter: "ServiceAdapter") -> Blueprint:
                 message += f"<h2>{options.title}</h2>\n"
 
             if isinstance(data, pd.DataFrame):
+                print(data)
                 show_index = options.show_index
                 if {"個人成績一覧", "チーム成績一覧"} & set(m.post.headline):
                     check_column = data.columns.to_list()
                     multi = [
-                        ("", "名前" if g.params.get("individual", True) else "チーム"),
+                        ("", "プレイヤー名" if g.params.get("individual", True) else "チーム名"),
                         ("", "ゲーム数"),
-                        ("ポイント", "通算") if {"通算", "平均"}.issubset(check_column) else None,
-                        ("ポイント", "平均") if {"通算", "平均"}.issubset(check_column) else None,
+                        ("ポイント", "通算") if {"通算ポイント", "平均ポイント"}.issubset(check_column) else None,
+                        ("ポイント", "平均") if {"通算ポイント", "平均ポイント"}.issubset(check_column) else None,
                         ("1位", "獲得数") if {"1位数", "1位率"}.issubset(check_column) else None,
                         ("1位", "獲得率") if {"1位数", "1位率"}.issubset(check_column) else None,
                         ("2位", "獲得数") if {"2位数", "2位率"}.issubset(check_column) else None,

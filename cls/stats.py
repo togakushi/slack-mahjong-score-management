@@ -92,18 +92,24 @@ class StatsDetailed:
         ret: float = 0.0
 
         match pattern:
-            case "rank1" if self.rank1:
-                ret = round(self.score_rank1 * 100 / self.rank1, 1)
-            case "rank2" if self.rank2:
-                ret = round(self.score_rank2 * 100 / self.rank2, 1)
-            case "rank3" if self.rank3:
-                ret = round(self.score_rank3 * 100 / self.rank3, 1)
-            case "rank4" if self.rank4:
-                ret = round(self.score_rank4 * 100 / self.rank4, 1)
-            case "top2" if self.rank1 + self.rank2:
-                ret = round((self.score_rank1 + self.score_rank2) * 100 / (self.rank1 + self.rank2), 1)
-            case "lose2" if self.rank3 + self.rank4:
-                ret = round((self.score_rank3 + self.score_rank4) * 100 / (self.rank3 + self.rank4), 1)
+            case "rank1":
+                if self.rank1:
+                    ret = round(self.score_rank1 * 100 / self.rank1, 1)
+            case "rank2":
+                if self.rank2:
+                    ret = round(self.score_rank2 * 100 / self.rank2, 1)
+            case "rank3":
+                if self.rank3:
+                    ret = round(self.score_rank3 * 100 / self.rank3, 1)
+            case "rank4":
+                if self.rank4:
+                    ret = round(self.score_rank4 * 100 / self.rank4, 1)
+            case "top2":
+                if self.rank1 + self.rank2:
+                    ret = round((self.score_rank1 + self.score_rank2) * 100 / (self.rank1 + self.rank2), 1)
+            case "lose2":
+                if self.rank3 + self.rank4:
+                    ret = round((self.score_rank3 + self.score_rank4) * 100 / (self.rank3 + self.rank4), 1)
             case _:
                 if self.count:
                     ret = round(self.score * 100 / self.count, 1)
@@ -242,7 +248,7 @@ class StatsDetailed:
         return ret.strip()
 
     def _work(self, c_num: int, m_num: int) -> str:
-        """_summary_
+        """単位設定
 
         Args:
             c_num (int): 現在値

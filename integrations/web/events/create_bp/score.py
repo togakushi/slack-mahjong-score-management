@@ -13,6 +13,7 @@ from cls.score import GameResult
 from cls.timekit import ExtendedDatetime as ExtDt
 from cls.timekit import Format
 from libs.data import modify
+from libs.types import StyleOptions
 from libs.utils import dbutil, formatter
 
 if TYPE_CHECKING:
@@ -60,7 +61,8 @@ def score_bp(adapter: "ServiceAdapter") -> Blueprint:
                 ;
                 """,
                     con=dbutil.connection(g.cfg.setting.database_file),
-                )
+                ),
+                options=StyleOptions(),
             )
 
             if not isinstance(df.columns, pd.MultiIndex):

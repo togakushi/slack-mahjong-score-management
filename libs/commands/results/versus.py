@@ -102,14 +102,14 @@ def aggregation(m: "MessageParserProtocol"):
         df_data["rpoint"] = df_data["rpoint"] * 100
     df_data = formatter.df_rename(
         df_data.filter(items=["playtime", "座席", "name", "rank", "rpoint", "point", "yakuman"]).drop_duplicates(),
-        short=False,
+        StyleOptions(),
     )
 
     namelist = list(cast(dict, g.params["competition_list"]).values())  # noqa: F841
     df_vs["対戦相手"] = df_vs["vs_name"].apply(lambda x: str(x).strip())
     df_vs["my_rpoint_avg"] = (df_vs["my_rpoint_avg"] * 100).astype("int")
     df_vs["vs_rpoint_avg"] = (df_vs["vs_rpoint_avg"] * 100).astype("int")
-    df_vs = formatter.df_rename(df_vs)
+    df_vs = formatter.df_rename(df_vs, StyleOptions())
     df_vs2 = (
         df_vs.query("vs_name == @namelist")
         .filter(

@@ -38,7 +38,7 @@ def save_output(
 
     # カラムリネーム
     options.rename_type = StyleOptions.RenameType.NORMAL
-    df = formatter.df_rename2(df, options)
+    df = formatter.df_rename(df, options)
     if options.transpose:
         df = df.T
 
