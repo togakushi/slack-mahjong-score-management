@@ -91,6 +91,7 @@ def read_data(keyword: str, params: dict = {}) -> pd.DataFrame:
         print(f">>> SQL: {keyword} -> {g.cfg.setting.database_file}\n{named_query(sql, cast(dict, g.params))}")
 
     try:
+        query_start_time = datetime.now().timestamp()
         df = pd.read_sql(
             sql=sql,
             con=dbutil.connection(g.cfg.setting.database_file),
@@ -101,6 +102,7 @@ def read_data(keyword: str, params: dict = {}) -> pd.DataFrame:
                 **g.params.get("competition_list", {}),
             },
         )
+        query_end_time = datetime.now().timestamp()
     except pd.errors.DatabaseError as err:
         logging.error("DatabaseError: %s", err)
         logging.error("SQL: %s, DATABASE: %s", keyword, g.cfg.setting.database_file)
@@ -111,6 +113,7 @@ def read_data(keyword: str, params: dict = {}) -> pd.DataFrame:
         print("=" * 80)
         print(df.to_string())
 
+    logging.debug("SQL: %s, time: %s", keyword, query_end_time - query_start_time)
     return df
 
 
