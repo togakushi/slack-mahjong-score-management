@@ -89,12 +89,8 @@ def aggregation(m: "MessageParserProtocol"):
         return
 
     df["rank"] = df["rate"].rank(ascending=False, method="dense").astype("int")
-    df = formatter.df_rename(
-        df.query("rank <= @ranked").filter(items=["rank", "name", "rate", "rank_distr", "rank_avg", "rank_dev", "rpoint_avg", "point_dev", "grade"]),
-        StyleOptions(),
-    ).copy()
-
-    df = df.drop(columns=[x for x in g.cfg.dropitems.ranking if x in df.columns.to_list()])  # 非表示項目
+    df = df.query("rank <= @ranked").filter(items=["rank", "name", "rate", "rank_distr", "rank_avg", "rank_dev", "rpoint_avg", "point_dev", "grade"]).copy()
+    df = formatter.df_drop(df, list(g.cfg.dropitems.ranking))
 
     m.post.headline = {title: message.header(game_info, m, add_text, 1)}
     options: StyleOptions = StyleOptions(
