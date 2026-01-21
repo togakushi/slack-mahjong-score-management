@@ -97,7 +97,7 @@ def aggregation(m: "MessageParserProtocol"):
         {  # 座席データ
             "席": ["東家", "南家", "西家", "北家"][:mode],
             "順位分布": stats.rank_distr_list2,
-            "平均順位": stats.rank_avg_list,
+            "平均順位": [f"{x:.2f}".replace("0.00", "-.--") for x in stats.rank_avg_list],
             "トビ": stats.flying_list,
             "役満和了": stats.yakuman_list,
         }
@@ -115,7 +115,7 @@ def aggregation(m: "MessageParserProtocol"):
             1着終了時：{stats.seat0.avg_balance("rank1"):+.1f}点
             2着終了時：{stats.seat0.avg_balance("rank2"):+.1f}点
             3着終了時：{stats.seat0.avg_balance("rank3"):+.1f}点
-            """
+            """.replace("+0.0点", "記録なし")
         ).replace("-", "▲")
     else:
         balance_data = textwrap.dedent(
@@ -127,7 +127,7 @@ def aggregation(m: "MessageParserProtocol"):
             2着終了時：{stats.seat0.avg_balance("rank2"):+.1f}点
             3着終了時：{stats.seat0.avg_balance("rank3"):+.1f}点
             4着終了時：{stats.seat0.avg_balance("rank4"):+.1f}点
-            """
+            """.replace("+0.0点", "記録なし")
         ).replace("-", "▲")
 
     if g.params.get("statistics"):
