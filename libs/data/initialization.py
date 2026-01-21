@@ -118,6 +118,9 @@ def initialization_resultdb(database_file: Union[str, Path]) -> None:
     resultdb.execute(dbutil.query("CREATE_VIEW_GAME_INFO"))
     resultdb.execute(dbutil.query("CREATE_VIEW_REGULATIONS").format(undefined_word=g.cfg.undefined_word))
 
+    # INDEX
+    resultdb.execute(dbutil.query("CREATE_INDEX"))
+
     # ゲスト設定チェック
     ret = resultdb.execute("select * from member where id=0;")
     data = ret.fetchall()
