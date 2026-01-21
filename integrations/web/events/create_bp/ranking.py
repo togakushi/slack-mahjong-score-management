@@ -51,7 +51,7 @@ def ranking_bp(adapter: "ServiceAdapter") -> Blueprint:
             if isinstance(data, pd.DataFrame):
                 show_index = options.show_index
                 message += adapter.functions.to_styled_html(
-                    formatter.df_rename2(data, StyleOptions(rename_type=StyleOptions.RenameType.NORMAL)), padding, show_index
+                    formatter.df_rename(data, StyleOptions(rename_type=StyleOptions.RenameType.NORMAL)), padding, show_index
                 )
 
             if isinstance(data, str):

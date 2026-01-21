@@ -134,4 +134,4 @@ def plot(m: "MessageParserProtocol"):
         case "slack":
             m.set_data(report_file_path, StyleOptions(title="成績上位者", use_comment=True, header_hidden=True))
         case "web":
-            m.set_data(formatter.df_rename2(results_df, StyleOptions()), StyleOptions(title="月別集計結果"))
+            m.set_data(formatter.df_rename(results_df, StyleOptions()), StyleOptions(title="月別集計結果"))

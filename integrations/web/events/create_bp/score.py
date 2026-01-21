@@ -42,7 +42,7 @@ def score_bp(adapter: "ServiceAdapter") -> Blueprint:
         m = adapter.parser()
 
         def score_table() -> str:
-            df = formatter.df_rename2(
+            df = formatter.df_rename(
                 pd.read_sql(
                     sql="""
                 select

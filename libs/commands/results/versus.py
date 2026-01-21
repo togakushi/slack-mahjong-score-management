@@ -100,7 +100,7 @@ def aggregation(m: "MessageParserProtocol"):
     if len(df_data) != 0:
         df_data["座席"] = df_data["seat"].apply(lambda x: ["東家", "南家", "西家", "北家"][x - 1])
         df_data["rpoint"] = df_data["rpoint"] * 100
-    df_data = formatter.df_rename2(
+    df_data = formatter.df_rename(
         df_data.filter(items=["playtime", "座席", "name", "rank", "rpoint", "point", "yakuman"]).drop_duplicates(),
         StyleOptions(),
     )
@@ -109,7 +109,7 @@ def aggregation(m: "MessageParserProtocol"):
     df_vs["対戦相手"] = df_vs["vs_name"].apply(lambda x: str(x).strip())
     df_vs["my_rpoint_avg"] = (df_vs["my_rpoint_avg"] * 100).astype("int")
     df_vs["vs_rpoint_avg"] = (df_vs["vs_rpoint_avg"] * 100).astype("int")
-    df_vs = formatter.df_rename2(df_vs, StyleOptions())
+    df_vs = formatter.df_rename(df_vs, StyleOptions())
     df_vs2 = (
         df_vs.query("vs_name == @namelist")
         .filter(

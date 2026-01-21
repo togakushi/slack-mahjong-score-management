@@ -89,7 +89,7 @@ def aggregation(m: "MessageParserProtocol"):
         return
 
     df["rank"] = df["rate"].rank(ascending=False, method="dense").astype("int")
-    df = formatter.df_rename2(
+    df = formatter.df_rename(
         df.query("rank <= @ranked").filter(items=["rank", "name", "rate", "rank_distr", "rank_avg", "rank_dev", "rpoint_avg", "point_dev", "grade"]),
         StyleOptions(),
     ).copy()

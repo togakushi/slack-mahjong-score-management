@@ -215,7 +215,7 @@ def anonymous_mapping(name_list: list, initial: int = 0) -> dict:
     return ret
 
 
-def df_rename2(df: pd.DataFrame, options: StyleOptions) -> pd.DataFrame:
+def df_rename(df: pd.DataFrame, options: StyleOptions) -> pd.DataFrame:
     """カラム名をリネームする
 
     Args:

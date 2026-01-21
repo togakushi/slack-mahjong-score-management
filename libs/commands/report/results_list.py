@@ -94,7 +94,7 @@ def graph_generation(game_info: GameInfo, df: "pd.DataFrame", title: str) -> "Me
     if g.adapter.conf.plotting_backend == "plotly":
         return None
 
-    df = formatter.df_rename2(
+    df = formatter.df_rename(
         df.filter(
             items=[
                 "player",
@@ -214,7 +214,7 @@ def text_generation(df: "pd.DataFrame") -> "MessageType":
         ]
     )
     fmt = formatter.floatfmt_adjust(df, index=True)
-    df = formatter.df_rename2(df, StyleOptions())
+    df = formatter.df_rename(df, StyleOptions())
     df.to_markdown(report_file_path, tablefmt="outline", floatfmt=fmt)
 
     return report_file_path
@@ -302,4 +302,4 @@ def df_generation(df: "pd.DataFrame") -> "MessageType":
         ]
     )
 
-    return formatter.df_rename2(df, StyleOptions())
+    return formatter.df_rename(df, StyleOptions())
