@@ -54,13 +54,6 @@ def aggregation(m: "MessageParserProtocol"):
         m.status.result = False
         return
 
-    options = StyleOptions(
-        data_kind=StyleOptions.DataKind.RANKING,
-        rename_type=StyleOptions.RenameType.SHORT,
-        codeblock=True,
-        show_index=False,
-    )
-
     df["participation_rate"] = df["count"] / game_info.count  # ゲーム参加率
     df["avg_balance"] = df["score"] * 100 / df["count"]  # 平均収支
     df["rank1_rate"] = df["rank1"] / df["count"]  # トップ率
@@ -81,7 +74,7 @@ def aggregation(m: "MessageParserProtocol"):
     data: dict[str, pd.DataFrame] = {}
     ranked = int(g.params.get("ranked", g.cfg.ranking.ranked))  # noqa: F841
 
-    data["ゲーム参加率"] = formatter.df_rename2(
+    data["ゲーム参加率"] = (
         pd.DataFrame(
             {
                 "rank": df["participation_rate"].rank(ascending=False, method="dense").astype("int"),
@@ -92,10 +85,9 @@ def aggregation(m: "MessageParserProtocol"):
             }
         )
         .sort_values("rank")
-        .query("rank <= @ranked"),
-        options,
+        .query("rank <= @ranked")
     )
-    data["通算ポイント"] = formatter.df_rename2(
+    data["通算ポイント"] = (
         pd.DataFrame(
             {
                 "rank": df["total_point"].rank(ascending=False, method="dense").astype("int"),
@@ -105,10 +97,9 @@ def aggregation(m: "MessageParserProtocol"):
             }
         )
         .sort_values(by=["rank", "count"], ascending=[True, False])
-        .query("rank <= @ranked"),
-        options,
+        .query("rank <= @ranked")
     )
-    data["平均ポイント"] = formatter.df_rename2(
+    data["平均ポイント"] = (
         pd.DataFrame(
             {
                 "rank": df["avg_point"].rank(ascending=False, method="dense").astype("int"),
@@ -119,10 +110,9 @@ def aggregation(m: "MessageParserProtocol"):
             }
         )
         .sort_values(by=["rank", "count"], ascending=[True, False])
-        .query("rank <= @ranked"),
-        options,
+        .query("rank <= @ranked")
     )
-    data["平均収支"] = formatter.df_rename2(
+    data["平均収支"] = (
         pd.DataFrame(
             {
                 "rank": df["avg_balance"].rank(ascending=False, method="dense").astype("int"),
@@ -133,10 +123,9 @@ def aggregation(m: "MessageParserProtocol"):
             }
         )
         .sort_values(by=["rank", "count"], ascending=[True, False])
-        .query("rank <= @ranked"),
-        options,
+        .query("rank <= @ranked")
     )
-    data["トップ率"] = formatter.df_rename2(
+    data["トップ率"] = (
         pd.DataFrame(
             {
                 "rank": df["rank1_rate"].rank(ascending=False, method="dense").astype("int"),
@@ -147,11 +136,10 @@ def aggregation(m: "MessageParserProtocol"):
             }
         )
         .sort_values(by=["rank", "count"], ascending=[True, False])
-        .query("rank <= @ranked"),
-        options,
+        .query("rank <= @ranked")
     )
     if g.params.get("mode") == 3:
-        data["ラス回避率"] = formatter.df_rename2(
+        data["ラス回避率"] = (
             pd.DataFrame(
                 {
                     "rank": df["top2_rate"].rank(ascending=False, method="dense").astype("int"),
@@ -162,11 +150,10 @@ def aggregation(m: "MessageParserProtocol"):
                 }
             )
             .sort_values(by=["rank", "count"], ascending=[True, False])
-            .query("rank <= @ranked"),
-            options,
+            .query("rank <= @ranked")
         )
     else:
-        data["連対率"] = formatter.df_rename2(
+        data["連対率"] = (
             pd.DataFrame(
                 {
                     "rank": df["top2_rate"].rank(ascending=False, method="dense").astype("int"),
@@ -177,10 +164,9 @@ def aggregation(m: "MessageParserProtocol"):
                 }
             )
             .sort_values(by=["rank", "count"], ascending=[True, False])
-            .query("rank <= @ranked"),
-            options,
+            .query("rank <= @ranked")
         )
-        data["ラス回避率"] = formatter.df_rename2(
+        data["ラス回避率"] = (
             pd.DataFrame(
                 {
                     "rank": df["top3_rate"].rank(ascending=False, method="dense").astype("int"),
@@ -191,11 +177,9 @@ def aggregation(m: "MessageParserProtocol"):
                 }
             )
             .sort_values(by=["rank", "count"], ascending=[True, False])
-            .query("rank <= @ranked"),
-            options,
+            .query("rank <= @ranked")
         )
-
-    data["トビ率"] = formatter.df_rename2(
+    data["トビ率"] = (
         pd.DataFrame(
             {
                 "rank": df["flying_rate"].rank(ascending=True, method="dense").astype("int"),
@@ -206,10 +190,9 @@ def aggregation(m: "MessageParserProtocol"):
             }
         )
         .sort_values(by=["rank", "count"], ascending=[True, False])
-        .query("rank <= @ranked"),
-        options,
+        .query("rank <= @ranked")
     )
-    data["平均順位"] = formatter.df_rename2(
+    data["平均順位"] = (
         pd.DataFrame(
             {
                 "rank": df["rank_avg"].rank(ascending=True, method="dense").astype("int"),
@@ -220,10 +203,9 @@ def aggregation(m: "MessageParserProtocol"):
             }
         )
         .sort_values(by=["rank", "count"], ascending=[True, False])
-        .query("rank <= @ranked"),
-        options,
+        .query("rank <= @ranked")
     )
-    data["役満和了率"] = formatter.df_rename2(
+    data["役満和了率"] = (
         pd.DataFrame(
             {
                 "rank": df["yakuman_rate"].rank(ascending=False, method="dense").astype("int"),
@@ -234,10 +216,9 @@ def aggregation(m: "MessageParserProtocol"):
             }
         )
         .sort_values(by=["rank", "count"], ascending=[True, False])
-        .query("rank <= @ranked and yakuman > 0"),
-        options,
+        .query("rank <= @ranked and yakuman > 0")
     )
-    data["最大素点"] = formatter.df_rename2(
+    data["最大素点"] = (
         pd.DataFrame(
             {
                 "rank": df["rpoint_max"].rank(ascending=False, method="dense").astype("int"),
@@ -248,10 +229,9 @@ def aggregation(m: "MessageParserProtocol"):
             }
         )
         .sort_values(by=["rank", "count"], ascending=[True, False])
-        .query("rank <= @ranked"),
-        options,
+        .query("rank <= @ranked")
     )
-    data["連続トップ"] = formatter.df_rename2(
+    data["連続トップ"] = (
         pd.DataFrame(
             {
                 "rank": df["top1_max"].rank(ascending=False, method="dense").astype("int"),
@@ -261,11 +241,10 @@ def aggregation(m: "MessageParserProtocol"):
             }
         )
         .sort_values(by=["rank", "count"], ascending=[True, False])
-        .query("rank <= @ranked and top1_max > 1"),
-        options,
+        .query("rank <= @ranked and top1_max > 1")
     )
     if g.params.get("mode") == 3:
-        data["連続ラス回避"] = formatter.df_rename2(
+        data["連続ラス回避"] = (
             pd.DataFrame(
                 {
                     "rank": df["top2_max"].rank(ascending=False, method="dense").astype("int"),
@@ -275,11 +254,10 @@ def aggregation(m: "MessageParserProtocol"):
                 }
             )
             .sort_values(by=["rank", "count"], ascending=[True, False])
-            .query("rank <= @ranked and top2_max > 1"),
-            options,
+            .query("rank <= @ranked and top2_max > 1")
         )
     else:
-        data["連続連対"] = formatter.df_rename2(
+        data["連続連対"] = (
             pd.DataFrame(
                 {
                     "rank": df["top2_max"].rank(ascending=False, method="dense").astype("int"),
@@ -289,10 +267,9 @@ def aggregation(m: "MessageParserProtocol"):
                 }
             )
             .sort_values(by=["rank", "count"], ascending=[True, False])
-            .query("rank <= @ranked and top2_max > 1"),
-            options,
+            .query("rank <= @ranked and top2_max > 1")
         )
-        data["連続ラス回避"] = formatter.df_rename2(
+        data["連続ラス回避"] = (
             pd.DataFrame(
                 {
                     "rank": df["top3_max"].rank(ascending=False, method="dense").astype("int"),
@@ -302,8 +279,7 @@ def aggregation(m: "MessageParserProtocol"):
                 }
             )
             .sort_values(by=["rank", "count"], ascending=[True, False])
-            .query("rank <= @ranked and top3_max > 1"),
-            options,
+            .query("rank <= @ranked and top3_max > 1")
         )
 
     # 項目整理
