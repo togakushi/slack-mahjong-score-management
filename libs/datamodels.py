@@ -31,10 +31,6 @@ class GameInfo:
     """集計範囲の最初のゲームコメント"""
     last_comment: Optional[str] = field(default=None)
     """集計範囲の最後のゲームコメント"""
-    unique_name: int = field(default=0)
-    """集計範囲のユニークプレイヤー数"""
-    unique_team: int = field(default=0)
-    """集計範囲のユニークチーム数"""
 
     def __post_init__(self):
         self.get()
@@ -66,8 +62,6 @@ class GameInfo:
             self.last_game = ExtDt(df["last_game"].to_string(index=False))
             self.first_comment = str(df["first_comment"].to_string(index=False))
             self.last_comment = str(df["last_comment"].to_string(index=False))
-            self.unique_name = int(df["unique_name"].to_string(index=False))
-            self.unique_team = int(df["unique_team"].to_string(index=False))
 
         # 規定打数更新
         if not g.params.get("stipulated", 0):  # 規定打数0はレートから計算
