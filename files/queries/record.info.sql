@@ -1,14 +1,22 @@
 --record.info.sql
 with base_tbl as (
     select
-        playtime,
-        --[individual] --[unregistered_replace] case when guest = 0 then name else :guest_name end as name, -- ゲスト有効
-        --[individual] --[unregistered_not_replace] case when guest = 0 then name else name || '(<<guest_mark>>)' end as name, -- ゲスト無効
-        --[team] team as name,
-        seat,
-        rank
-    from
-        individual_results
+        *
+    from (
+        select
+            playtime,
+            --[individual] --[unregistered_replace] case when guest = 0 then name else :guest_name end as name, -- ゲスト有効
+            --[individual] --[unregistered_not_replace] case when guest = 0 then name else name || '(<<guest_mark>>)' end as name, -- ゲスト無効
+            --[team] team as name,
+            seat,
+            rank,
+            mode,
+            rule_version,
+            sum(guest) over (partition by playtime) as guest_count,
+            count(*) over (partition by playtime, team) as same_team
+        from
+            individual_results
+    )
     where
         mode = :mode and seat <= :mode
         and rule_version in (<<rule_list>>)

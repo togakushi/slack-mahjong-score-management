@@ -67,6 +67,7 @@ select distinct
     ifnull(sum(case when rank = 4 then score else null end) over (partition by name, id), 0) as score_rank4,
     max(rpoint) over (partition by name, id) as rpoint_max,
     min(rpoint) over (partition by name, id) as rpoint_min,
+    round(avg(rpoint) over (partition by name, id), 3) as rpoint_avg,
     max(point) over (partition by name, id) as point_max,
     min(point) over (partition by name, id) as point_min,
     first_value(playtime) over (partition by name, id order by playtime rows between unbounded preceding and unbounded following) as first_game,

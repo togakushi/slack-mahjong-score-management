@@ -585,9 +585,9 @@ def df_rename2(df: pd.DataFrame, options: StyleOptions) -> pd.DataFrame:
                 rename_dict[x] = "順位差"
             case "diff_from_top":
                 rename_dict[x] = "トップ差"
-            case "yakuman_mix" | "yakuman":
+            case "yakuman_mix":
                 rename_dict[x] = "役満和了"
-            case "yakuman_count":
+            case "yakuman_count" | "yakuman":
                 rename_dict[x] = "役満和了数"
             case "yakuman_rate":
                 rename_dict[x] = "役満和了率"

@@ -2,12 +2,12 @@
 libs/commands/ranking/ranking.py
 """
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 import pandas as pd
 
 import libs.global_value as g
-from libs.data import aggregate, loader
+from libs.data import loader
 from libs.datamodels import GameInfo
 from libs.functions import message
 from libs.types import StyleOptions
@@ -37,17 +37,34 @@ def aggregation(m: "MessageParserProtocol"):
         m.status.result = False
         return
 
-    result_df = loader.read_data("RANKING_AGGREGATE")
-    if result_df.empty:
+    df = (
+        pd.concat(
+            [
+                loader.read_data("RESULTS_INFO").query("id==0").drop(columns=["id", "seat"]),
+                loader.read_data("RECORD_INFO").query("id==0").drop(columns=["id", "seat", "name"]),
+            ],
+            axis=1,
+        )
+        .drop(columns=["first_game", "last_game", "first_comment", "last_comment"])
+        .query("count>=@g.params['stipulated']")
+    ).copy()
+
+    if df.empty:
         m.post.headline = {title: message.random_reply(m, "no_target")}
         m.status.result = False
         return
 
-    df = pd.merge(result_df, aggregate.ranking_record(), on=["name", "name"], suffixes=["", "_x"])
-    df["rank"] = 0  # 順位表示用カラム
-    df["total_count"] = game_info.count  # 集計ゲーム数
-    df["participation_rate"] = df["game_count"] / df["total_count"]  # 参加率
-    df["balance_avg"] = df["rpoint_avg"] - g.cfg.mahjong.origin_point * 100  # 平均収支
+    df["participation_rate"] = df["count"] / game_info.count  # ゲーム参加率
+    df["avg_balance"] = df["score"] * 100 / df["count"]  # 平均収支
+    df["rank1_rate"] = df["rank1"] / df["count"]  # トップ率
+    df["top2_rate"] = (df["rank1"] + df["rank2"]) / df["count"]  # 連対率
+    df["top3_rate"] = (df["rank1"] + df["rank2"] + df["rank3"]) / df["count"]  # ラス回避率
+    df["flying_rate"] = df["flying"] / df["count"]  # トビ率
+    df["yakuman_rate"] = df["yakuman"] / df["count"]  # 役満和了率
+    if g.params.get("mode") == 3:
+        df["rank_distr"] = [f"{x.rank1}-{x.rank2}-{x.rank3}" for x in df.itertuples()]
+    else:
+        df["rank_distr"] = [f"{x.rank1}-{x.rank2}-{x.rank3}-{x.rank4}" for x in df.itertuples()]
 
     if g.params.get("anonymous"):
         mapping_dict = formatter.anonymous_mapping(df["name"].unique().tolist())
@@ -57,109 +74,213 @@ def aggregation(m: "MessageParserProtocol"):
     data: dict[str, pd.DataFrame] = {}
     ranked = int(g.params.get("ranked", g.cfg.ranking.ranked))  # noqa: F841
 
-    # ゲーム参加率
-    filter_item = ["rank", "name", "participation_rate", "game_count", "total_count"]
-    work_df = df.filter(items=filter_item).sort_values(by=["participation_rate", "game_count"], ascending=[False, False])
-    work_df["rank"] = df["participation_rate"].rank(ascending=False, method="dense").astype("int")
-    data["ゲーム参加率"] = formatter.df_rename(work_df.query("rank <= @ranked"), short=False)
-
-    # 通算ポイント
-    filter_item = ["rank", "name", "point_sum", "game_count"]
-    work_df = df.filter(items=filter_item).sort_values(by=["point_sum", "game_count"], ascending=[False, False])
-    work_df["rank"] = work_df["point_sum"].rank(ascending=False, method="dense").astype("int")
-    data["通算ポイント"] = formatter.df_rename(work_df.query("rank <= @ranked"), short=False)
-
-    # 平均ポイント
-    filter_item = ["rank", "name", "point_avg", "point_sum", "game_count"]
-    work_df = df.filter(items=filter_item).sort_values(by=["point_avg", "game_count"], ascending=[False, False])
-    work_df["rank"] = work_df["point_avg"].rank(ascending=False, method="dense").astype("int")
-    data["平均ポイント"] = formatter.df_rename(work_df.query("rank <= @ranked"), short=False)
-
-    # 平均収支
-    filter_item = ["rank", "name", "balance_avg", "rpoint_avg", "game_count"]
-    work_df = df.filter(items=filter_item).sort_values(by=["rpoint_avg", "game_count"], ascending=[False, False])
-    work_df["rank"] = work_df["balance_avg"].rank(ascending=False, method="dense").astype("int")
-    data["平均収支"] = formatter.df_rename(work_df.query("rank <= @ranked"), short=False)
-
-    # トップ率
-    filter_item = ["rank", "name", "rank1_rate", "rank1", "game_count"]
-    work_df = df.filter(items=filter_item).sort_values(by=["rank1_rate", "game_count"], ascending=[False, False])
-    work_df["rank"] = work_df["rank1_rate"].rank(ascending=False, method="dense").astype("int")
-    data["トップ率"] = formatter.df_rename(work_df.query("rank <= @ranked"), short=False)
-
+    data["ゲーム参加率"] = (
+        pd.DataFrame(
+            {
+                "rank": df["participation_rate"].rank(ascending=False, method="dense").astype("int"),
+                "name": df["name"],
+                "participation_rate": [f"{x.participation_rate:.2%}" for x in df.itertuples()],
+                "count": df["count"],
+                "total_count": game_info.count,
+            }
+        )
+        .sort_values("rank")
+        .query("rank <= @ranked")
+    )
+    data["通算ポイント"] = (
+        pd.DataFrame(
+            {
+                "rank": df["total_point"].rank(ascending=False, method="dense").astype("int"),
+                "name": df["name"],
+                "total_point": [f"{x.total_point:+.1f}pt".replace("-", "▲") for x in df.itertuples()],
+                "count": df["count"],
+            }
+        )
+        .sort_values(by=["rank", "count"], ascending=[True, False])
+        .query("rank <= @ranked")
+    )
+    data["平均ポイント"] = (
+        pd.DataFrame(
+            {
+                "rank": df["avg_point"].rank(ascending=False, method="dense").astype("int"),
+                "name": df["name"],
+                "avg_point": [f"{x.avg_point:+.1f}pt".replace("-", "▲") for x in df.itertuples()],
+                "total_point": [f"{x.total_point:+.1f}pt".replace("-", "▲") for x in df.itertuples()],
+                "count": df["count"],
+            }
+        )
+        .sort_values(by=["rank", "count"], ascending=[True, False])
+        .query("rank <= @ranked")
+    )
+    data["平均収支"] = (
+        pd.DataFrame(
+            {
+                "rank": df["avg_balance"].rank(ascending=False, method="dense").astype("int"),
+                "name": df["name"],
+                "avg_balance": [f"{x.avg_balance:+.1f}点".replace("-", "▲") for x in df.itertuples()],
+                "rpoint_avg": [f"{cast(float, x.rpoint_avg) * 100:+.1f}点".replace("-", "▲") for x in df.itertuples()],
+                "count": df["count"],
+            }
+        )
+        .sort_values(by=["rank", "count"], ascending=[True, False])
+        .query("rank <= @ranked")
+    )
+    data["トップ率"] = (
+        pd.DataFrame(
+            {
+                "rank": df["rank1_rate"].rank(ascending=False, method="dense").astype("int"),
+                "name": df["name"],
+                "rank1_rate": [f"{x.rank1_rate:.2%}" for x in df.itertuples()],
+                "rank1": df["rank1"],
+                "count": df["count"],
+            }
+        )
+        .sort_values(by=["rank", "count"], ascending=[True, False])
+        .query("rank <= @ranked")
+    )
     if g.params.get("mode") == 3:
-        # ラス回避率
-        filter_item = ["rank", "name", "top2_rate", "top2", "game_count"]
-        work_df = df.filter(items=filter_item).sort_values(by=["top2_rate", "game_count"], ascending=[False, False])
-        work_df["rank"] = work_df["top2_rate"].rank(ascending=False, method="dense").astype("int")
-        data["ラス回避率"] = formatter.df_rename(work_df.query("rank <= @ranked"), short=False)
+        data["ラス回避率"] = (
+            pd.DataFrame(
+                {
+                    "rank": df["top2_rate"].rank(ascending=False, method="dense").astype("int"),
+                    "name": df["name"],
+                    "top2_rate": [f"{x.top2_rate:.2%}" for x in df.itertuples()],
+                    "top2": df["rank1"] + df["rank2"],
+                    "count": df["count"],
+                }
+            )
+            .sort_values(by=["rank", "count"], ascending=[True, False])
+            .query("rank <= @ranked")
+        )
     else:
-        # 連対率
-        filter_item = ["rank", "name", "top2_rate", "top2", "game_count"]
-        work_df = df.filter(items=filter_item).sort_values(by=["top2_rate", "game_count"], ascending=[False, False])
-        work_df["rank"] = work_df["top2_rate"].rank(ascending=False, method="dense").astype("int")
-        data["連対率"] = formatter.df_rename(work_df.query("rank <= @ranked"), short=False)
-
-        # ラス回避率
-        filter_item = ["rank", "name", "top3_rate", "top3", "game_count"]
-        work_df = df.filter(items=filter_item).sort_values(by=["top3_rate", "game_count"], ascending=[False, False])
-        work_df["rank"] = work_df["top3_rate"].rank(ascending=False, method="dense").astype("int")
-        data["ラス回避率"] = formatter.df_rename(work_df.query("rank <= @ranked"), short=False)
-
-    # トビ率
-    filter_item = ["rank", "name", "flying_rate", "flying", "game_count"]
-    work_df = df.filter(items=filter_item).sort_values(by=["flying_rate", "game_count"], ascending=[True, False])
-    work_df["rank"] = work_df["flying_rate"].rank(ascending=True, method="dense").astype("int")
-    data["トビ率"] = formatter.df_rename(work_df.query("rank <= @ranked"), short=False)
-
-    # 平均順位
-    work_df = df.sort_values(by=["rank_avg", "game_count"], ascending=[True, False])
-    work_df["rank"] = work_df["rank_avg"].rank(ascending=True, method="dense").astype("int")
-    filter_item = ["rank", "name", "rank_avg", "rank_distr"]
-    work_df = work_df.filter(items=filter_item).sort_values(by="rank", ascending=True)
-    data["平均順位"] = formatter.df_rename(work_df.query("rank <= @ranked"), short=False)
-
-    # 役満和了率
-    work_df = df.query("yakuman_count > 0")
-    filter_item = ["rank", "name", "yakuman_rate", "yakuman_count", "game_count"]
-    work_df = work_df.filter(items=filter_item).sort_values(by=["yakuman_rate", "game_count"], ascending=[False, False])
-    work_df["rank"] = work_df["yakuman_rate"].rank(ascending=False, method="dense").astype("int")
-    data["役満和了率"] = formatter.df_rename(work_df.query("rank <= @ranked"), short=False)
-
-    # 最大素点
-    filter_item = ["rank", "name", "rpoint_max", "point_max", "game_count"]
-    work_df = df.filter(items=filter_item).sort_values(by=["rpoint_max", "game_count"], ascending=[False, False])
-    work_df["rank"] = work_df["rpoint_max"].rank(ascending=False, method="dense").astype("int")
-    data["最大素点"] = formatter.df_rename(work_df.query("rank <= @ranked"), short=False)
-
-    # 連続トップ
-    work_df = df.query("max_top > 1")
-    filter_item = ["rank", "name", "max_top", "game_count"]
-    work_df = work_df.filter(items=filter_item).sort_values(by=["max_top", "game_count"], ascending=[False, False])
-    work_df["rank"] = work_df["max_top"].rank(ascending=False, method="dense").astype("int")
-    data["連続トップ"] = formatter.df_rename(work_df.query("rank <= @ranked"), short=False)
-
+        data["連対率"] = (
+            pd.DataFrame(
+                {
+                    "rank": df["top2_rate"].rank(ascending=False, method="dense").astype("int"),
+                    "name": df["name"],
+                    "top2_rate": [f"{x.top2_rate:.2%}" for x in df.itertuples()],
+                    "top2": df["rank1"] + df["rank2"],
+                    "count": df["count"],
+                }
+            )
+            .sort_values(by=["rank", "count"], ascending=[True, False])
+            .query("rank <= @ranked")
+        )
+        data["ラス回避率"] = (
+            pd.DataFrame(
+                {
+                    "rank": df["top3_rate"].rank(ascending=False, method="dense").astype("int"),
+                    "name": df["name"],
+                    "top3_rate": [f"{x.top3_rate:.2%}" for x in df.itertuples()],
+                    "top3": df["rank1"] + df["rank2"] + df["rank3"],
+                    "count": df["count"],
+                }
+            )
+            .sort_values(by=["rank", "count"], ascending=[True, False])
+            .query("rank <= @ranked")
+        )
+    data["トビ率"] = (
+        pd.DataFrame(
+            {
+                "rank": df["flying_rate"].rank(ascending=True, method="dense").astype("int"),
+                "name": df["name"],
+                "flying_rate": [f"{x.flying_rate:.2%}" for x in df.itertuples()],
+                "flying": df["flying"],
+                "count": df["count"],
+            }
+        )
+        .sort_values(by=["rank", "count"], ascending=[True, False])
+        .query("rank <= @ranked")
+    )
+    data["平均順位"] = (
+        pd.DataFrame(
+            {
+                "rank": df["rank_avg"].rank(ascending=True, method="dense").astype("int"),
+                "name": df["name"],
+                "rank_avg": [f"{x.rank_avg:.2f}" for x in df.itertuples()],
+                "rank_distr": df["rank_distr"],
+                "count": df["count"],
+            }
+        )
+        .sort_values(by=["rank", "count"], ascending=[True, False])
+        .query("rank <= @ranked")
+    )
+    data["役満和了率"] = (
+        pd.DataFrame(
+            {
+                "rank": df["yakuman_rate"].rank(ascending=False, method="dense").astype("int"),
+                "name": df["name"],
+                "yakuman_rate": [f"{x.yakuman_rate:.2%}" for x in df.itertuples()],
+                "yakuman": df["yakuman"],
+                "count": df["count"],
+            }
+        )
+        .sort_values(by=["rank", "count"], ascending=[True, False])
+        .query("rank <= @ranked and yakuman > 0")
+    )
+    data["最大素点"] = (
+        pd.DataFrame(
+            {
+                "rank": df["rpoint_max"].rank(ascending=False, method="dense").astype("int"),
+                "name": df["name"],
+                "rpoint_max": [f"{cast(float, x.rpoint_max) * 100}点".replace("-", "▲") for x in df.itertuples()],
+                "point_max": [f"{x.point_max:+.1f}pt".replace("-", "▲") for x in df.itertuples()],
+                "count": df["count"],
+            }
+        )
+        .sort_values(by=["rank", "count"], ascending=[True, False])
+        .query("rank <= @ranked")
+    )
+    data["連続トップ"] = (
+        pd.DataFrame(
+            {
+                "rank": df["top1_max"].rank(ascending=False, method="dense").astype("int"),
+                "name": df["name"],
+                "top1_max": df["top1_max"],
+                "count": df["count"],
+            }
+        )
+        .sort_values(by=["rank", "count"], ascending=[True, False])
+        .query("rank <= @ranked and top1_max > 1")
+    )
     if g.params.get("mode") == 3:
-        # 連続ラス回避
-        work_df = df.query("max_top2 > 1")
-        filter_item = ["rank", "name", "max_top2", "game_count"]
-        work_df = work_df.filter(items=filter_item).sort_values(by=["max_top2", "game_count"], ascending=[False, False])
-        work_df["rank"] = work_df["max_top2"].rank(ascending=False, method="dense").astype("int")
-        data["連続ラス回避"] = formatter.df_rename(work_df.query("rank <= @ranked"), short=False)
+        data["連続ラス回避"] = (
+            pd.DataFrame(
+                {
+                    "rank": df["top2_max"].rank(ascending=False, method="dense").astype("int"),
+                    "name": df["name"],
+                    "top2_max": df["top2_max"],
+                    "count": df["count"],
+                }
+            )
+            .sort_values(by=["rank", "count"], ascending=[True, False])
+            .query("rank <= @ranked and top2_max > 1")
+        )
     else:
-        # 連続連対
-        work_df = df.query("max_top2 > 1")
-        filter_item = ["rank", "name", "max_top2", "game_count"]
-        work_df = work_df.filter(items=filter_item).sort_values(by=["max_top2", "game_count"], ascending=[False, False])
-        work_df["rank"] = work_df["max_top2"].rank(ascending=False, method="dense").astype("int")
-        data["連続連対"] = formatter.df_rename(work_df.query("rank <= @ranked"), short=False)
-
-        # 連続ラス回避
-        work_df = df.query("max_top3 > 1")
-        filter_item = ["rank", "name", "max_top3", "game_count"]
-        work_df = work_df.filter(items=filter_item).sort_values(by=["max_top3", "game_count"], ascending=[False, False])
-        work_df["rank"] = work_df["max_top3"].rank(ascending=False, method="dense").astype("int")
-        data["連続ラス回避"] = formatter.df_rename(work_df.query("rank <= @ranked"), short=False)
+        data["連続連対"] = (
+            pd.DataFrame(
+                {
+                    "rank": df["top2_max"].rank(ascending=False, method="dense").astype("int"),
+                    "name": df["name"],
+                    "top2_max": df["top2_max"],
+                    "count": df["count"],
+                }
+            )
+            .sort_values(by=["rank", "count"], ascending=[True, False])
+            .query("rank <= @ranked and top2_max > 1")
+        )
+        data["連続ラス回避"] = (
+            pd.DataFrame(
+                {
+                    "rank": df["top3_max"].rank(ascending=False, method="dense").astype("int"),
+                    "name": df["name"],
+                    "top3_max": df["top3_max"],
+                    "count": df["count"],
+                }
+            )
+            .sort_values(by=["rank", "count"], ascending=[True, False])
+            .query("rank <= @ranked and top3_max > 1")
+        )
 
     # 項目整理
     if g.cfg.mahjong.ignore_flying or g.cfg.dropitems.ranking & g.cfg.dropitems.flying:
