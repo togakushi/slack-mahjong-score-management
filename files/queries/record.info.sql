@@ -8,6 +8,7 @@ with base_tbl as (
             --[individual] --[unregistered_replace] case when guest = 0 then name else :guest_name end as name, -- ゲスト有効
             --[individual] --[unregistered_not_replace] case when guest = 0 then name else name || '(<<guest_mark>>)' end as name, -- ゲスト無効
             --[team] team as name,
+            guest,
             seat,
             rank,
             mode,
