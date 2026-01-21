@@ -89,9 +89,9 @@ def aggregation(m: "MessageParserProtocol"):
         return
 
     df["rank"] = df["rate"].rank(ascending=False, method="dense").astype("int")
-    df = formatter.df_rename(
+    df = formatter.df_rename2(
         df.query("rank <= @ranked").filter(items=["rank", "name", "rate", "rank_distr", "rank_avg", "rank_dev", "rpoint_avg", "point_dev", "grade"]),
-        short=False,
+        StyleOptions(),
     ).copy()
 
     df = df.drop(columns=[x for x in g.cfg.dropitems.ranking if x in df.columns.to_list()])  # 非表示項目

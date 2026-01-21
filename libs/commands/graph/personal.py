@@ -62,7 +62,7 @@ def plot(m: "MessageParserProtocol"):
 
     m.post.headline = {title_text: message.header(game_info, m)}
     m.set_data(
-        formatter.df_rename(df.drop(columns=["count", "name"]), False),
+        formatter.df_rename2(df.drop(columns=["count", "name"]), StyleOptions()),
         StyleOptions(title="個人成績", header_hidden=True, key_title=False),
     )
 
