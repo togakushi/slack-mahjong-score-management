@@ -26,9 +26,9 @@ with base_tbl as (
         --[individual] --[guest_not_skip] and guest_count <= 1 -- ゲストアリ(2ゲスト戦除外)
         --[individual] --[guest_skip] and guest = 0 -- ゲストナシ
         --[individual] --[player_name] and name in (<<player_list>>) -- 対象プレイヤー
-        --[team] and team != '未所属' -- 未所属除外
+        --[team] and name != '未所属' -- 未所属除外
         --[team] --[friendly_fire] and same_team != 0
-        --[team] --[player_name] and team in (<<player_list>>) -- 対象チーム
+        --[team] --[player_name] and name in (<<player_list>>) -- 対象チーム
         --[search_word] and comment like :search_word
 ),
 all_tbl as (
