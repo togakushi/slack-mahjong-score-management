@@ -78,7 +78,7 @@ class AdapterAPI(APIInterface):
                         disp = disp.replace("0.00", "-.--")
                     print(disp)
                 case x if isinstance(x, Path):
-                    print(f"{title}: {x.absolute()}")
+                    print(f"{options.title}: {x.absolute()}")
                 case _:
                     pass
 
