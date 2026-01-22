@@ -73,10 +73,15 @@ def main(m: "MessageParserProtocol"):
 
     m.post.headline = {title: message.header(game_info, m)}
     match g.adapter.interface_type:
-        case "slack":
+        case "slack" | "discord":
             m.set_data(file_path, StyleOptions(title=title, use_comment=True, header_hidden=True))
         case "web":
             m.set_data(df_generation(df), StyleOptions())
+        case _:
+            df = df.filter(
+                items=["player", "team", "game", "total_mix", "avg_mix", "1st_mix", "2nd_mix", "2nd_mix", "3rd_mix", "4th_mix", "flying_mix", "yakuman_mix"]
+            )
+            m.set_data(df, StyleOptions())
 
 
 def graph_generation(game_info: GameInfo, df: "pd.DataFrame", title: str) -> "MessageType":
