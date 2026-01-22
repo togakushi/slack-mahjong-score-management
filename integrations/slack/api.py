@@ -51,15 +51,18 @@ class AdapterAPI(APIInterface):
                 return f"*【{title}】*\n"
             return ""
 
-        def _table_data(data: dict) -> list:
+        def _table_data(data: dict, codeblock: bool = True) -> list:
             ret_list: list = []
             text_data = iter(data.values())
+            symbol = "```\n" if codeblock else ""
             # 先頭ブロックの処理(ヘッダ追加)
             v = next(text_data)
-            ret_list.append(f"{header}```\n{v}\n```\n" if options.codeblock else f"{header}{v}\n")
+
+            ret_list.append(f"{header}{symbol}{v}\n{symbol}" if options.codeblock else f"{header}{v}\n")
             # 残りのブロック
             for v in text_data:
-                ret_list.append(f"```\n{v}\n```\n" if options.codeblock else f"```\n{v}\n```\n")
+                ret_list.append(f"{symbol}{v}\n{symbol}" if options.codeblock else f"{symbol}{v}\n{symbol}")
+
             return ret_list
 
         def _post_header():
@@ -108,7 +111,6 @@ class AdapterAPI(APIInterface):
                 post_msg.append(f"{header}```\n{data.rstrip()}\n```\n" if options.codeblock else f"{header}{data.rstrip()}\n")
 
             if isinstance(data, pd.DataFrame):
-                data = formatter.df_rename(data, options)
                 if options.key_title and (options.title != header_title):
                     header = _header_text(options.title)
 
@@ -116,25 +118,26 @@ class AdapterAPI(APIInterface):
                     case CommandType.RESULTS:
                         match options.title:
                             case "通算ポイント" | "ポイント差分":
-                                post_msg.extend(_table_data(converter.df_to_text_table(data, step=40)))
+                                post_msg.extend(_table_data(converter.df_to_text_table(formatter.df_rename(data, options), step=40)))
                             case "役満和了" | "卓外清算" | "その他":
                                 if "回数" in data.columns:
-                                    post_msg.extend(_table_data(converter.df_to_count(data, options.title, 1)))
+                                    post_msg.extend(_table_data(converter.df_to_count(formatter.df_rename(data, options), options.title, 1)))
                                 else:
-                                    post_msg.extend(_table_data(converter.df_to_remarks(data)))
+                                    post_msg.extend(_table_data(converter.df_to_remarks(formatter.df_rename(data, options))))
                             case "成績詳細比較":
-                                post_msg.extend(_table_data(converter.df_to_text_table2(data, options, 3800)))
+                                post_msg.extend(_table_data(converter.df_to_text_table2(formatter.df_rename(data, options), options, 3800)))
                             case "座席データ":
-                                post_msg.extend(_table_data(converter.df_to_seat_data(data, 1)))
+                                post_msg.extend(_table_data(converter.df_to_seat_data(formatter.df_rename(data, options), 1)))
                             case "戦績":
                                 if "東家 名前" in data.columns:  # 縦持ちデータ
-                                    post_msg.extend(_table_data(converter.df_to_results_details(data)))
+                                    options.summarize = False
+                                    post_msg.extend(_table_data(converter.df_to_results_details(formatter.df_rename(data, options)), False))
                                 else:
-                                    post_msg.extend(_table_data(converter.df_to_results_simple(data)))
+                                    post_msg.extend(_table_data(converter.df_to_results_simple(formatter.df_rename(data, options))))
                             case _:
-                                post_msg.extend(_table_data(converter.df_to_remarks(data)))
+                                post_msg.extend(_table_data(converter.df_to_remarks(formatter.df_rename(data, options))))
                     case CommandType.RATING:
-                        post_msg.extend(_table_data(converter.df_to_text_table(data, step=20)))
+                        post_msg.extend(_table_data(converter.df_to_text_table(formatter.df_rename(data, options), step=20)))
                     case CommandType.RANKING:
                         post_msg.extend(_table_data(converter.df_to_ranking(data, options.title, step=50)))
                     case _:
