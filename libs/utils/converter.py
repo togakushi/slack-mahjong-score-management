@@ -536,7 +536,7 @@ def df_to_seat_data(df: pd.DataFrame, indent: int = 0) -> dict:
     """
 
     # 表示加工
-    df["順位分布(平均順位)"] = df.apply(lambda x: f"{x['順位分布']} ({x['平均順位']:.2f})", axis=1)
+    df["順位分布(平均順位)"] = df.apply(lambda x: f"{x['順位分布']} ({x['平均順位']})", axis=1)
     df.drop(columns=["順位分布", "平均順位"], inplace=True)
     df["席"] = df.apply(lambda x: f"{x['席']}：", axis=1)
     if "トビ" in df.columns:
