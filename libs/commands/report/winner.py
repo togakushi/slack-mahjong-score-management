@@ -5,6 +5,7 @@ libs/commands/report/winner.py
 from typing import TYPE_CHECKING
 
 import matplotlib.pyplot as plt
+import pandas as pd
 
 import libs.global_value as g
 from libs.data import loader
@@ -136,4 +137,4 @@ def plot(m: "MessageParserProtocol"):
         case "web":
             m.set_data(formatter.df_rename(results_df, StyleOptions()), StyleOptions(title="成績上位者"))
         case _:
-            m.set_data(results_df, StyleOptions())
+            m.set_data(pd.DataFrame(results).T, StyleOptions())
