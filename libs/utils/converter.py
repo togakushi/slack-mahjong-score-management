@@ -3,7 +3,7 @@ libs/utils/converter.py
 """
 
 import textwrap
-from typing import TYPE_CHECKING, Optional, Union, cast
+from typing import TYPE_CHECKING, Optional, Union
 
 import pandas as pd
 from table2ascii import Alignment, PresetStyle, table2ascii
@@ -221,26 +221,33 @@ def df_to_results_details(df: pd.DataFrame) -> dict:
     """
 
     data_list: list = []
+    game_results: dict[str, dict] = {}
+
     for x in df.to_dict(orient="index").values():
-        work_df = pd.DataFrame(
-            {
-                "東家：": [v for k, v in cast(dict, x).items() if str(k).startswith("東家")],
-                "南家：": [v for k, v in cast(dict, x).items() if str(k).startswith("南家")],
-                "西家：": [v for k, v in cast(dict, x).items() if str(k).startswith("西家")],
-                "北家：": [v for k, v in cast(dict, x).items() if str(k).startswith("北家")],
-            },
-            index=["name", "rpoint", "rank", "point", "regulation"],
-        ).T
+        game_results[x["日時"]] = {"備考": x["備考"]}
+        for seat in ("東家", "南家", "西家", "北家"):
+            game_results[x["日時"]].update(
+                {
+                    seat: [
+                        x[f"{seat} 名前"],
+                        f"{(x[f'{seat} 素点'])}点".replace("-", "▲"),
+                        f"{(x[f'{seat} 順位'])}位",
+                        f"({float(x[f'{seat} ポイント']):+.1f}pt)".replace("-", "▲"),
+                        x[f"{seat} メモ"],
+                    ]
+                }
+            )
 
-        work_df["rpoint"] = work_df.apply(lambda v: f"<>{v['rpoint']:8d}点".replace("-", "▲"), axis=1)
-        work_df["point"] = work_df.apply(lambda v: f"(<>{v['point']:7.1f}pt)".replace("-", "▲"), axis=1)
-        work_df["rank"] = work_df.apply(lambda v: f"{v['rank']}位", axis=1)
-        data = work_df.to_markdown(tablefmt="tsv", headers=[], floatfmt=formatter.floatfmt_adjust(work_df)).replace("<>", "")
-
-        ret = f"{str(x['日時']).replace('-', '/')} {x['備考']}\n"
-        ret += textwrap.indent(data, "\t") + "\n"
-
-        data_list.append(ret)
+    for k, v in game_results.items():
+        body = [["　東家："] + v["東家"], ["　南家："] + v["南家"], ["　西家："] + v["西家"], ["　北家："] + v["北家"]]
+        output = table2ascii(
+            body=body,
+            style=PresetStyle.plain,
+            cell_padding=0,
+            first_col_heading=True,
+            alignments=[Alignment.LEFT, Alignment.LEFT, Alignment.RIGHT, Alignment.RIGHT, Alignment.RIGHT, Alignment.LEFT],
+        )
+        data_list.append(f"{k.replace('-', '/')} {v['備考']}\n" + output + "\n")
 
     return {str(idx): x for idx, x in enumerate(formatter.group_strings(data_list, 2000))}
 
@@ -536,7 +543,7 @@ def df_to_seat_data(df: pd.DataFrame, indent: int = 0) -> dict:
     """
 
     # 表示加工
-    df["順位分布(平均順位)"] = df.apply(lambda x: f"{x['順位分布']} ({x['平均順位']:.2f})", axis=1)
+    df["順位分布(平均順位)"] = df.apply(lambda x: f"{x['順位分布']} ({x['平均順位']})", axis=1)
     df.drop(columns=["順位分布", "平均順位"], inplace=True)
     df["席"] = df.apply(lambda x: f"{x['席']}：", axis=1)
     if "トビ" in df.columns:

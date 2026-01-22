@@ -24,7 +24,7 @@ def main(m: "MessageParserProtocol"):
     g.params = dictutil.placeholder(g.cfg.report, m)
 
     if len(g.params["player_list"]) == 1:  # 成績レポート
-        report.results_report.gen_pdf(m)
+        report.stats_report.gen_pdf(m)
     elif g.params.get("order"):
         report.winner.plot(m)
     elif g.params.get("statistics"):
@@ -32,4 +32,4 @@ def main(m: "MessageParserProtocol"):
     elif g.params.get("versus_matrix") or len(g.params["player_list"]) >= 2:  # 対局対戦マトリックス
         report.matrix.plot(m)
     else:
-        report.results_list.main(m)
+        report.stats_list.main(m)

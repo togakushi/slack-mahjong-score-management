@@ -185,7 +185,7 @@ def test_pattern(flag: dict, test_case: str, sec: str, pattern: str, argument: s
                 pprint(
                     [
                         "exec: report.results_list.main()",
-                        report.results_list.main(m),
+                        report.stats_list.main(m),
                         f"{g.params=}" if flag.get("dump") else "g.params={...}",
                     ],
                     width=120,
@@ -197,7 +197,7 @@ def test_pattern(flag: dict, test_case: str, sec: str, pattern: str, argument: s
                 pprint(
                     [
                         "exec: report.slackpost.results_report.gen_pdf()",
-                        report.results_report.gen_pdf(m),
+                        report.stats_report.gen_pdf(m),
                         f"{g.params=}" if flag.get("dump") else "g.params={...}",
                     ],
                     width=120,
