@@ -549,7 +549,7 @@ def entire_aggregate(style: dict) -> list:
     plt.title("順位分布 （ 全期間 ）", fontsize=18)
     plt.ylabel("")
     plt.legend(
-        handles=list(gdata.index),
+        labels=list(gdata.index),
         bbox_to_anchor=(0.5, -0.1),
         loc="lower center",
         ncol=4,
