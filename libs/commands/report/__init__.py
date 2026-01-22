@@ -8,6 +8,6 @@ Exports:
 - `libs.commands.report.winner`: 月間上位5名表示
 """
 
-from libs.commands.report import matrix, monthly, results_list, results_report, winner
+from libs.commands.report import matrix, monthly, stats_list, stats_report, winner
 
-__all__ = ["matrix", "monthly", "results_list", "results_report", "winner"]
+__all__ = ["matrix", "monthly", "stats_list", "stats_report", "winner"]
