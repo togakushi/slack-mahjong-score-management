@@ -74,7 +74,7 @@ class AdapterAPI(APIInterface):
                         )
                         .replace(" nan ", "-----")
                     )
-                    if title == "座席データ":
+                    if options.title == "座席データ":
                         disp = disp.replace("0.00", "-.--")
                     print(disp)
                 case x if isinstance(x, Path):
