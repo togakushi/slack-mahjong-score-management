@@ -2,7 +2,7 @@
 cls/types.py
 """
 
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field
 from enum import Enum, auto
 from typing import TYPE_CHECKING, Any, Literal, Optional, TypeAlias, TypedDict, Union
 
@@ -183,6 +183,11 @@ class StyleOptions:
         if self.format_type == "default":
             return ""
         return f"{self.base_name}.{self.format_type}"
+
+    @property
+    def asdict(self) -> dict:
+        """辞書変換"""
+        return asdict(self)
 
 
 class PlaceholderDict(TypedDict, total=False):

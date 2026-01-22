@@ -2,7 +2,6 @@
 libs/commands/results/summary.py
 """
 
-from copy import copy
 from typing import TYPE_CHECKING
 
 import libs.global_value as g
@@ -92,7 +91,7 @@ def aggregation(m: "MessageParserProtocol"):
         options.base_name = "summary"
         df_summary = df_summary.filter(items=filter_list).fillna("*****")
         data = converter.save_output(df_summary, options, f"【{headline_title}】\n{header_text}", "summary")
-    m.set_data(data, copy(options))
+    m.set_data(data, StyleOptions(**options.asdict))
 
     # メモ(役満和了)
     if not g.cfg.dropitems.results & g.cfg.dropitems.yakuman:
@@ -107,7 +106,7 @@ def aggregation(m: "MessageParserProtocol"):
             options.base_name = "yakuman"
             data = converter.save_output(df_yakuman, options, f"【役満和了】\n{header_text}", "yakuman")
 
-        m.set_data(data, copy(options))
+        m.set_data(data, StyleOptions(**options.asdict))
 
     # メモ(卓外清算)
     if not g.cfg.dropitems.results & g.cfg.dropitems.regulation:
@@ -126,7 +125,7 @@ def aggregation(m: "MessageParserProtocol"):
             options.base_name = "regulations"
             data = converter.save_output(df_regulations, options, f"【卓外清算】\n{header_text}", "regulations")
 
-        m.set_data(data, copy(options))
+        m.set_data(data, StyleOptions(**options.asdict))
 
     # メモ(その他)
     if not g.cfg.dropitems.results & g.cfg.dropitems.other:
@@ -140,7 +139,7 @@ def aggregation(m: "MessageParserProtocol"):
             options.base_name = "others"
             data = converter.save_output(df_others, options, f"【その他】\n{header_text}", "others")
 
-        m.set_data(data, copy(options))
+        m.set_data(data, StyleOptions(**options.asdict))
 
 
 def difference(m: "MessageParserProtocol"):
@@ -203,4 +202,4 @@ def difference(m: "MessageParserProtocol"):
             options.format_type = "default"
             data = formatter.df_rename(df_summary.filter(items=header_list), options)
 
-    m.set_data(data, copy(options))
+    m.set_data(data, StyleOptions(**options.asdict))
