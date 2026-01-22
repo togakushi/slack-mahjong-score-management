@@ -119,7 +119,7 @@ def test_pattern(flag: dict, test_case: str, sec: str, pattern: str, argument: s
                 pprint(compose.msg_print.help_message(m), width=200)
 
             case "summary":
-                g.cfg.results.always_argument = add_argument
+                m.data.text = f"{g.cfg.results.commandword[0]} {' '.join(add_argument)}"
                 g.params = dictutil.placeholder(g.cfg.results, m)
                 pprint(
                     [
@@ -131,7 +131,7 @@ def test_pattern(flag: dict, test_case: str, sec: str, pattern: str, argument: s
                 )
 
             case "graph":
-                g.cfg.graph.always_argument = add_argument
+                m.data.text = f"{g.cfg.graph.commandword[0]} {' '.join(add_argument)}"
                 g.params = dictutil.placeholder(g.cfg.graph, m)
                 if g.params.get("filename"):
                     save_filename = g.params["filename"]
@@ -152,22 +152,22 @@ def test_pattern(flag: dict, test_case: str, sec: str, pattern: str, argument: s
                         graph_statistics(m)
 
             case "graph_point":
-                g.cfg.graph.always_argument = add_argument
+                m.data.text = f"{g.cfg.graph.commandword[0]} {' '.join(add_argument)}"
                 g.params = dictutil.placeholder(g.cfg.graph, m)
                 graph_point(m)
 
             case "graph_rank":
-                g.cfg.graph.always_argument = add_argument
+                m.data.text = f"{g.cfg.graph.commandword[0]} {' '.join(add_argument)}"
                 g.params = dictutil.placeholder(g.cfg.graph, m)
                 graph_rank(m)
 
             case "graph_statistics":
-                g.cfg.graph.always_argument = add_argument
+                m.data.text = f"{g.cfg.graph.commandword[0]} {' '.join(add_argument)}"
                 g.params = dictutil.placeholder(g.cfg.graph, m)
                 graph_statistics(m)
 
             case "ranking":
-                g.cfg.ranking.always_argument = add_argument
+                m.data.text = f"{g.cfg.ranking.commandword[0]} {' '.join(add_argument)}"
                 g.params = dictutil.placeholder(g.cfg.ranking, m)
 
                 pprint(
@@ -180,7 +180,7 @@ def test_pattern(flag: dict, test_case: str, sec: str, pattern: str, argument: s
                 )
 
             case "report":
-                g.cfg.report.always_argument = add_argument
+                m.data.text = f"{g.cfg.report.commandword[0]} {' '.join(add_argument)}"
                 g.params = dictutil.placeholder(g.cfg.report, m)
                 pprint(
                     [
@@ -192,7 +192,7 @@ def test_pattern(flag: dict, test_case: str, sec: str, pattern: str, argument: s
                 )
 
             case "pdf":
-                g.cfg.report.always_argument = add_argument
+                m.data.text = f"{g.cfg.report.commandword[0]} {' '.join(add_argument)}"
                 g.params = dictutil.placeholder(g.cfg.report, m)
                 pprint(
                     [
@@ -204,7 +204,7 @@ def test_pattern(flag: dict, test_case: str, sec: str, pattern: str, argument: s
                 )
 
             case "rating":
-                g.cfg.results.always_argument = add_argument
+                m.data.text = f"{g.cfg.ranking.commandword[0]} {' '.join(add_argument)}"
                 g.params = dictutil.placeholder(g.cfg.results, m)
                 pprint(
                     [
