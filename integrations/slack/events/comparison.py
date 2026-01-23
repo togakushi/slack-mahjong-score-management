@@ -124,15 +124,15 @@ def check_omission(results: ComparisonResults):
     # DATABASE -> SLACK
     ts_list = [x.ts for x in slack_score]
     work_m = g.adapter.parser()
-    work_m.status.command_type = CommandType.COMPARISON
     for score in db_score:
         if score.ts not in ts_list:  # 削除漏れ
             work_m.data.event_ts = score.ts
             if score.source:
                 work_m.data.channel_id = score.source.replace("slack_", "")
-            if work_m.data.channel_id in set(keep_channel_id):
+            if work_m.data.channel_id not in set(keep_channel_id):
                 results.delete.append(score)
-                logging.info("delete (Only database): %s (%s)", score.ts, ExtDt(float(score.ts)).format(Format.YMDHMS))
+                logging.info("delete (Only database): %s %s", ExtDt(float(score.ts)).format(Format.YMDHMS), score.to_text("logging"))
+                work_m.status.command_type = CommandType.COMPARISON
                 modify.db_delete(work_m)
 
 
