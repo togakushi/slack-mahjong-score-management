@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, cast
 
 import libs.global_value as g
 from integrations.base.interface import MessageParserDataMixin, MessageParserInterface
-from integrations.protocols import ChannelType, MessageStatus, MsgData, PostData, StatusData
+from integrations.protocols import ChannelType, CommandType, MessageStatus, MsgData, PostData, StatusData
 
 if TYPE_CHECKING:
     from integrations.slack.adapter import ServiceAdapter
@@ -119,7 +119,7 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
         ret: bool = False
 
         # 突合処理中はチェック省略
-        if self.status.command_type == "comparison":
+        if self.status.command_type == CommandType.COMPARISON:
             return True
 
         if g.adapter.conf.channel_limitations:
@@ -127,13 +127,13 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
                 ret = True
         else:  # リストが空なら全チャンネルが対象
             match self.data.channel_type:
-                case "channel":  # public channel
+                case ChannelType.CHANNEL:  # public channel
                     ret = True
-                case "group":  # private channel
+                case ChannelType.PRIVATE:  # private channel
                     ret = True
-                case "im":  # direct message
+                case ChannelType.DIRECT_MESSAGE:  # direct message
                     ret = False
-                case "search_messages":
+                case ChannelType.SEARCH:
                     ret = True
                 case _:
                     pass
