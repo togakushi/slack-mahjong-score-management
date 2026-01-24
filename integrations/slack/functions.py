@@ -286,8 +286,10 @@ class SvcFunctions(FunctionsInterface):
                     pass
                 case "message_not_found":
                     pass
+                case "channel_not_found":
+                    pass
                 case _:
-                    logging.error("slack_api_error: %s", err)
+                    logging.error("slack_api_error'(%s): %s", self.slack_api_error, err)
                     logging.error("ch=%s, ts=%s, icon=%s", ch, ts, icon)
 
     def pickup_score(self) -> list["MessageParserProtocol"]:

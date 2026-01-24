@@ -9,7 +9,7 @@ from discord.channel import TextChannel
 
 import libs.global_value as g
 from integrations.base.interface import MessageParserDataMixin, MessageParserInterface
-from integrations.protocols import MsgData, PostData, StatusData
+from integrations.protocols import CommandType, MsgData, PostData, StatusData
 
 if TYPE_CHECKING:
     from integrations.discord.adapter import ServiceAdapter
@@ -63,7 +63,7 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
         g.adapter = cast("ServiceAdapter", g.adapter)
 
         # 突合処理中はチェック省略
-        if self.status.command_type == "comparison":
+        if self.status.command_type == CommandType.COMPARISON:
             return True
 
         # スレッド内では常に禁止
