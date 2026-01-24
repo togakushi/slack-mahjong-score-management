@@ -16,6 +16,7 @@ from cls.timekit import Delimiter, Format
 from cls.timekit import ExtendedDatetime as ExtDt
 from integrations.base.interface import APIInterface
 from integrations.protocols import CommandType
+from libs.types import StyleOptions
 from libs.utils import converter, formatter, textutil
 
 sys.modules["audioop"] = _audioop
@@ -87,7 +88,6 @@ class AdapterAPI(APIInterface):
         # 見出しポスト
         header_title = ""
         header_text = ""
-
         if m.post.headline:
             header_title, header_text = next(iter(m.post.headline.items()))
             m.post.thread_title = header_title
@@ -102,6 +102,7 @@ class AdapterAPI(APIInterface):
             m.post.thread = True
 
         # 本文
+        options = StyleOptions()
         post_msg: list[str] = []
         for data, options in m.post.message:
             header = ""

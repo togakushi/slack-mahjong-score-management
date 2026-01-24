@@ -11,6 +11,7 @@ import pandas as pd
 
 from integrations.base.interface import APIInterface
 from integrations.protocols import CommandType
+from libs.types import StyleOptions
 from libs.utils import converter, formatter
 
 if TYPE_CHECKING:
@@ -90,6 +91,7 @@ class AdapterAPI(APIInterface):
                 _post_header()
 
         # 本文
+        options = StyleOptions()
         post_msg: list[str] = []
         for data, options in m.post.message:
             header = ""
