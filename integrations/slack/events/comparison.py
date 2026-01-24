@@ -78,7 +78,6 @@ def check_omission(results: ComparisonResults):
 
     g.adapter = cast("ServiceAdapter", g.adapter)
     slack_score: list[GameResult] = []
-    keep_channel_id: list = []
 
     for work_m in set(g.adapter.functions.pickup_score()):
         if work_m.keyword in g.keyword_dispatcher:  # コマンドキーワードはスキップ
@@ -94,7 +93,6 @@ def check_omission(results: ComparisonResults):
             else:
                 slack_score.append(score)
                 results.score_list.update({work_m.data.event_ts: work_m})
-                keep_channel_id.append(work_m.data.channel_id)
 
     if slack_score:
         first_ts = float(min(x.ts for x in slack_score))
@@ -129,11 +127,10 @@ def check_omission(results: ComparisonResults):
             work_m.data.event_ts = score.ts
             if score.source:
                 work_m.data.channel_id = score.source.replace("slack_", "")
-            if work_m.data.channel_id not in set(keep_channel_id):
-                results.delete.append(score)
-                logging.info("delete (Only database): %s %s", ExtDt(float(score.ts)).format(Format.YMDHMS), score.to_text("logging"))
-                work_m.status.command_type = CommandType.COMPARISON
-                modify.db_delete(work_m)
+            results.delete.append(score)
+            logging.info("delete (Only database): %s %s", ExtDt(float(score.ts)).format(Format.YMDHMS), score.to_text("logging"))
+            work_m.status.command_type = CommandType.COMPARISON
+            modify.db_delete(work_m)
 
 
 def check_remarks(results: ComparisonResults):
