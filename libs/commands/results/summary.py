@@ -25,7 +25,6 @@ def aggregation(m: "MessageParserProtocol"):
 
     # --- データ収集
     data: "MessageType"
-    options: StyleOptions
     game_info = GameInfo()
     df_summary = aggregate.game_summary()
     df_game = loader.read_data("SUMMARY_DETAILS")
@@ -86,7 +85,7 @@ def aggregation(m: "MessageParserProtocol"):
 
     if options.format_type == "default":
         options.codeblock = True
-        data = formatter.df_rename(df_summary.filter(items=header_list), options)
+        data = df_summary.filter(items=header_list)
     else:
         options.base_name = "summary"
         df_summary = df_summary.filter(items=filter_list).fillna("*****")
@@ -101,7 +100,7 @@ def aggregation(m: "MessageParserProtocol"):
 
         if options.format_type == "default":
             options.codeblock = False
-            data = formatter.df_rename(df_yakuman, options)
+            data = df_yakuman
         else:
             options.base_name = "yakuman"
             data = converter.save_output(df_yakuman, options, f"【役満和了】\n{header_text}", "yakuman")
@@ -120,7 +119,7 @@ def aggregation(m: "MessageParserProtocol"):
 
         if options.format_type == "default":
             options.codeblock = False
-            data = formatter.df_rename(df_regulations, options)
+            data = df_regulations
         else:
             options.base_name = "regulations"
             data = converter.save_output(df_regulations, options, f"【卓外清算】\n{header_text}", "regulations")
@@ -134,7 +133,7 @@ def aggregation(m: "MessageParserProtocol"):
         df_others = df_remarks.query("type == 1").drop(columns=["type", "ex_point"])
 
         if options.format_type == "default":
-            data = formatter.df_rename(df_others, options)
+            data = df_others
         else:
             options.base_name = "others"
             data = converter.save_output(df_others, options, f"【その他】\n{header_text}", "others")
@@ -200,6 +199,6 @@ def difference(m: "MessageParserProtocol"):
             data = converter.save_output(df_summary.filter(items=filter_list).fillna("*****"), options, f"【{headline_title}】\n{header_text}")
         case _:
             options.format_type = "default"
-            data = formatter.df_rename(df_summary.filter(items=header_list), options)
+            data = df_summary.filter(items=header_list)
 
     m.set_data(data, StyleOptions(**options.asdict))

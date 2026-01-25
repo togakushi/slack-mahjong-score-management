@@ -340,6 +340,8 @@ def df_rename(df: pd.DataFrame, options: StyleOptions) -> pd.DataFrame:
         # メモ
         "regulation": "卓外清算",
         "remarks": "メモ",
+        #
+        "memo": "備考",
     }
 
     match options.rename_type:
