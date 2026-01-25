@@ -10,7 +10,6 @@ from typing import TYPE_CHECKING, cast
 import pandas as pd
 
 from integrations.base.interface import APIInterface
-from integrations.protocols import CommandType
 from libs.types import StyleOptions
 from libs.utils import converter, formatter
 
@@ -52,17 +51,16 @@ class AdapterAPI(APIInterface):
                 return f"*【{title}】*\n"
             return ""
 
-        def _table_data(data: dict, codeblock: bool = True) -> list:
+        def _table_data(data: dict) -> list:
             ret_list: list = []
             text_data = iter(data.values())
-            symbol = "```\n" if codeblock else ""
             # 先頭ブロックの処理(ヘッダ追加)
             v = next(text_data)
 
-            ret_list.append(f"{header}{symbol}{v}\n{symbol}" if options.codeblock else f"{header}{v}\n")
+            ret_list.append(f"{header}```\n{v}\n```\n" if options.codeblock else f"{header}{v}\n")
             # 残りのブロック
             for v in text_data:
-                ret_list.append(f"{symbol}{v}\n{symbol}" if options.codeblock else f"{symbol}{v}\n{symbol}")
+                ret_list.append(f"```\n{v}\n```\n" if options.codeblock else f"{v}\n")
 
             return ret_list
 
@@ -110,38 +108,33 @@ class AdapterAPI(APIInterface):
             if isinstance(data, str):
                 if options.key_title and (options.title != header_title):
                     header = _header_text(options.title)
-                post_msg.append(f"{header}```\n{data.rstrip()}\n```\n" if options.codeblock else f"{header}{data.rstrip()}\n")
+                text_body = textwrap.indent(data.rstrip(), "\t" * options.indent)
+                post_msg.append(f"{header}```\n{text_body}\n```\n" if options.codeblock else f"{header}{text_body}\n")
 
             if isinstance(data, pd.DataFrame):
                 if options.key_title and (options.title != header_title):
                     header = _header_text(options.title)
-
-                match m.status.command_type:
-                    case CommandType.RESULTS:
-                        match options.title:
-                            case "通算ポイント" | "ポイント差分":
-                                post_msg.extend(_table_data(converter.df_to_text_table(formatter.df_rename(data, options), step=40)))
-                            case "役満和了" | "卓外清算" | "その他":
-                                if "回数" in data.columns:
-                                    post_msg.extend(_table_data(converter.df_to_count(formatter.df_rename(data, options), options.title, 1)))
-                                else:
-                                    post_msg.extend(_table_data(converter.df_to_remarks(formatter.df_rename(data, options))))
-                            case "成績詳細比較":
-                                post_msg.extend(_table_data(converter.df_to_text_table2(formatter.df_rename(data, options), options, 3800)))
-                            case "座席データ":
-                                post_msg.extend(_table_data(converter.df_to_seat_data(formatter.df_rename(data, options), 1)))
-                            case "戦績":
-                                if "東家 名前" in data.columns:  # 縦持ちデータ
-                                    options.summarize = False
-                                    post_msg.extend(_table_data(converter.df_to_results_details(formatter.df_rename(data, options)), False))
-                                else:
-                                    post_msg.extend(_table_data(converter.df_to_results_simple(formatter.df_rename(data, options))))
-                            case _:
-                                post_msg.extend(_table_data(converter.df_to_remarks(formatter.df_rename(data, options))))
-                    case CommandType.RATING:
-                        post_msg.extend(_table_data(converter.df_to_text_table(formatter.df_rename(data, options), step=20)))
-                    case CommandType.RANKING:
+                match options.data_kind:
+                    case StyleOptions.DataKind.POINTS_TOTAL | StyleOptions.DataKind.POINTS_DIFF:
+                        post_msg.extend(_table_data(converter.df_to_text_table(data, options, step=40)))
+                    case StyleOptions.DataKind.REMARKS_YAKUMAN | StyleOptions.DataKind.REMARKS_REGULATION | StyleOptions.DataKind.REMARKS_OTHER:
+                        options.indent = 1
+                        post_msg.extend(_table_data(converter.df_to_remarks(data, options)))
+                    case StyleOptions.DataKind.DETAILED_COMPARISON:
+                        post_msg.extend(_table_data(converter.df_to_text_table2(data, options, limit=3800)))
+                    case StyleOptions.DataKind.SEAT_DATA:
+                        options.indent = 1
+                        post_msg.extend(_table_data(converter.df_to_seat_data(data, options)))
+                    case StyleOptions.DataKind.RECORD_DATA:
+                        options.summarize = False
+                        post_msg.extend(_table_data(converter.df_to_results_simple(data, options, limit=2600)))
+                    case StyleOptions.DataKind.RECORD_DATA_ALL:
+                        options.summarize = False
+                        post_msg.extend(_table_data(converter.df_to_results_details(data, options, limit=2600)))
+                    case StyleOptions.DataKind.RANKING:
                         post_msg.extend(_table_data(converter.df_to_ranking(data, options.title, step=50)))
+                    case StyleOptions.DataKind.RATING:
+                        post_msg.extend(_table_data(converter.df_to_text_table(data, options, step=20)))
                     case _:
                         pass
 
@@ -149,11 +142,19 @@ class AdapterAPI(APIInterface):
             post_msg = formatter.group_strings(post_msg)
 
         for msg in post_msg:
-            self._call_chat_post_message(
-                channel=m.data.channel_id,
-                text=msg,
-                thread_ts=m.reply_ts,
-            )
+            if options.data_kind == StyleOptions.DataKind.RECORD_DATA:
+                self._call_chat_post_message(
+                    channel=m.data.channel_id,
+                    text=msg.rstrip(),
+                    blocks=[{"type": "section", "text": {"type": "mrkdwn", "text": msg.rstrip()}}],
+                    thread_ts=m.reply_ts,
+                )
+            else:
+                self._call_chat_post_message(
+                    channel=m.data.channel_id,
+                    text=msg.rstrip(),
+                    thread_ts=m.reply_ts,
+                )
 
     def _call_chat_post_message(self, **kwargs) -> "SlackResponse":
         """slackにメッセージをポストする
