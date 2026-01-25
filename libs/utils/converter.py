@@ -75,22 +75,24 @@ def save_output(
     return save_file
 
 
-def df_to_text_table(df: pd.DataFrame, step: int = 40, index: bool = False) -> dict:
+def df_to_text_table(df: pd.DataFrame, options: StyleOptions, step: int = 40) -> dict:
     """DataFrameからテキストテーブルの生成
 
     Args:
         df (pd.DataFrame): 対象データ
+        options (StyleOptions): 表示フラグ
         step (int, optional): 分割行. Defaults to 40.
-        index (bool, optional): インデックスを含める. Defaults to False.
 
     Returns:
         dict: 生成テーブル
     """
 
+    df = formatter.df_rename(df, options)
+
     # ヘッダ/位置
     header: list = []
     alignments: list = []
-    if index:
+    if options.show_index:
         df.reset_index(inplace=True, drop=True)
         df.index += 1
         header.append("")
@@ -121,7 +123,7 @@ def df_to_text_table(df: pd.DataFrame, step: int = 40, index: bool = False) -> d
                     data.append(f"{v:.0f}")
                 case _:
                     data.append(str(v).replace("nan", "*****"))
-            if index:
+            if options.show_index:
                 data.insert(0, "")
         body.append(data.copy())
 
@@ -138,7 +140,7 @@ def df_to_text_table(df: pd.DataFrame, step: int = 40, index: bool = False) -> d
             body=table_body,
             style=my_style,
             cell_padding=0,
-            first_col_heading=index,
+            first_col_heading=options.show_index,
             alignments=alignments,
         )
         table_data.update({f"{idx}": output})
@@ -146,17 +148,19 @@ def df_to_text_table(df: pd.DataFrame, step: int = 40, index: bool = False) -> d
     return table_data
 
 
-def df_to_text_table2(df: pd.DataFrame, style: StyleOptions, limit: int = 2000) -> dict:
+def df_to_text_table2(df: pd.DataFrame, options: StyleOptions, limit: int = 2000) -> dict:
     """DataFrameからテキストテーブルの生成(縦横変換)
 
     Args:
         df (pd.DataFrame): 対象データ
-        style (StyleOptions): 表示フラグ
+        options (StyleOptions): 表示フラグ
         limit (int, optional): 分割文字数. Defaults to 2000.
 
     Returns:
         dict: 生成テーブル
     """
+
+    df = formatter.df_rename(df, options)
 
     # 表生成/分割
     my_style = PresetStyle.plain
@@ -176,7 +180,7 @@ def df_to_text_table2(df: pd.DataFrame, style: StyleOptions, limit: int = 2000) 
 
         # ヘッダ
         header: list = chk_df.columns.to_list()
-        if style.show_index:
+        if options.show_index:
             header.insert(0, "")
 
         # ボディ
@@ -194,7 +198,7 @@ def df_to_text_table2(df: pd.DataFrame, style: StyleOptions, limit: int = 2000) 
             style=my_style,
             cell_padding=0,
             alignments=[Alignment.RIGHT] * len(header),
-            first_col_heading=style.show_index,
+            first_col_heading=options.show_index,
         )
 
         # 文字数チェック
@@ -210,15 +214,19 @@ def df_to_text_table2(df: pd.DataFrame, style: StyleOptions, limit: int = 2000) 
     return table_data
 
 
-def df_to_results_details(df: pd.DataFrame) -> dict:
+def df_to_results_details(df: pd.DataFrame, options: StyleOptions, limit: int = 2000) -> dict:
     """戦績(詳細)データをテキスト変換
 
     Args:
         df (pd.DataFrame): 対象データ
+        options (StyleOptions): 表示フラグ
+        limit (int, optional): 分割文字数. Defaults to 2000.
 
     Returns:
         dict: 整形テキスト
     """
+
+    df = formatter.df_rename(df, options)
 
     data_list: list = []
     game_results: dict[str, dict] = {}
@@ -249,18 +257,22 @@ def df_to_results_details(df: pd.DataFrame) -> dict:
         )
         data_list.append(f"{k.replace('-', '/')} {v['備考']}\n" + output + "\n")
 
-    return {str(idx): x for idx, x in enumerate(formatter.group_strings(data_list, 2000))}
+    return {str(idx): x for idx, x in enumerate(formatter.group_strings(data_list, limit))}
 
 
-def df_to_results_simple(df: pd.DataFrame) -> dict:
+def df_to_results_simple(df: pd.DataFrame, options: StyleOptions, limit: int = 2000) -> dict:
     """戦績(簡易)データをテキスト変換
 
     Args:
         df (pd.DataFrame): 対象データ
+        options (StyleOptions): 表示フラグ
+        limit (int, optional): 分割文字数. Defaults to 2000.
 
     Returns:
         dict: 整形テキスト
     """
+
+    df = formatter.df_rename(df, options)
 
     data_list: list = []
     for x in df.to_dict(orient="index").values():
@@ -268,11 +280,11 @@ def df_to_results_simple(df: pd.DataFrame) -> dict:
         if x["備考"] != "":
             vs_guest = f"({g.cfg.setting.guest_mark}) "
 
-        ret = f"\t{vs_guest}{str(x['日時']).replace('-', '/')}  "
+        ret = f"　{vs_guest}{str(x['日時']).replace('-', '/')}  "
         ret += f"{x['座席']}\t{x['順位']}位\t{x['素点']:8d}点\t{x['獲得ポイント']:7.1f}pt\t{x['メモ']}".replace("-", "▲")
         data_list.append(ret)
 
-    return {str(idx): x for idx, x in enumerate(formatter.group_strings(data_list, 2500))}
+    return {str(idx): x for idx, x in enumerate(formatter.group_strings(data_list, limit))}
 
 
 def df_to_ranking(df: pd.DataFrame, title: str, step: int = 40) -> dict:
@@ -479,15 +491,18 @@ def df_to_ranking(df: pd.DataFrame, title: str, step: int = 40) -> dict:
     return ret
 
 
-def df_to_remarks(df: pd.DataFrame) -> dict:
+def df_to_remarks(df: pd.DataFrame, options: StyleOptions) -> dict:
     """DataFrameからメモテーブルを生成
 
     Args:
         df (pd.DataFrame): 対象データ
+        options (StyleOptions): 表示フラグ
 
     Returns:
         dict: 整形テキスト
     """
+
+    df = formatter.df_rename(df, options)
 
     key_name = "名前" if g.params.get("individual") else "チーム"
     for col in df.columns:
@@ -497,50 +512,37 @@ def df_to_remarks(df: pd.DataFrame) -> dict:
             case "ポイント":
                 df["ポイント"] = df["ポイント"].map(lambda x: f"{x}pt".replace("-", "▲"))
 
-    if "ポイント" in df.columns:
-        df["表示"] = df.apply(lambda x: f"{x['日時']} {x['ポイント']} {x['内容']} （{x[key_name]}）", axis=1)
-    elif "和了役" in df.columns:
-        df["表示"] = df.apply(lambda x: f"{x['日時']} {x['和了役']} （{x[key_name]}）", axis=1)
-    else:
-        df["表示"] = df.apply(lambda x: f"{x['日時']} {x['内容']} （{x[key_name]}）", axis=1)
-    tbl = tabulate(df.filter(items=["表示"]).values, showindex=False).splitlines()[1:-1]
-
-    return {"0": "\n".join(tbl)}
-
-
-def df_to_count(df: pd.DataFrame, title: str, indent: int = 0) -> dict:
-    """DataFrameからメモの回数表示を生成
-
-    Args:
-        df (pd.DataFrame): 対象データ
-        title (str): _description_
-        indent (int, optional): インデント. Defaults to 0.
-
-    Returns:
-        dict: 整形テキスト
-    """
-    match title:
-        case "役満和了":
-            df["表示"] = df.apply(lambda x: f"{x['和了役']}： {x['回数']} 回", axis=1)
-        case "卓外清算":
+    if "日時" in df.columns:
+        if "ポイント" in df.columns:
+            df["表示"] = df.apply(lambda x: f"{x['日時']} {x['ポイント']} {x['内容']} （{x[key_name]}）", axis=1)
+        elif "和了役" in df.columns:
+            df["表示"] = df.apply(lambda x: f"{x['日時']} {x['和了役']} （{x[key_name]}）", axis=1)
+        else:
+            df["表示"] = df.apply(lambda x: f"{x['日時']} {x['内容']} （{x[key_name]}）", axis=1)
+    elif "回数" in df.columns:
+        if "ポイント" in df.columns:
             df["表示"] = df.apply(lambda x: f"{x['内容']}： {x['回数']} 回 ({x['ポイント合計']:.1f}pt)".replace("-", "▲"), axis=1)
-        case "その他":
+        elif "和了役" in df.columns:
+            df["表示"] = df.apply(lambda x: f"{x['和了役']}： {x['回数']} 回", axis=1)
+        else:
             df["表示"] = df.apply(lambda x: f"{x['内容']}： {x['回数']} 回", axis=1)
 
     tbl = tabulate(df.filter(items=["表示"]).values, showindex=False).splitlines()[1:-1]
-    return {"0": textwrap.indent("\n".join(tbl), "\t" * indent)}
+    return {"0": textwrap.indent("\n".join(tbl), "\t" * options.indent)}
 
 
-def df_to_seat_data(df: pd.DataFrame, indent: int = 0) -> dict:
+def df_to_seat_data(df: pd.DataFrame, options: StyleOptions) -> dict:
     """座席データ生成
 
     Args:
         df (pd.DataFrame): 対象データ
-        indent (int, optional): インデント. Defaults to 0.
+        options (StyleOptions): 表示フラグ
 
     Returns:
         dict: 整形テキスト
     """
+
+    df = formatter.df_rename(df, options)
 
     # 表示加工
     df["順位分布(平均順位)"] = df.apply(lambda x: f"{x['順位分布']} ({x['平均順位']})", axis=1)
@@ -555,4 +557,4 @@ def df_to_seat_data(df: pd.DataFrame, indent: int = 0) -> dict:
     df = df.filter(items=["席", "順位分布(平均順位)", "トビ", "役満和了"]).rename(columns={"席": "# 席：", "トビ": "/ トビ", "役満和了": "/ 役満 #"})
 
     tbl = df.to_markdown(tablefmt="tsv", index=False).replace("0.00", "-.--").replace(" \t", "")
-    return {"0": textwrap.indent(tbl, "\t" * indent)}
+    return {"0": textwrap.indent(tbl, "\t" * options.indent)}
