@@ -227,6 +227,12 @@ def df_rename(df: pd.DataFrame, options: StyleOptions) -> pd.DataFrame:
     """
 
     rename_dict: dict = {
+        #
+        "p1": "東家",
+        "p2": "南家",
+        "p3": "西家",
+        "p4": "北家",
+        #
         "playtime": "日時",
         "rate": "レート",
         "participation_rate": "ゲーム参加率",

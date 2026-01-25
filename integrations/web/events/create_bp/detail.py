@@ -77,17 +77,7 @@ def _conv_verbose(df: pd.DataFrame) -> pd.DataFrame:
     """
 
     if not isinstance(df.columns, pd.MultiIndex):
-        if not g.params.get("individual", True):  # チーム戦
-            df.rename(
-                columns={
-                    "東家 名前": "東家 チーム",
-                    "南家 名前": "南家 チーム",
-                    "西家 名前": "西家 チーム",
-                    "北家 名前": "北家 チーム",
-                },
-                inplace=True,
-            )
-        new_columns = [tuple(col.split(" ")) if " " in col else ("", col) for col in df.columns]
+        new_columns = [tuple(col.split("_")) if len(col.split("_")) != 1 else ("", col) for col in df.columns]
         df.columns = pd.MultiIndex.from_tuples(new_columns, names=["座席", "項目"])
 
     return df
