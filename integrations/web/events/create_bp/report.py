@@ -47,7 +47,6 @@ def report_bp(adapter: "ServiceAdapter") -> Blueprint:
                 message += f"<h2>{options.title}</h2>\n"
 
             if isinstance(data, pd.DataFrame):
-                print(data)
                 show_index = options.show_index
                 if {"個人成績一覧", "チーム成績一覧"} & set(m.post.headline):
                     check_column = data.columns.to_list()
