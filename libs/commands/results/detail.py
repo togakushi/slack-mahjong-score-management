@@ -131,9 +131,9 @@ def aggregation(m: "MessageParserProtocol"):
         ).replace("-", "▲")
 
     if g.params.get("statistics"):
-        m.set_data(seat_data, StyleOptions(title="座席データ"))
-        m.set_data(stats.seat0.best_record(), StyleOptions(title="ベストレコード"))
-        m.set_data(stats.seat0.worst_record(), StyleOptions(title="ワーストレコード"))
+        m.set_data(seat_data, StyleOptions(title="座席データ", data_kind=StyleOptions.DataKind.SEAT_DATA))
+        m.set_data(textwrap.indent(stats.seat0.best_record(), "\t"), StyleOptions(title="ベストレコード"))
+        m.set_data(textwrap.indent(stats.seat0.worst_record(), "\t"), StyleOptions(title="ワーストレコード"))
         m.set_data(textwrap.indent(balance_data.strip(), "\t"), StyleOptions(title="平均収支"))
 
     # レギュレーション
@@ -143,28 +143,29 @@ def aggregation(m: "MessageParserProtocol"):
 
     if not g.cfg.dropitems.results & g.cfg.dropitems.yakuman:
         work_df = count_df.query("type == 0").filter(items=["matter", "matter_count"])
-        m.set_data(formatter.df_rename(work_df, StyleOptions(data_kind=StyleOptions.DataKind.REMARKS_YAKUMAN)), StyleOptions(title="役満和了"))
+        m.set_data(work_df, StyleOptions(title="役満和了", data_kind=StyleOptions.DataKind.REMARKS_YAKUMAN))
 
     if not g.cfg.dropitems.results & g.cfg.dropitems.regulation:
         if g.params.get("individual"):
             work_df = count_df.query("type == 2").filter(items=["matter", "matter_count", "ex_total"])
         else:
             work_df = count_df.query("type == 2 or type == 3").filter(items=["matter", "matter_count", "ex_total"])
-        m.set_data(formatter.df_rename(work_df, StyleOptions(data_kind=StyleOptions.DataKind.REMARKS_REGULATION)), StyleOptions(title="卓外清算"))
+        m.set_data(work_df, StyleOptions(title="卓外清算", data_kind=StyleOptions.DataKind.REMARKS_REGULATION))
 
     if not g.cfg.dropitems.results & g.cfg.dropitems.other:
         work_df = count_df.query("type == 1").filter(items=["matter", "matter_count"])
-        m.set_data(formatter.df_rename(work_df, StyleOptions(data_kind=StyleOptions.DataKind.REMARKS_OTHER)), StyleOptions(title="その他"))
+        m.set_data(work_df, StyleOptions(title="その他", data_kind=StyleOptions.DataKind.REMARKS_OTHER))
 
     # 戦績
     if g.params.get("game_results"):
         if g.params.get("verbose"):
-            m.set_data(get_results_details(mapping_dict), StyleOptions(title="戦績"))
+            m.set_data(get_results_details(mapping_dict), StyleOptions(title="戦績", data_kind=StyleOptions.DataKind.RECORD_DATA_ALL, codeblock=False))
         else:
-            m.set_data(get_results_simple(mapping_dict), StyleOptions(title="戦績"))
+            m.set_data(get_results_simple(mapping_dict), StyleOptions(title="戦績", data_kind=StyleOptions.DataKind.RECORD_DATA, codeblock=False))
 
+    # 対戦結果
     if g.params.get("versus_matrix"):
-        m.set_data(get_versus_matrix(mapping_dict), StyleOptions(title="対戦結果"))
+        m.set_data(get_versus_matrix(mapping_dict), StyleOptions(title="対戦結果", indent=1))
 
     # 非表示項目を除外
     m.post.message = [(data, options) for data, options in m.post.message if options.title not in g.cfg.dropitems.results]
@@ -231,6 +232,7 @@ def comparison(m: "MessageParserProtocol"):
     # 出力
     options: StyleOptions = StyleOptions(
         title=title,
+        data_kind=StyleOptions.DataKind.DETAILED_COMPARISON,
         base_name=title,
         show_index=True,
         codeblock=True,
@@ -337,10 +339,10 @@ def get_results_simple(mapping_dict: dict) -> pd.DataFrame:
     df_data["rpoint"] = df_data["rpoint"] * 100
     pd.options.mode.copy_on_write = True
     if g.params.get("individual"):
-        df_data.loc[:, "備考"] = np.where(df_data["guest_count"] >= 2, "2ゲスト戦", "")
+        df_data.loc[:, "memo"] = np.where(df_data["guest_count"] >= 2, "2ゲスト戦", "")
     else:
-        df_data.loc[:, "備考"] = np.where(df_data["same_team"] == 1, "チーム同卓", "")
-    df_data = formatter.df_rename(df_data.filter(items=["playtime", "seat", "rank", "rpoint", "point", "remarks", "備考"]), StyleOptions())
+        df_data.loc[:, "memo"] = np.where(df_data["same_team"] == 1, "チーム同卓", "")
+    df_data = df_data.filter(items=["playtime", "seat", "rank", "rpoint", "point", "remarks", "memo"])
 
     return df_data
 
@@ -386,10 +388,10 @@ def get_results_details(mapping_dict: dict) -> pd.DataFrame:
 
     pd.options.mode.copy_on_write = True
     if g.params.get("individual"):
-        df_data.loc[:, "備考"] = np.where(df_data["guest_count"] >= 2, "2ゲスト戦", "")
+        df_data.loc[:, "memo"] = np.where(df_data["guest_count"] >= 2, "2ゲスト戦", "")
     else:
-        df_data.loc[:, "備考"] = np.where(df_data["same_team"] == 1, "チーム同卓", "")
-    df_data = formatter.df_rename(df_data.drop(columns=["guest_count", "same_team"]), StyleOptions())
+        df_data.loc[:, "memo"] = np.where(df_data["same_team"] == 1, "チーム同卓", "")
+    df_data = df_data.drop(columns=["guest_count", "same_team"])
 
     return df_data
 
