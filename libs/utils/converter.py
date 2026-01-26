@@ -175,7 +175,7 @@ def df_to_text_table2(df: pd.DataFrame, options: StyleOptions, limit: int = 2000
     safe_output: str = ""
     output: str = ""
 
-    for cur_block in range(len(df.columns)):
+    for cur_block in range(len(df.columns) + 1):
         chk_df = df.iloc[:, start_block:cur_block]
 
         # ヘッダ
@@ -208,7 +208,7 @@ def df_to_text_table2(df: pd.DataFrame, options: StyleOptions, limit: int = 2000
             table_data.update({f"{cur_block}": safe_output})
             start_block = cur_block - 1
     # 最終ブロック
-    if cur_block != len(df.columns):
+    if cur_block <= len(df.columns):
         table_data.update({f"{cur_block}": output})
 
     return table_data
