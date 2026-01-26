@@ -202,25 +202,29 @@ def comparison(m: "MessageParserProtocol"):
         return
 
     stats_df = pd.DataFrame()
-    x_result_df = loader.read_data("RESULTS_INFO")
-    x_record_df = loader.read_data("RECORD_INFO")
-    for name in x_result_df.query("id==0").sort_values("total_point", ascending=False)["name"]:
+    result_df = loader.read_data("RESULTS_INFO")
+    record_df = loader.read_data("RECORD_INFO")
+    for name in result_df.query("id==0").sort_values("total_point", ascending=False)["name"]:
         work_stats = StatsInfo()
         work_params = g.params.copy()
         work_params["player_name"] = name
         work_stats.set_parameter(**work_params)
-        work_stats.set_data(x_result_df.query("name == @name"))
-        work_stats.set_data(x_record_df.query("name == @name"))
+        work_stats.set_data(result_df.query("name == @name"))
+        work_stats.set_data(record_df.query("name == @name"))
         stats_df = pd.concat([stats_df, work_stats.summary])
 
-    if g.params.get("anonymous"):
-        mapping_dict = formatter.anonymous_mapping(stats_df["name"].unique().tolist())
-        stats_df["name"] = stats_df["name"].replace(mapping_dict)
+    # 規定打数足切り
+    stipulated = g.params.get("stipulated", 1)  # noqa: F841
+    stats_df.query("count >= @stipulated", inplace=True)
 
     if stats_df.empty:
         m.post.headline = {"0": message.random_reply(m, "no_target")}
         m.status.result = False
         return
+
+    if g.params.get("anonymous"):
+        mapping_dict = formatter.anonymous_mapping(stats_df["name"].unique().tolist())
+        stats_df["name"] = stats_df["name"].replace(mapping_dict)
 
     # 非表示項目
     stats_df = stats_df.drop(columns=[x for x in g.cfg.dropitems.results if x in stats_df.columns.to_list()])
