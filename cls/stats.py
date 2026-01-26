@@ -460,7 +460,7 @@ class StatsInfo:
 
     @property
     def yakuman_list(self) -> list:
-        """ "座席別役満和了率"""
+        """座席別役満和了率"""
 
         return [
             self.seat1.yakuman,
