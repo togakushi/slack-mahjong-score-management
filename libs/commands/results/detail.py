@@ -194,16 +194,16 @@ def comparison(m: "MessageParserProtocol"):
 
     # タイトル
     title = "成績詳細比較"
-    if game_info:
-        m.post.headline = {title: message.header(game_info, m, "", 1)}
-    else:
-        m.post.headline = {"0": message.random_reply(m, "no_hits")}
+    m.post.headline = {title: message.header(game_info, m, "", 1)}
+
+    if not game_info.count:
         m.status.result = False
         return
 
     stats_df = pd.DataFrame()
     result_df = loader.read_data("RESULTS_INFO")
     record_df = loader.read_data("RECORD_INFO")
+
     for name in result_df.query("id==0").sort_values("total_point", ascending=False)["name"]:
         work_stats = StatsInfo()
         work_params = g.params.copy()
@@ -213,10 +213,14 @@ def comparison(m: "MessageParserProtocol"):
         work_stats.set_data(record_df.query("name == @name"))
         stats_df = pd.concat([stats_df, work_stats.summary])
 
+    if stats_df.empty:
+        m.post.headline = {"0": message.random_reply(m, "no_hits")}
+        m.status.result = False
+        return
+
     # 規定打数足切り
     stipulated = g.params.get("stipulated", 1)  # noqa: F841
     stats_df.query("count >= @stipulated", inplace=True)
-
     if stats_df.empty:
         m.post.headline = {"0": message.random_reply(m, "no_target")}
         m.status.result = False
