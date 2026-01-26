@@ -213,14 +213,18 @@ def comparison(m: "MessageParserProtocol"):
         work_stats.set_data(record_df.query("name == @name"))
         stats_df = pd.concat([stats_df, work_stats.summary])
 
-    if g.params.get("anonymous"):
-        mapping_dict = formatter.anonymous_mapping(stats_df["name"].unique().tolist())
-        stats_df["name"] = stats_df["name"].replace(mapping_dict)
+    # 規定打数足切り
+    stipulated = g.params.get("stipulated", 1)  # noqa: F841
+    stats_df.query("count >= @stipulated", inplace=True)
 
     if stats_df.empty:
         m.post.headline = {"0": message.random_reply(m, "no_target")}
         m.status.result = False
         return
+
+    if g.params.get("anonymous"):
+        mapping_dict = formatter.anonymous_mapping(stats_df["name"].unique().tolist())
+        stats_df["name"] = stats_df["name"].replace(mapping_dict)
 
     # 非表示項目
     stats_df = stats_df.drop(columns=[x for x in g.cfg.dropitems.results if x in stats_df.columns.to_list()])
