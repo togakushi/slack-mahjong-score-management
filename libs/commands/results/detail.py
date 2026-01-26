@@ -202,15 +202,15 @@ def comparison(m: "MessageParserProtocol"):
         return
 
     stats_df = pd.DataFrame()
-    x_result_df = loader.read_data("RESULTS_INFO")
-    x_record_df = loader.read_data("RECORD_INFO")
-    for name in x_result_df.query("id==0").sort_values("total_point", ascending=False)["name"]:
+    result_df = loader.read_data("RESULTS_INFO")
+    record_df = loader.read_data("RECORD_INFO")
+    for name in result_df.query("id==0").sort_values("total_point", ascending=False)["name"]:
         work_stats = StatsInfo()
         work_params = g.params.copy()
         work_params["player_name"] = name
         work_stats.set_parameter(**work_params)
-        work_stats.set_data(x_result_df.query("name == @name"))
-        work_stats.set_data(x_record_df.query("name == @name"))
+        work_stats.set_data(result_df.query("name == @name"))
+        work_stats.set_data(record_df.query("name == @name"))
         stats_df = pd.concat([stats_df, work_stats.summary])
 
     if g.params.get("anonymous"):
