@@ -44,30 +44,51 @@ class StatsDetailed:
 
     # 最大/最小
     rpoint_max: int = field(default=0)
+    """最大素点"""
     rpoint_min: int = field(default=0)
+    """最小素点"""
     point_max: float = field(default=0.0)
+    """最大獲得ポイント"""
     point_min: float = field(default=0.0)
+    """最小獲得ポイント"""
 
     # 収支データ
     score: int = field(default=0)
+    """最終素点合計"""
     score_rank1: int = field(default=0)
+    """最終素点合計(1位終了時)"""
     score_rank2: int = field(default=0)
+    """最終素点合計(2位終了時)"""
     score_rank3: int = field(default=0)
+    """最終素点合計(3位終了時)"""
     score_rank4: int = field(default=0)
+    """最終素点合計(4位終了時)"""
 
     # レコード
     top1_max: int = field(default=0)
+    """連続1位獲得最大値"""
     top1_cur: int = field(default=0)
+    """連続1位獲得最終値(現在地)"""
     top2_max: int = field(default=0)
+    """連続連対最大値"""
     top2_cur: int = field(default=0)
+    """連続連対最終値(現在地)"""
     top3_max: int = field(default=0)
+    """連続ラス回避獲得最大値"""
     top3_cur: int = field(default=0)
+    """連続ラス回避最終値(現在地)"""
     lose2_max: int = field(default=0)
+    """連続1位なし最大値"""
     lose2_cur: int = field(default=0)
+    """連続1位なし最終値(現在地)"""
     lose3_max: int = field(default=0)
+    """連続逆連対最大値"""
     lose3_cur: int = field(default=0)
+    """連続逆連対最終値(現在地)"""
     lose4_max: int = field(default=0)
+    """連続ラス最大値"""
     lose4_cur: int = field(default=0)
+    """連続ラス最終値(現在地)"""
 
     # 集計範囲
     first_game: ExtDt = field(default=ExtDt("1900-01-01 00:00:00"))
@@ -118,6 +139,8 @@ class StatsDetailed:
 
     @property
     def count(self) -> int:
+        """ゲーム数"""
+
         match self.mode:
             case 3:
                 return sum([self.rank1, self.rank2, self.rank3])
@@ -126,6 +149,8 @@ class StatsDetailed:
 
     @property
     def rank_avg(self) -> float:
+        """平均順位"""
+
         if self.count:
             match self.mode:
                 case 3:
@@ -136,6 +161,8 @@ class StatsDetailed:
 
     @property
     def rank_distr(self) -> str:
+        """順位分布(+平均順位)"""
+
         match self.mode:
             case 3:
                 return f"{self.rank1}-{self.rank2}-{self.rank3} ({self.rank_avg:.2f})"
@@ -144,6 +171,8 @@ class StatsDetailed:
 
     @property
     def rank_distr2(self) -> str:
+        """順位分布(+ゲーム数)"""
+
         match self.mode:
             case 3:
                 return f"{self.rank1}+{self.rank2}+{self.rank3}={self.count}"
@@ -152,36 +181,48 @@ class StatsDetailed:
 
     @property
     def rank1_rate(self) -> float:
+        """1位獲得率"""
+
         if self.count:
             return round(self.rank1 / self.count, 4)
         return 0.0
 
     @property
     def rank2_rate(self) -> float:
+        """2位獲得率"""
+
         if self.count:
             return round(self.rank2 / self.count, 4)
         return 0.0
 
     @property
     def rank3_rate(self) -> float:
+        """3位獲得率"""
+
         if self.count:
             return round(self.rank3 / self.count, 4)
         return 0.0
 
     @property
     def rank4_rate(self) -> float:
+        """4位獲得率"""
+
         if self.count:
             return round(self.rank4 / self.count, 4)
         return 0.0
 
     @property
     def flying_rate(self) -> float:
+        """トビ率"""
+
         if self.count:
             return round(self.flying / self.count, 4)
         return 0.0
 
     @property
     def yakuman_rate(self) -> float:
+        """役満和了率"""
+
         if self.count:
             return round(self.yakuman / self.count, 4)
         return 0.0
@@ -219,9 +260,13 @@ class StatsDetailed:
                 setattr(self, field_obj.name, value)
 
     def war_record(self) -> str:
+        """戦績結果"""
+
         return f"{self.count} 戦 ({self.win} 勝 {self.lose} 敗 {self.draw} 分)"
 
     def best_record(self) -> str:
+        """ベストレコード"""
+
         rpoint_max = f"{self.rpoint_max * 100:+}点".replace("-", "▲") if self.rpoint_max else "記録なし"
         point_max = f"{self.point_max:+.1f}pt".replace("-", "▲") if self.point_max else "記録なし"
 
@@ -235,6 +280,8 @@ class StatsDetailed:
         return ret.strip()
 
     def worst_record(self) -> str:
+        """ワーストレコード"""
+
         rpoint_min = f"{self.rpoint_min * 100:+}点".replace("-", "▲") if self.rpoint_min else "記録なし"
         point_min = f"{self.point_min:+.1f}pt".replace("-", "▲") if self.point_min else "記録なし"
 
@@ -361,7 +408,7 @@ class StatsInfo:
 
     @property
     def rank_distr_list(self) -> list:
-        """座席別順位分布
+        """座席別順位分布(平均順位)
 
         Returns:
             list: _description_
@@ -376,7 +423,7 @@ class StatsInfo:
 
     @property
     def rank_distr_list2(self) -> list:
-        """座席別順位分布
+        """座席別順位分布(ゲーム数)
 
         Returns:
             list: _description_
@@ -391,6 +438,8 @@ class StatsInfo:
 
     @property
     def rank_avg_list(self) -> list:
+        """座席別平均順位"""
+
         return [
             self.seat1.rank_avg,
             self.seat2.rank_avg,
@@ -400,6 +449,8 @@ class StatsInfo:
 
     @property
     def flying_list(self) -> list:
+        """座席別トビ率"""
+
         return [
             self.seat1.flying,
             self.seat2.flying,
@@ -409,6 +460,8 @@ class StatsInfo:
 
     @property
     def yakuman_list(self) -> list:
+        """ "座席別役満和了率"""
+
         return [
             self.seat1.yakuman,
             self.seat2.yakuman,
@@ -418,6 +471,8 @@ class StatsInfo:
 
     @property
     def summary(self) -> pd.DataFrame:
+        """成績サマリ"""
+
         ret_df = pd.DataFrame(
             {
                 "count": [self.seat0.count],
