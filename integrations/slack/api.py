@@ -143,7 +143,6 @@ class AdapterAPI(APIInterface):
 
         for msg in post_msg:
             if msg != msg.lstrip() or (not msg.find("*【戦績】*") and block_layout):
-                print(msg)
                 self._call_chat_post_message(
                     channel=m.data.channel_id,
                     text=msg.rstrip(),
