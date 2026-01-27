@@ -3,7 +3,6 @@ cls/config.py
 """
 
 import logging
-import shutil
 import sys
 from configparser import ConfigParser
 from dataclasses import dataclass, field
@@ -288,14 +287,6 @@ class SettingSection(BaseSection):
         if not self.default_rule:
             self.default_rule = outer.mahjong.rule_version
 
-        # 作業用ディレクトリ作成
-        if self.work_dir.is_dir():
-            shutil.rmtree(self.work_dir)
-        try:
-            self.work_dir.mkdir(exist_ok=True)
-        except FileExistsError as err:
-            sys.exit(str(err))
-
         # フォントファイルチェック
         for chk_dir in (outer.config_dir, outer.script_dir):
             chk_file = chk_dir / str(self.font_file)
@@ -310,12 +301,6 @@ class SettingSection(BaseSection):
         # データベース関連
         if isinstance(self.database_file, Path) and not self.database_file.exists():
             self.database_file = outer.config_dir / str(self.database_file)
-
-        if isinstance(self.backup_dir, PosixPath):
-            try:
-                self.backup_dir.mkdir(exist_ok=True)
-            except FileExistsError as err:
-                sys.exit(str(err))
 
         logging.debug("%s: %s", _section_name, self)
 

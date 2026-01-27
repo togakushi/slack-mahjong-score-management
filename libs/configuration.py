@@ -5,6 +5,7 @@ libs/configuration.py
 import argparse
 import logging
 import os
+import shutil
 import sys
 from functools import partial
 from pathlib import Path
@@ -257,6 +258,21 @@ def setup(init_db: bool = True):
         g.adapter.conf.plotting_backend,
         g.cfg.setting.time_adjust,
     )
+
+    # ディレクトリ作成
+    if g.cfg.setting.work_dir.is_dir():
+        if not g.args.testcase:
+            shutil.rmtree(g.cfg.setting.work_dir)
+        try:
+            g.cfg.setting.work_dir.mkdir(exist_ok=True)
+        except FileExistsError as err:
+            sys.exit(str(err))
+
+    if isinstance(g.cfg.setting.backup_dir, Path):
+        try:
+            g.cfg.setting.backup_dir.mkdir(exist_ok=True)
+        except FileExistsError as err:
+            sys.exit(str(err))
 
     # DB初期化
     if init_db:
