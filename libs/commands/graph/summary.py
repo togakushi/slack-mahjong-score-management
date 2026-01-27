@@ -399,6 +399,8 @@ def _graph_title(graph_params: GraphParams):
                 graph_params.update({"title_text": f"順位変動 (直近 {g.params['target_count']} ゲーム)"})
             case "point_hbar":
                 graph_params.update({"title_text": f"通算ポイント (直近 {g.params['target_count']} ゲーム)"})
+            case _:
+                raise ValueError("Unsupported")
     else:
         match g.params.get("collection"):
             case "daily":

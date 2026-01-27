@@ -223,6 +223,8 @@ def query_modification(sql: str) -> str:
         case "A":
             sql = sql.replace("<<collection>>", "'合計' as 集計")
             sql = sql.replace("<<group by>>", "")
+        case _:
+            raise ValueError("Unsupported")
 
     if g.params.get("interval") is not None:
         if g.params.get("interval") == 0:
