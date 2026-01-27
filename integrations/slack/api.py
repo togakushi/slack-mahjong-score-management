@@ -91,6 +91,7 @@ class AdapterAPI(APIInterface):
         # 本文
         options = StyleOptions()
         post_msg: list[str] = []
+        block_layout = False
         for data, options in m.post.message:
             header = ""
 
@@ -126,10 +127,9 @@ class AdapterAPI(APIInterface):
                         options.indent = 1
                         post_msg.extend(_table_data(converter.df_to_seat_data(data, options)))
                     case StyleOptions.DataKind.RECORD_DATA:
-                        options.summarize = False
-                        post_msg.extend(_table_data(converter.df_to_results_simple(data, options, limit=2600)))
+                        block_layout = True
+                        post_msg.extend(_table_data(converter.df_to_results_simple(data, options, limit=1900)))
                     case StyleOptions.DataKind.RECORD_DATA_ALL:
-                        options.summarize = False
                         post_msg.extend(_table_data(converter.df_to_results_details(data, options, limit=2600)))
                     case StyleOptions.DataKind.RANKING:
                         post_msg.extend(_table_data(converter.df_to_ranking(data, options.title, step=50)))
@@ -142,7 +142,8 @@ class AdapterAPI(APIInterface):
             post_msg = formatter.group_strings(post_msg)
 
         for msg in post_msg:
-            if options.data_kind == StyleOptions.DataKind.RECORD_DATA:
+            if msg != msg.lstrip() or (not msg.find("*【戦績】*") and block_layout):
+                print(msg)
                 self._call_chat_post_message(
                     channel=m.data.channel_id,
                     text=msg.rstrip(),
