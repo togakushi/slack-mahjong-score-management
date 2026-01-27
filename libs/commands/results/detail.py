@@ -156,16 +156,16 @@ def aggregation(m: "MessageParserProtocol"):
         work_df = count_df.query("type == 1").filter(items=["matter", "matter_count"])
         m.set_data(work_df, StyleOptions(title="その他", data_kind=StyleOptions.DataKind.REMARKS_OTHER))
 
+    # 対戦結果
+    if g.params.get("versus_matrix"):
+        m.set_data(get_versus_matrix(mapping_dict), StyleOptions(title="対戦結果", indent=1))
+
     # 戦績
     if g.params.get("game_results"):
         if g.params.get("verbose"):
             m.set_data(get_results_details(mapping_dict), StyleOptions(title="戦績", data_kind=StyleOptions.DataKind.RECORD_DATA_ALL, codeblock=False))
         else:
             m.set_data(get_results_simple(mapping_dict), StyleOptions(title="戦績", data_kind=StyleOptions.DataKind.RECORD_DATA, codeblock=False))
-
-    # 対戦結果
-    if g.params.get("versus_matrix"):
-        m.set_data(get_versus_matrix(mapping_dict), StyleOptions(title="対戦結果", indent=1))
 
     # 非表示項目を除外
     m.post.message = [(data, options) for data, options in m.post.message if options.title not in g.cfg.dropitems.results]

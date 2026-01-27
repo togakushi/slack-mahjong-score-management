@@ -111,9 +111,9 @@ class StyleOptions:
         SEAT_DATA = auto()
         """座席データ"""
         RECORD_DATA = auto()
-        """戦績データ"""
+        """戦績データ(簡易版)"""
         RECORD_DATA_ALL = auto()
-        """戦績データ(全体)"""
+        """戦績データ(詳細版)"""
         RANKING = auto()
         """ランキングデータ"""
         RATING = auto()

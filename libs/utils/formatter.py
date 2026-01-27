@@ -476,9 +476,9 @@ def group_strings(lines: list[str], limit: int = 3000) -> list[str]:
     if buffer:
         result.append("\n".join(buffer))
 
-    # コードブロックの連結
-    # result = [str(x).replace("\n```\n\n```\n", "\n") for x in result]
+    # 改行の集約
     result = [str(x).replace("\n```\n\n```\n", "\n```\n```\n") for x in result]
+    result = [str(x).replace("\n\n\t", "\n\t") for x in result]
 
     return result
 
