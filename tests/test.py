@@ -6,6 +6,7 @@ test.py
 import configparser
 import random
 import re
+import shutil
 from pathlib import Path
 from pprint import pprint
 
@@ -223,6 +224,9 @@ def main():
     assert isinstance(g.args.testcase, Path)
 
     configuration.setup()
+    if g.cfg.setting.work_dir.is_dir():
+        shutil.rmtree(g.cfg.setting.work_dir)
+    g.cfg.setting.work_dir.mkdir()
     test_conf = configparser.ConfigParser()
     test_conf.read(g.args.testcase, encoding="utf-8")
 
