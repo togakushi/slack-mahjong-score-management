@@ -209,10 +209,10 @@ Python側で *{ name: member }* という辞書を生成するのに利用され
 | ex_point         | regulations.ex_point | 卓外ポイント(個人集計)                         |
 | point            | result.p?_point      | 個人獲得ポイント(卓外ポイント込み)             |
 | remarks          | regulations.word     | 個人メモすべて(type=`0`,`1`,`2`のワード)       |
-| them_regulation  | regulations.word     | チームレギュレーション(type=`2`,`3`のワード)   |
-| them_ex_point    | regulations.ex_point | 卓外ポイント(チーム集計)                       |
+| team_regulation  | regulations.word     | チームレギュレーション(type=`2`,`3`のワード)   |
+| team_ex_point    | regulations.ex_point | 卓外ポイント(チーム集計)                       |
 | team_point       | result.p?_point      | チーム獲得ポイント(卓外ポイント込み)           |
-| them_remarks     | regulations.word     | チームメモすべて(type=`0`,`1`,`2`,`3`のワード) |
+| team_remarks     | regulations.word     | チームメモすべて(type=`0`,`1`,`2`,`3`のワード) |
 | collection_daily |                      | 集計対象年月日(YYYY-MM-DD)                     |
 | rule_version     | result.rule_version  | ルールバージョンを示す文字列                   |
 | comment          | result.comment       | ゲームコメント                                 |

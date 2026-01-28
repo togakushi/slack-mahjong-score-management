@@ -99,7 +99,7 @@ def initialization_resultdb(database_file: Union[str, Path]) -> None:
                     logging.debug("regulations table(type2): %s, %s", word, ex_point)
 
     if cast("ConfigParser", getattr(g.cfg, "_parser")).has_section("regulations"):
-        for k, v in cast("ConfigParser", getattr(g.cfg, "_parser")).items("regulations_them"):
+        for k, v in cast("ConfigParser", getattr(g.cfg, "_parser")).items("regulations_team"):
             resultdb.execute(
                 "insert into words(word, type, ex_point) values (?, 3, ?);",
                 (
