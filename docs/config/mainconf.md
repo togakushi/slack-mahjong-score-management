@@ -67,7 +67,7 @@ INIファイル内の設定を変更することで、動作変更が可能。
 | time_adjust   | 日付変更後、指定時間までを1日単位の集計に含める    | 数値                   | 12                               | 1時間単位で指定                                                                       |
 | font_file     | グラフ描写に使用する日本語フォントファイル[^1]     | 文字列                 | `ipaexg.ttf`                     |                                                                                       |
 | graph_style   | グラフに使用するスタイル                           | 文字列                 | `ggplot`                         | [style sheets](https://matplotlib.org/stable/gallery/style_sheets/index.html)から選択 |
-| work_dir      | 生成ファイルの保存先[^2]                           | 文字列(ディレクトリ名) | `work`                           | 画像ファイル、PDFファイルの保存先                                                     |
+| work_dir      | 生成ファイルの保存先[^1]                           | 文字列(ディレクトリ名) | `work`                           | 画像ファイル、PDFファイルの保存先                                                     |
 | database_file | 成績を記録するファイル名[^2]                       | 文字列(ファイルパス)   | `mahjong.db`                     | SQLite 3.x database                                                                   |
 | backup_dir    | 自動バックアップ保存先[^2]                         | 文字列(ディレクトリ名) | None                             | 空欄時はバックアップしない                                                            |
 | help          | ヘルプ表示キーワード                               | 文字列                 | 麻雀成績ヘルプ                   |                                                                                       |
