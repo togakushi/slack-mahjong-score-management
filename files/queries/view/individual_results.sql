@@ -30,7 +30,7 @@ with
         group by
             thread_ts, name
     ),
-    them_regulation_table as (
+    team_regulation_table as (
         select
             thread_ts, name, sum(ex_point) as ex_point, group_concat(word) as word
         from
@@ -50,7 +50,7 @@ with
         group by
             thread_ts, name
     ),
-    them_remarks_table as (
+    team_remarks_table as (
         select
             thread_ts, name, group_concat(word) as word
         from
@@ -81,10 +81,10 @@ select * from (
         p1_point + ifnull(regulation_table.ex_point, 0) as point,
         remarks_table.word as remarks,
         -- チーム戦レギュレーション
-        them_regulation_table.word as them_regulation,
-        them_regulation_table.ex_point as them_ex_point,
-        p1_point + ifnull(them_regulation_table.ex_point, 0) as team_point,
-        them_remarks_table.word as them_remarks,
+        team_regulation_table.word as team_regulation,
+        team_regulation_table.ex_point as team_ex_point,
+        p1_point + ifnull(team_regulation_table.ex_point, 0) as team_point,
+        team_remarks_table.word as team_remarks,
         --
         date(playtime, '-<time_adjust> hours') as collection_daily,
         rule_version,
@@ -106,15 +106,15 @@ select * from (
     left join regulation_table
         on regulation_table.thread_ts = result.ts
         and regulation_table.name = result.p1_name
-    left join them_regulation_table
-        on them_regulation_table.thread_ts = result.ts
-        and them_regulation_table.name = result.p1_name
+    left join team_regulation_table
+        on team_regulation_table.thread_ts = result.ts
+        and team_regulation_table.name = result.p1_name
     left join remarks_table
         on remarks_table.thread_ts = result.ts
         and remarks_table.name = result.p1_name
-    left join them_remarks_table
-        on them_remarks_table.thread_ts = result.ts
-        and them_remarks_table.name = result.p1_name
+    left join team_remarks_table
+        on team_remarks_table.thread_ts = result.ts
+        and team_remarks_table.name = result.p1_name
     -- 南家
     union all select
         datetime(playtime),
@@ -135,10 +135,10 @@ select * from (
         p2_point + ifnull(regulation_table.ex_point, 0),
         remarks_table.word,
         -- チーム戦レギュレーション
-        them_regulation_table.word,
-        them_regulation_table.ex_point,
-        p2_point + ifnull(them_regulation_table.ex_point, 0),
-        them_remarks_table.word,
+        team_regulation_table.word,
+        team_regulation_table.ex_point,
+        p2_point + ifnull(team_regulation_table.ex_point, 0),
+        team_remarks_table.word,
         --
         date(playtime, '-<time_adjust> hours'),
         rule_version,
@@ -160,15 +160,15 @@ select * from (
     left join regulation_table
         on regulation_table.thread_ts = result.ts
         and regulation_table.name = result.p2_name
-    left join them_regulation_table
-        on them_regulation_table.thread_ts = result.ts
-        and them_regulation_table.name = result.p2_name
+    left join team_regulation_table
+        on team_regulation_table.thread_ts = result.ts
+        and team_regulation_table.name = result.p2_name
     left join remarks_table
         on remarks_table.thread_ts = result.ts
         and remarks_table.name = result.p2_name
-    left join them_remarks_table
-        on them_remarks_table.thread_ts = result.ts
-        and them_remarks_table.name = result.p2_name
+    left join team_remarks_table
+        on team_remarks_table.thread_ts = result.ts
+        and team_remarks_table.name = result.p2_name
     -- 西家
     union all select
         datetime(playtime),
@@ -189,10 +189,10 @@ select * from (
         p3_point + ifnull(regulation_table.ex_point, 0),
         remarks_table.word,
         -- チーム戦レギュレーション
-        them_regulation_table.word,
-        them_regulation_table.ex_point,
-        p3_point + ifnull(them_regulation_table.ex_point, 0),
-        them_remarks_table.word,
+        team_regulation_table.word,
+        team_regulation_table.ex_point,
+        p3_point + ifnull(team_regulation_table.ex_point, 0),
+        team_remarks_table.word,
         --
         date(playtime, '-<time_adjust> hours'),
         rule_version,
@@ -214,15 +214,15 @@ select * from (
     left join regulation_table
         on regulation_table.thread_ts = result.ts
         and regulation_table.name = result.p3_name
-    left join them_regulation_table
-        on them_regulation_table.thread_ts = result.ts
-        and them_regulation_table.name = result.p3_name
+    left join team_regulation_table
+        on team_regulation_table.thread_ts = result.ts
+        and team_regulation_table.name = result.p3_name
     left join remarks_table
         on remarks_table.thread_ts = result.ts
         and remarks_table.name = result.p3_name
-    left join them_remarks_table
-        on them_remarks_table.thread_ts = result.ts
-        and them_remarks_table.name = result.p3_name
+    left join team_remarks_table
+        on team_remarks_table.thread_ts = result.ts
+        and team_remarks_table.name = result.p3_name
     -- 北家
     union all select
         datetime(playtime),
@@ -243,10 +243,10 @@ select * from (
         p4_point + ifnull(regulation_table.ex_point, 0),
         remarks_table.word,
         -- チーム戦レギュレーション
-        them_regulation_table.word,
-        them_regulation_table.ex_point,
-        p4_point + ifnull(them_regulation_table.ex_point, 0),
-        them_remarks_table.word,
+        team_regulation_table.word,
+        team_regulation_table.ex_point,
+        p4_point + ifnull(team_regulation_table.ex_point, 0),
+        team_remarks_table.word,
         --
         date(playtime, '-<time_adjust> hours'),
         rule_version,
@@ -268,15 +268,15 @@ select * from (
     left join regulation_table
         on regulation_table.thread_ts = result.ts
         and regulation_table.name = result.p4_name
-    left join them_regulation_table
-        on them_regulation_table.thread_ts = result.ts
-        and them_regulation_table.name = result.p4_name
+    left join team_regulation_table
+        on team_regulation_table.thread_ts = result.ts
+        and team_regulation_table.name = result.p4_name
     left join remarks_table
         on remarks_table.thread_ts = result.ts
         and remarks_table.name = result.p4_name
-    left join them_remarks_table
-        on them_remarks_table.thread_ts = result.ts
-        and them_remarks_table.name = result.p4_name
+    left join team_remarks_table
+        on team_remarks_table.thread_ts = result.ts
+        and team_remarks_table.name = result.p4_name
 )
 order by ts, seat
 ;

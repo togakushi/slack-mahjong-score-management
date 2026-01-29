@@ -298,6 +298,10 @@ class SettingSection(BaseSection):
                 logging.critical("The specified font file cannot be found.")
                 sys.exit(255)
 
+        # 作業ディレクトリパス
+        if not self.work_dir.is_absolute():
+            self.work_dir = outer.config_dir / self.work_dir
+
         # データベース関連
         if isinstance(self.database_file, Path) and not self.database_file.exists():
             self.database_file = outer.config_dir / str(self.database_file)
@@ -740,7 +744,7 @@ class AppConfig:
             "member",
             "team",
             "regulations",
-            "regulations_them",
+            "regulations_team",
             "keyword_mapping",
         ]
         for x in option_sections:

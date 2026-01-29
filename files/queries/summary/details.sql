@@ -14,11 +14,11 @@ select
     --[team] team_point as point,
     yakuman,
     --[individual] regulation,
-    --[team] them_regulation as regulation,
+    --[team] team_regulation as regulation,
     --[individual] ex_point,
-    --[team] them_ex_point as ex_point,
+    --[team] team_ex_point as ex_point,
     --[individual] remarks,
-    --[team] them_remarks as remarks,
+    --[team] team_remarks as remarks,
     game_info.guest_count,
     game_info.same_team
 from
