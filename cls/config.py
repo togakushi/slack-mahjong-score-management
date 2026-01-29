@@ -300,7 +300,7 @@ class SettingSection(BaseSection):
 
         # 作業ディレクトリパス
         if not self.work_dir.is_absolute():
-            self.work_dir = outer.config_dir / self.work_dir
+            self.work_dir = outer.script_dir / self.work_dir
 
         # データベース関連
         if isinstance(self.database_file, Path) and not self.database_file.exists():

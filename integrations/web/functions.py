@@ -120,6 +120,7 @@ class SvcFunctions(FunctionsInterface):
         ret = re.sub(r" >-(\d+)</td>", r" >▲\1</td>", ret)  # 素点
         ret = re.sub(r" >-(\d+\.\d)(点?)</td>", r" >▲\1\2</td>", ret)  # 素点(小数点付き)
         ret = re.sub(r" >-(\d+\.\d)pt</td>", r" >▲\1pt</td>", ret)  # ポイント
+        ret = re.sub(r" >(\d\.\d\d)0000</td>", r" >\1</td>", ret)  # 縦持ち平均順位
 
         return ret
 

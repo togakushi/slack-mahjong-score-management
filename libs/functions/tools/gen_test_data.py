@@ -15,7 +15,7 @@ import libs.global_value as g
 from cls.score import GameResult
 from cls.timekit import ExtendedDatetime as ExtDt
 from cls.timekit import Format
-from libs.data import lookup
+from libs.data import loader, lookup
 from libs.functions.tools import score_simulator
 from libs.utils import dbutil
 
@@ -98,6 +98,8 @@ def main(season_times: int = 1):
 
         cur.commit()
 
-    with closing(dbutil.connection(g.cfg.setting.database_file)) as cur:
-        rows = cur.execute("select name, round(sum(point), 1) as point from team_results group by name order by point desc;")
-        logging.info(dict(rows.fetchall()))
+    ret = loader.execute("select team, round(sum(point), 1) as point from individual_results group by team order by point desc;")
+    if ret:
+        logging.info([f"{x.get('team')}: {x.get('point')}pt" for x in ret])
+    else:
+        logging.info("No test data was generated.")

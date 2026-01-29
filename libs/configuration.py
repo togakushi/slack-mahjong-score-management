@@ -260,13 +260,13 @@ def setup(init_db: bool = True):
     )
 
     # ディレクトリ作成
-    if g.cfg.setting.work_dir.is_dir():
-        if not g.args.testcase:
+    if not g.args.testcase:
+        if g.cfg.setting.work_dir.is_dir():
             shutil.rmtree(g.cfg.setting.work_dir)
-        try:
-            g.cfg.setting.work_dir.mkdir(exist_ok=True)
-        except FileExistsError as err:
-            sys.exit(str(err))
+    try:
+        g.cfg.setting.work_dir.mkdir(exist_ok=True)
+    except FileExistsError as err:
+        sys.exit(str(err))
 
     if isinstance(g.cfg.setting.backup_dir, Path):
         try:
