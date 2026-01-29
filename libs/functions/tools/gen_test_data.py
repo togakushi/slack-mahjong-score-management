@@ -98,4 +98,8 @@ def main(season_times: int = 1):
 
         cur.commit()
 
-    print(loader.execute("select team, round(sum(point), 1) as point from individual_results group by team order by point desc;"))
+    ret = loader.execute("select team, round(sum(point), 1) as point from individual_results group by team order by point desc;")
+    if ret:
+        logging.info([f"{x.get('team')}: {x.get('point')}pt" for x in ret])
+    else:
+        logging.info("No test data was generated.")
