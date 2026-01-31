@@ -1,5 +1,5 @@
 """
-cls/result.py
+cls/stats.py
 """
 
 import textwrap

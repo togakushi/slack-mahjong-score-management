@@ -54,8 +54,6 @@ class GameInfo:
             self.last_game = ExtDt()
             self.first_comment = ""
             self.last_comment = ""
-            self.unique_name = 0
-            self.unique_team = 0
         else:
             self.count = int(df["count"].to_string(index=False))
             self.first_game = ExtDt(df["first_game"].to_string(index=False))

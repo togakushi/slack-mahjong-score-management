@@ -149,27 +149,56 @@ class GameResult:
         return all([self.ts, isinstance(self.ts, str), score_data, all(self.to_list("rank"))])
 
     def set(self, **kwargs) -> None:
-        """テータ取り込み"""
-        for prefix in ("p1", "p2", "p3", "p4"):
-            prefix_obj = cast(Score, getattr(self, prefix))
-            if f"{prefix}_name" in kwargs:
-                prefix_obj.name = str(kwargs[f"{prefix}_name"])
-            if f"{prefix}_str" in kwargs:
-                input_str = cast(str, kwargs[f"{prefix}_str"]).strip()
-                input_str = re.sub(r"(-)+|(\+)+", r"\1\2", input_str)  # 連続した符号を集約
-                input_str = re.sub(r"(-|\+)0+", r"\1", input_str)  # 符号の直後のゼロを削除
-                if input_str != "0":  # 先頭のゼロとプラス記号を削除
-                    input_str = re.sub(r"^[0+]+", "", input_str)
-                prefix_obj.r_str = input_str
-            if f"{prefix}_r_str" in kwargs:
-                prefix_obj.r_str = kwargs[f"{prefix}_str"]
-            if f"{prefix}_rpoint" in kwargs and isinstance(kwargs[f"{prefix}_rpoint"], int):
-                prefix_obj.rpoint = int(kwargs[f"{prefix}_rpoint"])
-            if f"{prefix}_point" in kwargs and isinstance(kwargs[f"{prefix}_point"], (float, int)):
-                prefix_obj.point = float(kwargs[f"{prefix}_point"])
-            if f"{prefix}_rank" in kwargs and isinstance(kwargs[f"{prefix}_rank"], int):
-                prefix_obj.rank = int(kwargs[f"{prefix}_rank"])
+        """データ取り込み"""
 
+        def _normalize_score_string(s: str) -> str:
+            """素点文字列の正規化
+
+            Args:
+                s (str): 入力文字列
+
+            Returns:
+                str: 正規化後の文字列
+            """
+            s = s.strip()
+            s = re.sub(r"(-)+|(\+)+", r"\1\2", s)  # 連続した符号を集約
+            s = re.sub(r"(-|\+)0+", r"\1", s)  # 符号の直後のゼロを削除
+            if s != "0":  # 先頭のゼロとプラス記号を削除
+                s = re.sub(r"^[0+]+", "", s)
+            return s
+
+        def _set_score_attr(score: Score, prefix: str, key: str, value: object) -> None:
+            """Scoreオブジェクトに属性を設定
+
+            Args:
+                score (Score): 対象スコアオブジェクト
+                prefix (str): プレイヤーポジション (p1-p4)
+                key (str): 属性名
+                value (object): 設定値
+            """
+            match key:
+                case "name":
+                    score.name = str(value)
+                case "str":
+                    score.r_str = _normalize_score_string(str(value))
+                case "r_str":
+                    score.r_str = str(value)
+                case "rpoint" if isinstance(value, int):
+                    score.rpoint = value
+                case "point" if isinstance(value, (float, int)):
+                    score.point = float(value)
+                case "rank" if isinstance(value, int):
+                    score.rank = value
+
+        # プレイヤースコア設定
+        for prefix in ("p1", "p2", "p3", "p4"):
+            score_obj = cast(Score, getattr(self, prefix))
+            for attr in ("name", "str", "r_str", "rpoint", "point", "rank"):
+                key = f"{prefix}_{attr}"
+                if key in kwargs:
+                    _set_score_attr(score_obj, prefix, attr, kwargs[key])
+
+        # ゲーム設定
         if "mode" in kwargs and isinstance(kwargs["mode"], int):
             if kwargs["mode"] in (3, 4):
                 self.mode = kwargs["mode"]  # type: ignore[assignment]

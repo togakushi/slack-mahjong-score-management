@@ -42,6 +42,9 @@ def get_config_value(
     Returns:
         Any: 取得した値
             - 実際に返す型: Union[int, float, bool, str, list, None]
+
+    Raises:
+        TypeError: val_type が bool, int, float, str, list 以外の場合
     """
 
     value: Union[int, float, bool, str, list, None] = fallback
@@ -61,7 +64,7 @@ def get_config_value(
             case x if x is list:
                 value = [x.strip() for x in parser.get(section, name).split(",")]
             case _:
-                value = parser.get(section, name)
+                raise TypeError(f"Unsupported val_type: {val_type}")
 
     return value
 
